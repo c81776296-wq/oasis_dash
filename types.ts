@@ -22,4 +22,4 @@ export interface Task {
   tags: string[];
 }
 
-export type ViewType = 'List' | 'Board' | 'Calendar' | 'Gantt' | 'Team';
+export type ViewType = 'Overview' | 'List' | 'Board' | 'Calendar' | 'Gantt' | 'Team';

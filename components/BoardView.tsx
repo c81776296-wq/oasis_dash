@@ -7,9 +7,10 @@ import { MoreHorizontal, Plus, Flag, MessageSquare, Clock } from 'lucide-react';
 interface BoardViewProps {
    tasks: Task[];
    isDarkMode?: boolean;
+   onTaskClick: (task: Task) => void;
 }
 
-const BoardView: React.FC<BoardViewProps> = ({ tasks, isDarkMode }) => {
+const BoardView: React.FC<BoardViewProps> = ({ tasks, isDarkMode, onTaskClick }) => {
    const statuses: Status[] = ['To Do', 'In Progress', 'Review', 'Complete'];
 
    const getTasksByStatus = (status: Status) => tasks.filter(t => t.status === status);
@@ -33,7 +34,9 @@ const BoardView: React.FC<BoardViewProps> = ({ tasks, isDarkMode }) => {
                <div className="flex-1 space-y-3 overflow-y-auto pb-6">
                   {getTasksByStatus(status).map(task => (
                      <div
-                        key={task.id} className="bg-gray-50 dark:bg-[#111111] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all cursor-pointer group relative overflow-hidden"
+                        key={task.id}
+                        className="bg-gray-50 dark:bg-[#111111] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all cursor-pointer group relative overflow-hidden"
+                        onClick={() => onTaskClick(task)}
                      >
                         <div className={`absolute top-0 left-0 w-1 h-full ${STATUS_COLORS[task.status]}`} />
                         <div className="flex items-start justify-between mb-2">
