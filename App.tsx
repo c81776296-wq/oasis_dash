@@ -63,7 +63,18 @@ import {
   Archive,
   Trash,
   ArrowRight,
-  Pencil
+  Pencil,
+  Goal,
+  FolderOpen,
+  List,
+  Layers,
+  GitMerge,
+  Wand2,
+  Save,
+  Pin,
+  Lock,
+  Download,
+  ArrowUpDown
 } from 'lucide-react';
 import { MOCK_TASKS, STATUS_COLORS, PRIORITY_COLORS, USERS } from './constants';
 import { Task, ViewType, Status, Priority, User as UserType } from './types';
@@ -116,6 +127,11 @@ const App: React.FC = () => {
     localStorage.setItem('oasis-theme', currentTheme);
   }, [currentTheme]);
 
+  // Sync view name with active view
+  useEffect(() => {
+    setViewName(activeView);
+  }, [activeView]);
+
   // Modals & Panels State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -130,6 +146,42 @@ const App: React.FC = () => {
   // Temporary Settings State (for Cancel/Save logic)
   const [tempWorkspaceName, setTempWorkspaceName] = useState('');
   const [tempOwnerName, setTempOwnerName] = useState('');
+  // Customize View State
+  const [isCustomizeViewOpen, setIsCustomizeViewOpen] = useState(false);
+  const [viewName, setViewName] = useState('List');
+
+  // List View Options
+  const [showEmptyStatuses, setShowEmptyStatuses] = useState(false);
+  const [wrapText, setWrapText] = useState(false);
+  const [showTaskLocations, setShowTaskLocations] = useState(false);
+  const [showSubtaskParentNames, setShowSubtaskParentNames] = useState(false);
+  const [showClosedTasks, setShowClosedTasks] = useState(false);
+
+  // Board View Options
+  const [boardWorkload, setBoardWorkload] = useState('Number of tasks');
+  const [boardShowTaskLocations, setBoardShowTaskLocations] = useState(false);
+  const [boardShowSubtaskParentNames, setBoardShowSubtaskParentNames] = useState(false);
+
+  // Calendar View Options
+  const [calendarTaskDates, setCalendarTaskDates] = useState('1 shown');
+  const [calendarColorTasksBy, setCalendarColorTasksBy] = useState('Task status');
+  const [calendarTimeFormat, setCalendarTimeFormat] = useState('12h');
+  const [calendarShowWeekends, setCalendarShowWeekends] = useState(true);
+  const [calendarShowWeekNumbers, setCalendarShowWeekNumbers] = useState(false);
+
+  // Gantt View Options
+  const [ganttShowWeekends, setGanttShowWeekends] = useState(true);
+  const [ganttShowCriticalPath, setGanttShowCriticalPath] = useState(false);
+  const [ganttShowSlackTime, setGanttShowSlackTime] = useState(false);
+  const [ganttFullScreen, setGanttFullScreen] = useState(false);
+  const [ganttRescheduleDependencies, setGanttRescheduleDependencies] = useState(true);
+
+  // Customize View General Options
+  const [autosaveView, setAutosaveView] = useState(false);
+  const [pinView, setPinView] = useState(false);
+  const [privateView, setPrivateView] = useState(false);
+  const [protectView, setProtectView] = useState(false);
+  const [defaultView, setDefaultView] = useState(false);
 
   const notificationRef = useRef<HTMLDivElement>(null);
 
@@ -151,6 +203,21 @@ const App: React.FC = () => {
     tags: []
   });
 
+  // Task Detail Transition State
+  const [isTaskDetailsVisible, setIsTaskDetailsVisible] = useState(false);
+
+  const openTaskDetail = (task: Task) => {
+    setSelectedTask(task);
+    setTimeout(() => setIsTaskDetailsVisible(true), 10);
+  };
+
+  const closeTaskDetail = () => {
+    setIsTaskDetailsVisible(false);
+    setTimeout(() => {
+      setSelectedTask(null);
+    }, 300);
+  };
+
   // Handle outside click for notifications
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -161,7 +228,6 @@ const App: React.FC = () => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-
   // Sync temp state when opening settings
   const openSettings = () => {
     setTempWorkspaceName(workspaceName);
@@ -264,7 +330,7 @@ const App: React.FC = () => {
     const commonProps = {
       tasks: filteredTasks,
       isDarkMode: currentTheme === 'dark',
-      onTaskClick: (task: Task) => setSelectedTask(task)
+      onTaskClick: openTaskDetail
     };
     switch (activeView) {
       case 'List': return <ListView {...commonProps} onToggleStatus={toggleTaskStatus} onAddTask={() => setIsModalOpen(true)} onAddTaskInline={handleAddTaskInline} />;
@@ -854,7 +920,10 @@ const App: React.FC = () => {
                 <Search size={12} />
               </button>
             </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-bold text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
+            <button
+              onClick={() => setIsCustomizeViewOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-bold text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+            >
               <Settings size={12} /> Customize
             </button>
             <button
@@ -1107,14 +1176,14 @@ const App: React.FC = () => {
       {
         isSpaceModalOpen && (
           <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-[#121213] w-full max-w-2xl rounded-2xl border border-gray-800 shadow-2xl overflow-hidden animate-in zoom-in duration-300 flex flex-col">
+            <div className="bg-white dark:bg-[#121213] w-full max-w-2xl rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl overflow-hidden animate-in zoom-in duration-300 flex flex-col">
               {/* Modal Header */}
               <div className="px-8 pt-6 pb-2 flex items-center justify-between">
                 <div className="space-y-1">
-                  <h2 className="text-xl font-bold text-white tracking-tight">Create a Space</h2>
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">Create a Space</h2>
                   <p className="text-sm text-gray-500 font-medium">A Space represents teams, departments, or groups, each with its own Lists, workflows, and settings.</p>
                 </div>
-                <button onClick={() => setIsSpaceModalOpen(false)} className="p-1 hover:bg-gray-800 rounded text-gray-400 self-start mt-1">
+                <button onClick={() => setIsSpaceModalOpen(false)} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-500 dark:text-gray-400 self-start mt-1">
                   <X size={20} />
                 </button>
               </div>
@@ -1122,13 +1191,13 @@ const App: React.FC = () => {
               <div className="p-8 pb-4 space-y-8 overflow-y-auto custom-scrollbar">
                 {/* Icon & Name Section */}
                 <div className="space-y-3">
-                  <label className="text-sm font-bold text-gray-300">Icon & name</label>
+                  <label className="text-sm font-bold text-gray-700 dark:text-gray-300">Icon & name</label>
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-[#2e2e2e] border border-gray-700 font-black text-white flex items-center justify-center text-lg shadow-inner">S</div>
+                    <div className="w-12 h-12 rounded-xl bg-gray-100 dark:bg-[#2e2e2e] border border-gray-200 dark:border-gray-700 font-black text-gray-700 dark:text-white flex items-center justify-center text-lg shadow-inner">S</div>
                     <input
                       type="text"
                       placeholder="e.g. Marketing, Engineering, HR"
-                      className="flex-1 bg-transparent border border-gray-800 rounded-xl py-3 px-4 text-white placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-gray-700 transition-all font-medium"
+                      className="flex-1 bg-transparent border border-gray-200 dark:border-gray-800 rounded-xl py-3 px-4 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:focus:ring-gray-700 transition-all font-medium"
                       autoFocus
                     />
                   </div>
@@ -1136,9 +1205,9 @@ const App: React.FC = () => {
 
                 {/* Description Section */}
                 <div className="space-y-3">
-                  <label className="text-sm font-bold text-gray-300">Description <span className="text-gray-600 font-medium">(optional)</span></label>
+                  <label className="text-sm font-bold text-gray-700 dark:text-gray-300">Description <span className="text-gray-400 dark:text-gray-600 font-medium">(optional)</span></label>
                   <textarea
-                    className="w-full bg-transparent border border-gray-800 rounded-xl py-3 px-4 text-white placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-gray-700 transition-all font-medium min-h-[44px] resize-none"
+                    className="w-full bg-transparent border border-gray-200 dark:border-gray-800 rounded-xl py-3 px-4 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:focus:ring-gray-700 transition-all font-medium min-h-[44px] resize-none"
                   />
                 </div>
 
@@ -1146,10 +1215,10 @@ const App: React.FC = () => {
                 <div className="flex items-center justify-between group cursor-pointer pt-2">
                   <div className="flex items-center gap-2">
                     <UserPlus size={18} className="text-gray-400" />
-                    <span className="text-sm font-bold text-gray-300">Default permission</span>
-                    <Info size={14} className="text-gray-600" />
+                    <span className="text-sm font-bold text-gray-700 dark:text-gray-300">Default permission</span>
+                    <Info size={14} className="text-gray-400 dark:text-gray-600" />
                   </div>
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#1a1a1b] border border-gray-800 rounded-lg text-xs font-bold text-gray-400 group-hover:bg-[#202021] transition-colors">
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 dark:bg-[#1a1a1b] border border-gray-200 dark:border-gray-800 rounded-lg text-xs font-bold text-gray-500 dark:text-gray-400 group-hover:bg-gray-100 dark:group-hover:bg-[#202021] transition-colors">
                     Full edit
                     <ChevronDown size={14} />
                   </div>
@@ -1158,18 +1227,18 @@ const App: React.FC = () => {
                 {/* Private Toggle Section */}
                 <div className="flex items-center justify-between pt-2">
                   <div className="space-y-1">
-                    <div className="text-sm font-bold text-gray-300">Make Private</div>
+                    <div className="text-sm font-bold text-gray-700 dark:text-gray-300">Make Private</div>
                     <div className="text-xs text-gray-500 font-medium">Only you and invited members have access</div>
                   </div>
-                  <div className="w-11 h-6 bg-[#2a2a2b] rounded-full relative p-1 cursor-pointer transition-colors active:scale-95">
+                  <div className="w-11 h-6 bg-gray-200 dark:bg-[#2a2a2b] rounded-full relative p-1 cursor-pointer transition-colors active:scale-95">
                     <div className="w-4 h-4 bg-white rounded-full transition-transform" />
                   </div>
                 </div>
               </div>
 
               {/* Footer */}
-              <div className="px-8 py-6 border-t border-gray-800 flex items-center justify-between bg-[#121213]">
-                <button className="text-sm font-bold text-gray-500 hover:text-gray-300 transition-colors">
+              <div className="px-8 py-6 border-t border-gray-200 dark:border-gray-800 flex items-center justify-between bg-gray-50 dark:bg-[#121213]">
+                <button className="text-sm font-bold text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
                   Use Templates
                 </button>
                 <button
@@ -1183,28 +1252,33 @@ const App: React.FC = () => {
           </div>
         )
       }
-
       {/* Task Detail Modal */}
       {
         selectedTask && (
-          <div className="fixed inset-0 z-[150] flex items-center justify-end bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-[#0f0f13] w-full max-w-[95%] h-full flex animate-in slide-in-from-right duration-300 border-l border-gray-800">
+          <div
+            className={`fixed inset-0 z-[150] flex items-center justify-end bg-black/20 backdrop-blur-sm transition-opacity duration-300 ${isTaskDetailsVisible ? 'opacity-100' : 'opacity-0'}`}
+            onClick={closeTaskDetail}
+          >
+            <div
+              className={`bg-white dark:bg-[#0f0f13] w-full max-w-[95%] h-full flex transition-transform duration-300 ease-in-out border-l border-gray-200 dark:border-gray-800 ${isTaskDetailsVisible ? 'translate-x-0' : 'translate-x-full'}`}
+              onClick={(e) => e.stopPropagation()}
+            >
               {/* Modal Content - Main Detail Area */}
               <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
                 {/* Modal Header */}
-                <div className="h-14 border-b border-gray-800 flex items-center justify-between px-6 shrink-0">
-                  <div className="flex items-center gap-4 text-xs font-bold text-gray-400">
-                    <div className="flex items-center gap-2 px-2 py-1 bg-gray-800 rounded">
+                <div className="h-14 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-6 shrink-0">
+                  <div className="flex items-center gap-4 text-xs font-bold text-gray-500 dark:text-gray-400">
+                    <div className="flex items-center gap-2 px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded">
                       <Hash size={12} />
                       <span>Task</span>
                     </div>
-                    <div className="text-gray-500">86ewkpyb7</div>
+                    <div className="text-gray-400 dark:text-gray-500">86ewkpyb7</div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <button className="p-2 hover:bg-gray-800 rounded-lg text-gray-500 transition-colors">
+                    <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg text-gray-500 transition-colors">
                       <MoreHorizontal size={20} />
                     </button>
-                    <button onClick={() => setSelectedTask(null)} className="p-2 hover:bg-gray-800 rounded-lg text-gray-500 transition-colors">
+                    <button onClick={closeTaskDetail} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg text-gray-500 transition-colors">
                       <X size={20} />
                     </button>
                   </div>
@@ -1214,7 +1288,7 @@ const App: React.FC = () => {
                 <div className="flex-1 overflow-y-auto custom-scrollbar p-8 space-y-10">
                   {/* Title Section */}
                   <div>
-                    <h2 className="text-4xl font-black text-white uppercase tracking-tighter mb-6">{selectedTask.title}</h2>
+                    <h2 className="text-4xl font-black text-gray-900 dark:text-white uppercase tracking-tighter mb-6">{selectedTask.title}</h2>
                   </div>
 
                   {/* Info Grid */}
@@ -1226,9 +1300,9 @@ const App: React.FC = () => {
                         Status
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="px-3 py-1 bg-gray-800 text-white rounded text-xs font-black uppercase tracking-widest">Clients</span>
-                        <ChevronRight size={14} className="text-gray-600" />
-                        <div className="w-5 h-5 rounded-full border border-gray-700 flex items-center justify-center text-green-500"><Check size={12} /></div>
+                        <span className="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-white rounded text-xs font-black uppercase tracking-widest">Clients</span>
+                        <ChevronRight size={14} className="text-gray-400 dark:text-gray-600" />
+                        <div className="w-5 h-5 rounded-full border border-gray-200 dark:border-gray-700 flex items-center justify-center text-green-500"><Check size={12} /></div>
                       </div>
                     </div>
 
@@ -1277,7 +1351,7 @@ const App: React.FC = () => {
                         <Activity size={14} />
                         Track Time
                       </div>
-                      <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-800 rounded-lg text-xs font-bold text-gray-300">
+                      <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 dark:bg-gray-800 rounded-lg text-xs font-bold text-gray-500 dark:text-gray-300">
                         <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
                         Add time
                       </div>
@@ -1290,7 +1364,7 @@ const App: React.FC = () => {
                         Tags
                       </div>
                       <div className="flex flex-wrap gap-2">
-                        <span className="px-2 py-0.5 bg-purple-600/20 text-purple-400 rounded text-[10px] font-black uppercase tracking-widest border border-purple-500/20">client</span>
+                        <span className="px-2 py-0.5 bg-purple-100 dark:bg-purple-600/20 text-purple-600 dark:text-purple-400 rounded text-[10px] font-black uppercase tracking-widest border border-purple-200 dark:border-purple-500/20">client</span>
                       </div>
                     </div>
 
@@ -1305,15 +1379,15 @@ const App: React.FC = () => {
                   </div>
 
                   {/* Description Text Area */}
-                  <div className="p-8 border border-gray-800 bg-[#16161e]/30 rounded-[32px] max-w-4xl min-h-[160px]">
-                    <p className="text-sm font-bold text-gray-300 leading-relaxed mb-1">Phone: +971 50 963 6126</p>
-                    <p className="text-sm font-bold text-gray-300 leading-relaxed">Email: info@kocrossboxdubai.com</p>
+                  <div className="p-8 border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-[#16161e]/30 rounded-[32px] max-w-4xl min-h-[160px]">
+                    <p className="text-sm font-bold text-gray-600 dark:text-gray-300 leading-relaxed mb-1">Phone: +971 50 963 6126</p>
+                    <p className="text-sm font-bold text-gray-600 dark:text-gray-300 leading-relaxed">Email: info@kocrossboxdubai.com</p>
                   </div>
 
                   {/* Section Tabs */}
-                  <div className="flex items-center gap-8 border-b border-gray-800 max-w-4xl">
+                  <div className="flex items-center gap-8 border-b border-gray-200 dark:border-gray-800 max-w-4xl">
                     {['Details', 'Subtasks', 'Action Items'].map((tab, idx) => (
-                      <button key={tab} className={`pb-4 text-sm font-black uppercase tracking-tighter relative ${idx === 0 ? 'text-white' : 'text-gray-600 hover:text-gray-400'}`}>
+                      <button key={tab} className={`pb-4 text-sm font-black uppercase tracking-tighter relative ${idx === 0 ? 'text-gray-900 dark:text-white' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-400'}`}>
                         {tab}
                         {idx === 0 && <div className="absolute bottom-[-1px] left-0 w-full h-0.5 bg-orange-500" />}
                       </button>
@@ -1322,83 +1396,504 @@ const App: React.FC = () => {
 
                   {/* Add Custom Fields */}
                   <div className="space-y-6 max-w-4xl pt-4">
-                    <h3 className="text-sm font-black text-white uppercase tracking-tighter">Add Custom Fields</h3>
-                    <button className="px-4 py-2 border border-gray-800/50 rounded-lg text-[10px] font-black text-gray-600 uppercase tracking-widest hover:bg-gray-800/30 transition-colors">
+                    <h3 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-tighter">Add Custom Fields</h3>
+                    <button className="px-4 py-2 border border-gray-200 dark:border-gray-800/50 rounded-lg text-[10px] font-black text-gray-500 dark:text-gray-600 uppercase tracking-widest hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
                       + Create a field in this List
                     </button>
                   </div>
 
                   {/* Attachments Section */}
                   <div className="space-y-6 max-w-4xl pt-8">
-                    <h3 className="text-sm font-black text-white uppercase tracking-tighter">Attachments</h3>
-                    <div className="border-2 border-dashed border-gray-800/50 rounded-3xl p-10 flex flex-col items-center justify-center text-center group hover:border-purple-500/30 transition-colors cursor-pointer">
-                      <p className="text-sm font-black text-gray-600 group-hover:text-gray-400 transition-colors">Drop your files here to <span className="underline">upload</span></p>
+                    <h3 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-tighter">Attachments</h3>
+                    <div className="border-2 border-dashed border-gray-200 dark:border-gray-800/50 rounded-3xl p-10 flex flex-col items-center justify-center text-center group hover:border-purple-500/30 transition-colors cursor-pointer">
+                      <p className="text-sm font-black text-gray-400 dark:text-gray-600 group-hover:text-gray-600 dark:group-hover:text-gray-400 transition-colors">Drop your files here to <span className="underline">upload</span></p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Right Activity Panel */}
-              <div className="w-[380px] border-l border-gray-800 flex flex-col bg-[#0f0f13] overflow-hidden">
-                <div className="h-14 border-b border-gray-800 flex items-center justify-between px-6 shrink-0">
-                  <h3 className="text-lg font-black text-white uppercase tracking-tighter">Activity</h3>
-                  <div className="flex items-center gap-3 text-gray-600">
-                    <Search size={16} className="hover:text-white cursor-pointer" />
-                    <Filter size={16} className="hover:text-white cursor-pointer" />
-                    <div className="flex items-center gap-1 hover:text-white cursor-pointer">
+            </div>
+
+            {/* Right Activity Panel */}
+            <div className="w-[380px] border-l border-gray-200 dark:border-gray-800 flex flex-col bg-gray-50 dark:bg-[#0f0f13] overflow-hidden">
+              <div className="h-14 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-6 shrink-0">
+                <h3 className="text-lg font-black text-gray-900 dark:text-white uppercase tracking-tighter">Activity</h3>
+                <div className="flex items-center gap-3 text-gray-400 dark:text-gray-600">
+                  <Search size={16} className="hover:text-gray-700 dark:hover:text-white cursor-pointer" />
+                  <Filter size={16} className="hover:text-gray-700 dark:hover:text-white cursor-pointer" />
+                  <div className="flex items-center gap-1 hover:text-gray-700 dark:hover:text-white cursor-pointer">
+                    <MessageSquare size={16} />
+                    <span className="text-xs font-bold">1</span>
+                  </div>
+                  <p>Gustavo created this task</p>
+                </div>
+                <span className="text-gray-700">11:43 am</span>
+              </div>
+              <div className="flex items-start gap-4 text-[10px] font-bold text-gray-600">
+                <div className="w-2 h-2 rounded-full bg-purple-500 mt-1" />
+                <div className="flex-1">
+                  <p>Gustavo added tag client</p>
+                </div>
+                <span className="text-gray-700">11:43 am</span>
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-gray-800 bg-[#16161e]/50">
+              <div className="bg-[#0f0f13] border border-gray-800 rounded-2xl p-4 flex flex-col gap-4">
+                <textarea
+                  className="w-full bg-transparent border-none focus:outline-none resize-none text-sm font-medium text-white placeholder:text-gray-700 min-h-[60px]"
+                  placeholder="Write a comment..."
+                />
+                <div className="flex items-center justify-between pt-2 border-t border-gray-900">
+                  <div className="flex items-center gap-1.5 px-2 py-1 bg-gray-900 rounded-lg text-[10px] font-black text-gray-500 uppercase tracking-widest cursor-pointer hover:bg-gray-800">
+                    Comment
+                    <ChevronDown size={12} />
+                  </div>
+                  <div className="flex items-center gap-3 text-gray-700">
+                    <MoreHorizontal size={16} className="hover:text-gray-400 cursor-pointer" />
+                    <div className="flex items-center gap-1 hover:text-gray-400 cursor-pointer">
                       <MessageSquare size={16} />
-                      <span className="text-xs font-bold">1</span>
+                      <span className="text-xs">1</span>
                     </div>
-                    <MoreHorizontal size={16} className="hover:text-white cursor-pointer" />
-                  </div>
-                </div>
-
-                <div className="flex-1 overflow-y-auto custom-scrollbar p-8 space-y-4">
-                  <div className="flex items-start gap-4 text-[10px] font-bold text-gray-600">
-                    <div className="w-2 h-2 rounded-full bg-green-500 mt-1" />
-                    <div className="flex-1">
-                      <p>Gustavo created this task</p>
-                    </div>
-                    <span className="text-gray-700">11:43 am</span>
-                  </div>
-                  <div className="flex items-start gap-4 text-[10px] font-bold text-gray-600">
-                    <div className="w-2 h-2 rounded-full bg-purple-500 mt-1" />
-                    <div className="flex-1">
-                      <p>Gustavo added tag client</p>
-                    </div>
-                    <span className="text-gray-700">11:43 am</span>
-                  </div>
-                </div>
-
-                <div className="p-6 border-t border-gray-800 bg-[#16161e]/50">
-                  <div className="bg-[#0f0f13] border border-gray-800 rounded-2xl p-4 flex flex-col gap-4">
-                    <textarea
-                      className="w-full bg-transparent border-none focus:outline-none resize-none text-sm font-medium text-white placeholder:text-gray-700 min-h-[60px]"
-                      placeholder="Write a comment..."
-                    />
-                    <div className="flex items-center justify-between pt-2 border-t border-gray-900">
-                      <div className="flex items-center gap-1.5 px-2 py-1 bg-gray-900 rounded-lg text-[10px] font-black text-gray-500 uppercase tracking-widest cursor-pointer hover:bg-gray-800">
-                        Comment
-                        <ChevronDown size={12} />
-                      </div>
-                      <div className="flex items-center gap-3 text-gray-700">
-                        <MoreHorizontal size={16} className="hover:text-gray-400 cursor-pointer" />
-                        <div className="flex items-center gap-1 hover:text-gray-400 cursor-pointer">
-                          <MessageSquare size={16} />
-                          <span className="text-xs">1</span>
-                        </div>
-                        <button className="p-1.5 bg-gray-800 rounded-lg hover:text-white transition-colors">
-                          <ChevronRight size={14} />
-                        </button>
-                      </div>
-                    </div>
+                    <button className="p-1.5 bg-gray-800 rounded-lg hover:text-white transition-colors">
+                      <ChevronRight size={14} />
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+
         )
       }
+
+      {/* Customize View Drawer (Image 3) */}
+      {/* Customize View Sidebar - Always rendered for animation */}
+      <div
+        className={`fixed inset-0 z-[160] bg-black/20 backdrop-blur-[1px] transition-opacity duration-300 ${isCustomizeViewOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+          }`}
+        onClick={() => setIsCustomizeViewOpen(false)}
+      />
+      <div
+        className={`fixed top-0 right-0 h-full w-80 bg-white dark:bg-[#1e1e1e] border-l border-gray-200 dark:border-gray-800 shadow-2xl z-[170] transition-transform duration-300 ease-in-out flex flex-col ${isCustomizeViewOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-800">
+          <h2 className="text-sm font-bold text-gray-900 dark:text-gray-200">Customize view</h2>
+          <button
+            onClick={() => setIsCustomizeViewOpen(false)}
+            className="p-1 hover:bg-gray-100 dark:hover:bg-white/5 rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+          >
+            <X size={16} />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-5 space-y-6">
+
+          {/* View Name Input */}
+          <div className="bg-gray-50 dark:bg-[#2a2a2b] border border-gray-200 dark:border-gray-700/50 rounded-lg flex items-center px-3 py-2">
+            <div className="text-gray-500 dark:text-gray-400 mr-3">
+              {activeView === 'List' && <List size={16} />}
+              {activeView === 'Board' && <LayoutGrid size={16} />}
+              {activeView === 'Calendar' && <Calendar size={16} />}
+              {activeView === 'Gantt' && <GanttChart size={16} />}
+            </div>
+            <input
+              type="text"
+              value={viewName}
+              onChange={(e) => setViewName(e.target.value)}
+              className="bg-transparent border-none outline-none text-sm text-gray-900 dark:text-gray-200 w-full placeholder-gray-500 font-medium"
+              placeholder="View name"
+            />
+          </div>
+
+          {/* LIST VIEW OPTIONS */}
+          {(activeView === 'List' || activeView === 'Overview') && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Show empty statuses</span>
+                <button
+                  onClick={() => setShowEmptyStatuses(!showEmptyStatuses)}
+                  className={`w-8 h-4 rounded-full transition-colors relative ${showEmptyStatuses ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                >
+                  <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${showEmptyStatuses ? 'translate-x-4' : 'translate-x-0'}`} />
+                </button>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Wrap text</span>
+                <button
+                  onClick={() => setWrapText(!wrapText)}
+                  className={`w-8 h-4 rounded-full transition-colors relative ${wrapText ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                >
+                  <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${wrapText ? 'translate-x-4' : 'translate-x-0'}`} />
+                </button>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Show task locations</span>
+                <button
+                  onClick={() => setShowTaskLocations(!showTaskLocations)}
+                  className={`w-8 h-4 rounded-full transition-colors relative ${showTaskLocations ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                >
+                  <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${showTaskLocations ? 'translate-x-4' : 'translate-x-0'}`} />
+                </button>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Show subtask parent names</span>
+                <button
+                  onClick={() => setShowSubtaskParentNames(!showSubtaskParentNames)}
+                  className={`w-8 h-4 rounded-full transition-colors relative ${showSubtaskParentNames ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                >
+                  <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${showSubtaskParentNames ? 'translate-x-4' : 'translate-x-0'}`} />
+                </button>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Show closed tasks</span>
+                <button
+                  onClick={() => setShowClosedTasks(!showClosedTasks)}
+                  className={`w-8 h-4 rounded-full transition-colors relative ${showClosedTasks ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                >
+                  <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${showClosedTasks ? 'translate-x-4' : 'translate-x-0'}`} />
+                </button>
+              </div>
+
+              <button className="flex items-center gap-2 text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors">
+                More options <ChevronRight size={12} />
+              </button>
+            </div>
+          )}
+
+          {/* BOARD VIEW OPTIONS */}
+          {activeView === 'Board' && (
+            <div className="space-y-4">
+              <button className="w-full flex items-center justify-between py-1 group">
+                <span className="text-xs font-bold text-gray-900 dark:text-gray-200">Workload</span>
+                <div className="flex items-center gap-2 text-gray-500">
+                  <span className="text-[10px] text-gray-500 dark:text-gray-400 font-medium">{boardWorkload}</span>
+                  <ChevronRight size={14} />
+                </div>
+              </button>
+
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Show task locations</span>
+                <button
+                  onClick={() => setBoardShowTaskLocations(!boardShowTaskLocations)}
+                  className={`w-8 h-4 rounded-full transition-colors relative ${boardShowTaskLocations ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                >
+                  <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${boardShowTaskLocations ? 'translate-x-4' : 'translate-x-0'}`} />
+                </button>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Show subtask parent names</span>
+                <button
+                  onClick={() => setBoardShowSubtaskParentNames(!boardShowSubtaskParentNames)}
+                  className={`w-8 h-4 rounded-full transition-colors relative ${boardShowSubtaskParentNames ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                >
+                  <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${boardShowSubtaskParentNames ? 'translate-x-4' : 'translate-x-0'}`} />
+                </button>
+              </div>
+
+              <button className="flex items-center gap-2 text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors">
+                More options <ChevronRight size={12} />
+              </button>
+            </div>
+          )}
+
+          {/* CALENDAR VIEW OPTIONS */}
+          {activeView === 'Calendar' && (
+            <div className="space-y-4">
+              <button className="w-full flex items-center justify-between py-1 group">
+                <span className="text-xs font-bold text-gray-900 dark:text-gray-200">Task dates</span>
+                <div className="flex items-center gap-2 text-gray-500">
+                  <span className="text-[10px] text-gray-500 dark:text-gray-400 font-medium">{calendarTaskDates}</span>
+                  <ChevronRight size={14} />
+                </div>
+              </button>
+              <button className="w-full flex items-center justify-between py-1 group">
+                <span className="text-xs font-bold text-gray-900 dark:text-gray-200">Color tasks by</span>
+                <div className="flex items-center gap-2 text-gray-500">
+                  <span className="text-[10px] text-gray-500 dark:text-gray-400 font-medium">{calendarColorTasksBy}</span>
+                  <ChevronRight size={14} />
+                </div>
+              </button>
+              <button className="w-full flex items-center justify-between py-1 group">
+                <span className="text-xs font-bold text-gray-900 dark:text-gray-200">Time format</span>
+                <div className="flex items-center gap-2 text-gray-500">
+                  <span className="text-[10px] text-gray-500 dark:text-gray-400 font-medium">{calendarTimeFormat}</span>
+                  <ChevronRight size={14} />
+                </div>
+              </button>
+
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Show weekends</span>
+                <button
+                  onClick={() => setCalendarShowWeekends(!calendarShowWeekends)}
+                  className={`w-8 h-4 rounded-full transition-colors relative ${calendarShowWeekends ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                >
+                  <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${calendarShowWeekends ? 'translate-x-4' : 'translate-x-0'}`} />
+                </button>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Show week numbers</span>
+                <button
+                  onClick={() => setCalendarShowWeekNumbers(!calendarShowWeekNumbers)}
+                  className={`w-8 h-4 rounded-full transition-colors relative ${calendarShowWeekNumbers ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                >
+                  <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${calendarShowWeekNumbers ? 'translate-x-4' : 'translate-x-0'}`} />
+                </button>
+              </div>
+
+              <button className="flex items-center gap-2 text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors">
+                More options <ChevronRight size={12} />
+              </button>
+            </div>
+          )}
+
+          {/* GANTT VIEW OPTIONS */}
+          {activeView === 'Gantt' && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Show weekends</span>
+                <button
+                  onClick={() => setGanttShowWeekends(!ganttShowWeekends)}
+                  className={`w-8 h-4 rounded-full transition-colors relative ${ganttShowWeekends ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                >
+                  <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${ganttShowWeekends ? 'translate-x-4' : 'translate-x-0'}`} />
+                </button>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Show critical path</span>
+                <button
+                  onClick={() => setGanttShowCriticalPath(!ganttShowCriticalPath)}
+                  className={`w-8 h-4 rounded-full transition-colors relative ${ganttShowCriticalPath ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                >
+                  <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${ganttShowCriticalPath ? 'translate-x-4' : 'translate-x-0'}`} />
+                </button>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Show slack time</span>
+                <button
+                  onClick={() => setGanttShowSlackTime(!ganttShowSlackTime)}
+                  className={`w-8 h-4 rounded-full transition-colors relative ${ganttShowSlackTime ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                >
+                  <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${ganttShowSlackTime ? 'translate-x-4' : 'translate-x-0'}`} />
+                </button>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Full screen mode</span>
+                <button
+                  onClick={() => setGanttFullScreen(!ganttFullScreen)}
+                  className={`w-8 h-4 rounded-full transition-colors relative ${ganttFullScreen ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                >
+                  <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${ganttFullScreen ? 'translate-x-4' : 'translate-x-0'}`} />
+                </button>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Reschedule dependencies</span>
+                <button
+                  onClick={() => setGanttRescheduleDependencies(!ganttRescheduleDependencies)}
+                  className={`w-8 h-4 rounded-full transition-colors relative ${ganttRescheduleDependencies ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                >
+                  <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${ganttRescheduleDependencies ? 'translate-x-4' : 'translate-x-0'}`} />
+                </button>
+              </div>
+
+              <button className="flex items-center gap-2 text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors">
+                More options <ChevronRight size={12} />
+              </button>
+            </div>
+          )}
+
+          <div className="h-px bg-gray-200 dark:bg-gray-800" />
+
+          {/* Settings Section - Conditional based on View */}
+          <div className="space-y-1">
+            {/* Calendar specific: Sync */}
+            {activeView === 'Calendar' && (
+              <button className="w-full flex items-center gap-3 py-2 group">
+                <Calendar size={15} className="text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-200" />
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100">Sync with calendar</span>
+              </button>
+            )}
+
+            {/* Common: Fields (All except Calendar sometimes? No, Calendar has fields too) */}
+            <button className="w-full flex items-center justify-between py-2 group">
+              <div className="flex items-center gap-3">
+                <Pencil size={15} className="text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-200" />
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100">Fields</span>
+              </div>
+              <div className="flex items-center gap-2 text-gray-500">
+                <span className="text-[10px] uppercase">
+                  {activeView === 'List' ? '3 shown' : activeView === 'Gantt' ? '1 shown' : activeView === 'Board' ? '3 shown' : 'None'}
+                </span>
+                <ChevronRight size={14} />
+              </div>
+            </button>
+
+            <button className="w-full flex items-center justify-between py-2 group">
+              <div className="flex items-center gap-3">
+                <Filter size={15} className="text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-200" />
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100">Filter</span>
+              </div>
+              <div className="flex items-center gap-2 text-gray-500">
+                <span className="text-[10px] uppercase">None</span>
+                <ChevronRight size={14} />
+              </div>
+            </button>
+
+            {/* Group: List Only? Board implies columns are groups. Image 1 doesn't show Group. */}
+            {(activeView === 'List' || activeView === 'Overview') && (
+              <button className="w-full flex items-center justify-between py-2 group">
+                <div className="flex items-center gap-3">
+                  <Layers size={15} className="text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-200" />
+                  <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100">Group</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-500">
+                  <span className="text-[10px] uppercase">Status</span>
+                  <ChevronRight size={14} />
+                </div>
+              </button>
+            )}
+
+            {/* Sort: Board Only in explicit list? Image 1 shows Sort. List usually has sort in headers. */}
+            {activeView === 'Board' && (
+              <button className="w-full flex items-center justify-between py-2 group">
+                <div className="flex items-center gap-3">
+                  {/* Use ArrowUpDown or similar if available, else generic */}
+                  <ArrowUpDown size={15} className="text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-200" />
+                  <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100">Sort</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-500">
+                  <span className="text-[10px] uppercase">Task Name</span>
+                  <ChevronRight size={14} />
+                </div>
+              </button>
+            )}
+
+            {/* Subtasks: List, Board, Calendar */}
+            {activeView !== 'Gantt' && (
+              <button className="w-full flex items-center justify-between py-2 group">
+                <div className="flex items-center gap-3">
+                  <GitMerge size={15} className="text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-200" />
+                  <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100">Subtasks</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-500">
+                  <span className="text-[10px] uppercase">Collapsed</span>
+                  <ChevronRight size={14} />
+                </div>
+              </button>
+            )}
+
+            <button className="w-full flex items-center justify-between py-2 group">
+              <div className="flex items-center gap-3">
+                <Wand2 size={15} className="text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-200" />
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100">Templates</span>
+              </div>
+              <div className="flex items-center gap-2 text-gray-500">
+                <ChevronRight size={14} />
+              </div>
+            </button>
+          </div>
+
+          <div className="h-px bg-gray-200 dark:bg-gray-800" />
+
+          {/* Options Section */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Save size={15} className="text-gray-400" />
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Autosave for me</span>
+              </div>
+              <button
+                onClick={() => setAutosaveView(!autosaveView)}
+                className={`w-8 h-4 rounded-full transition-colors relative ${autosaveView ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+              >
+                <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${autosaveView ? 'translate-x-4' : 'translate-x-0'}`} />
+              </button>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Pin size={15} className="text-gray-400" />
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Pin view</span>
+              </div>
+              <button
+                onClick={() => setPinView(!pinView)}
+                className={`w-8 h-4 rounded-full transition-colors relative ${pinView ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+              >
+                <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${pinView ? 'translate-x-4' : 'translate-x-0'}`} />
+              </button>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Lock size={15} className="text-gray-400" />
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Private view</span>
+              </div>
+              <button
+                onClick={() => setPrivateView(!privateView)}
+                className={`w-8 h-4 rounded-full transition-colors relative ${privateView ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+              >
+                <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${privateView ? 'translate-x-4' : 'translate-x-0'}`} />
+              </button>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Shield size={15} className="text-gray-400" />
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Protect view</span>
+              </div>
+              <button
+                onClick={() => setProtectView(!protectView)}
+                className={`w-8 h-4 rounded-full transition-colors relative ${protectView ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+              >
+                <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${protectView ? 'translate-x-4' : 'translate-x-0'}`} />
+              </button>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Home size={15} className="text-gray-400" />
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Set as default view</span>
+              </div>
+              <button
+                onClick={() => setDefaultView(!defaultView)}
+                className={`w-8 h-4 rounded-full transition-colors relative ${defaultView ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+              >
+                <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${defaultView ? 'translate-x-4' : 'translate-x-0'}`} />
+              </button>
+            </div>
+          </div>
+
+          <div className="h-px bg-gray-200 dark:bg-gray-800" />
+
+          {/* Actions Section */}
+          <div className="space-y-1">
+            <button className="w-full flex items-center justify-between py-2 group">
+              <div className="flex items-center gap-3">
+                <Link size={15} className="text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-200" />
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100">Copy link to view</span>
+              </div>
+            </button>
+            <button className="w-full flex items-center justify-between py-2 group">
+              <div className="flex items-center gap-3">
+                <Star size={15} className="text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-200" />
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100">Favorite</span>
+              </div>
+              <ChevronRight size={14} className="text-gray-500" />
+            </button>
+            <button className="w-full flex items-center justify-between py-2 group">
+              <div className="flex items-center gap-3">
+                <Download size={15} className="text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-200" />
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100">Export view</span>
+              </div>
+            </button>
+            <button className="w-full flex items-center justify-between py-2 group">
+              <div className="flex items-center gap-3">
+                <Share2 size={15} className="text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-200" />
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100">Sharing & Permissions</span>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
     </div >
   );
 };

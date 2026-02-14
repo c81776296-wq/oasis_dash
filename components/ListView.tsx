@@ -729,276 +729,282 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
         )}
       </div>
       {/* IMAGEM 1, 2, 3: Create Field Drawer */}
-      {isCreateFieldOpen && (
-        <>
-          <div className="fixed inset-0 z-[200] bg-black/20 backdrop-blur-sm" onClick={() => setIsCreateFieldOpen(false)} />
-          <div className="fixed top-0 right-0 w-[320px] h-full bg-[#121213] border-l border-gray-800 shadow-2xl z-[210] flex flex-col animate-in slide-in-from-right duration-300">
-            {/* Header */}
-            <div className="px-4 h-14 border-b border-gray-800 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => {
-                    setIsCreateFieldOpen(false);
-                    setIsFieldsDrawerOpen(true);
-                  }}
-                  className="p-1 hover:bg-gray-800 rounded text-gray-400"
-                >
-                  <ArrowLeft size={18} />
-                </button>
-                <span className="text-sm font-bold text-white">Create field</span>
-              </div>
-              <button
-                onClick={() => {
-                  setIsCreateFieldOpen(false);
-                  setIsFieldsDrawerOpen(false);
-                }}
-                className="p-1 hover:bg-gray-800 rounded text-gray-400"
-              >
-                <CloseIcon size={18} />
-              </button>
-            </div>
-
-            {/* Search */}
-            <div className="p-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={14} />
-                <input
-                  type="text"
-                  placeholder="Search for new or existing fields"
-                  className="w-full bg-[#1a1a1b] border border-[#2a2a2b] rounded-lg py-2 pl-10 pr-4 text-xs text-white focus:outline-none focus:border-purple-500 transition-all placeholder:text-gray-600"
-                />
-              </div>
-            </div>
-
-            {/* Fields List */}
-            <div className="flex-1 overflow-y-auto custom-scrollbar pb-20">
-              {/* Suggested Section - Empty as requested */}
-              <div className="px-4 py-2">
-                <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Suggested</h3>
-                <p className="text-[10px] text-gray-600 italic px-2">No suggestions available</p>
-              </div>
-
-              {/* AI Fields Section */}
-              <div className="px-4 py-4 border-t border-gray-800/50 mt-2">
-                <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">AI fields</h3>
-                {[
-                  { label: 'Summary', icon: <Zap size={14} className="text-purple-500" /> },
-                  { label: 'Custom Text', icon: <Type size={14} className="text-purple-500" /> },
-                  { label: 'Custom Dropdown', icon: <LayoutList size={14} className="text-purple-500" /> },
-                ].map(field => (
-                  <button
-                    key={field.label}
-                    onClick={() => addColumn(field.label)}
-                    className="w-full flex items-center gap-3 px-2 py-2.5 hover:bg-white/5 rounded-lg text-xs font-medium text-gray-300 transition-colors group text-left"
-                  >
-                    {field.icon}
-                    <span className="group-hover:text-white transition-colors">{field.label}</span>
-                  </button>
-                ))}
-              </div>
-
-              {/* All Section */}
-              <div className="px-4 py-4 border-t border-gray-800/50 mt-2">
-                <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">All</h3>
-                {[
-                  { label: 'Dropdown', icon: <LayoutList size={14} className="text-emerald-500" /> },
-                  { label: 'Text', icon: <Type size={14} className="text-sky-500" /> },
-                  { label: 'Date', icon: <Calendar size={14} className="text-amber-500" /> },
-                  { label: 'Text area (Long Text)', icon: <Activity size={14} className="text-sky-500" /> },
-                  { label: 'Number', icon: <Hash size={14} className="text-emerald-500" /> },
-                  { label: 'Labels', icon: <Tag size={14} className="text-emerald-500" /> },
-                  { label: 'Checkbox', icon: <CheckSquare size={14} className="text-pink-500" /> },
-                  { label: 'Money', icon: <DollarSign size={14} className="text-emerald-500" /> },
-                  { label: 'Website', icon: <Globe size={14} className="text-rose-500" /> },
-                  { label: 'Formula', icon: <FunctionSquare size={14} className="text-emerald-600" /> },
-                  { label: 'Files', icon: <Files size={14} className="text-purple-500" /> },
-                  { label: 'Relationship', icon: <ArrowRightLeft size={14} className="text-blue-500" /> },
-                  { label: 'People', icon: <People size={14} className="text-rose-500" /> },
-                  { label: 'Progress (Auto)', icon: <BarChart3 size={14} className="text-orange-500" /> },
-                  { label: 'Email', icon: <Email size={14} className="text-rose-400" /> },
-                  { label: 'Phone', icon: <Phone size={14} className="text-rose-400" /> },
-                  { label: 'T-shirt Size', icon: <Shirt size={14} className="text-purple-400" /> },
-                ].map(field => (
-                  <button
-                    key={field.label}
-                    onClick={() => addColumn(field.label)}
-                    className="w-full flex items-center gap-3 px-2 py-2.5 hover:bg-white/5 rounded-lg text-xs font-medium text-gray-300 transition-colors group text-left"
-                  >
-                    {field.icon}
-                    <span className="group-hover:text-white transition-colors">{field.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
+      <div
+        className={`fixed inset-0 z-[200] bg-black/20 backdrop-blur-sm transition-opacity duration-300 ${isCreateFieldOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+          }`}
+        onClick={() => setIsCreateFieldOpen(false)}
+      />
+      <div
+        className={`fixed top-0 right-0 w-[320px] h-full bg-white dark:bg-[#121213] border-l border-gray-200 dark:border-gray-800 shadow-2xl z-[210] flex flex-col transition-transform duration-300 ease-in-out ${isCreateFieldOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}
+      >
+        {/* Header */}
+        <div className="px-4 h-14 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => {
+                setIsCreateFieldOpen(false);
+                setIsFieldsDrawerOpen(true);
+              }}
+              className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-500 dark:text-gray-400"
+            >
+              <ArrowLeft size={18} />
+            </button>
+            <span className="text-sm font-bold text-gray-900 dark:text-white">Create field</span>
           </div>
-        </>
-      )}
+          <button
+            onClick={() => {
+              setIsCreateFieldOpen(false);
+              setIsFieldsDrawerOpen(false);
+            }}
+            className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-500 dark:text-gray-400"
+          >
+            <CloseIcon size={18} />
+          </button>
+        </div>
+
+        {/* Search */}
+        <div className="p-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={14} />
+            <input
+              type="text"
+              placeholder="Search for new or existing fields"
+              className="w-full bg-gray-50 dark:bg-[#1a1a1b] border border-gray-200 dark:border-[#2a2a2b] rounded-lg py-2 pl-10 pr-4 text-xs text-gray-900 dark:text-white focus:outline-none focus:border-purple-500 transition-all placeholder:text-gray-500 dark:placeholder:text-gray-600"
+            />
+          </div>
+        </div>
+
+        {/* Fields List */}
+        <div className="flex-1 overflow-y-auto custom-scrollbar pb-20">
+          {/* Suggested Section */}
+          <div className="px-4 py-2">
+            <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Suggested</h3>
+            <p className="text-[10px] text-gray-400 dark:text-gray-600 italic px-2">No suggestions available</p>
+          </div>
+
+          {/* AI Fields Section */}
+          <div className="px-4 py-4 border-t border-gray-100 dark:border-gray-800/50 mt-2">
+            <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">AI fields</h3>
+            {[
+              { label: 'Summary', icon: <Zap size={14} className="text-purple-500" /> },
+              { label: 'Custom Text', icon: <Type size={14} className="text-purple-500" /> },
+              { label: 'Custom Dropdown', icon: <LayoutList size={14} className="text-purple-500" /> },
+            ].map(field => (
+              <button
+                key={field.label}
+                onClick={() => addColumn(field.label)}
+                className="w-full flex items-center gap-3 px-2 py-2.5 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-300 transition-colors group text-left"
+              >
+                {field.icon}
+                <span className="group-hover:text-gray-900 dark:group-hover:text-white transition-colors">{field.label}</span>
+              </button>
+            ))}
+          </div>
+
+          {/* All Section */}
+          <div className="px-4 py-4 border-t border-gray-100 dark:border-gray-800/50 mt-2">
+            <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">All</h3>
+            {[
+              { label: 'Dropdown', icon: <LayoutList size={14} className="text-emerald-500" /> },
+              { label: 'Text', icon: <Type size={14} className="text-sky-500" /> },
+              { label: 'Date', icon: <Calendar size={14} className="text-amber-500" /> },
+              { label: 'Text area (Long Text)', icon: <Activity size={14} className="text-sky-500" /> },
+              { label: 'Number', icon: <Hash size={14} className="text-emerald-500" /> },
+              { label: 'Labels', icon: <Tag size={14} className="text-emerald-500" /> },
+              { label: 'Checkbox', icon: <CheckSquare size={14} className="text-pink-500" /> },
+              { label: 'Money', icon: <DollarSign size={14} className="text-emerald-500" /> },
+              { label: 'Website', icon: <Globe size={14} className="text-rose-500" /> },
+              { label: 'Formula', icon: <FunctionSquare size={14} className="text-emerald-600" /> },
+              { label: 'Files', icon: <Files size={14} className="text-purple-500" /> },
+              { label: 'Relationship', icon: <ArrowRightLeft size={14} className="text-blue-500" /> },
+              { label: 'People', icon: <People size={14} className="text-rose-500" /> },
+              { label: 'Progress (Auto)', icon: <BarChart3 size={14} className="text-orange-500" /> },
+              { label: 'Email', icon: <Email size={14} className="text-rose-400" /> },
+              { label: 'Phone', icon: <Phone size={14} className="text-rose-400" /> },
+              { label: 'T-shirt Size', icon: <Shirt size={14} className="text-purple-400" /> },
+            ].map(field => (
+              <button
+                key={field.label}
+                onClick={() => addColumn(field.label)}
+                className="w-full flex items-center gap-3 px-2 py-2.5 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-300 transition-colors group text-left"
+              >
+                {field.icon}
+                <span className="group-hover:text-gray-900 dark:group-hover:text-white transition-colors">{field.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
 
       {/* IMAGEM 3, 4: Fields Drawer */}
-      {isFieldsDrawerOpen && (
-        <>
-          <div className="fixed inset-0 z-[100] bg-black/20 backdrop-blur-sm" onClick={() => setIsFieldsDrawerOpen(false)} />
-          <div className="fixed top-0 right-0 w-[320px] h-full bg-[#121213] border-l border-gray-800 shadow-2xl z-[110] flex flex-col animate-in slide-in-from-right duration-300">
-            {/* Header */}
-            <div className="px-4 h-14 border-b border-gray-800 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <button onClick={() => setIsFieldsDrawerOpen(false)} className="p-1 hover:bg-gray-800 rounded text-gray-400">
-                  <ArrowLeft size={18} />
-                </button>
-                <span className="text-sm font-bold text-white">Fields</span>
-              </div>
-              <button onClick={() => setIsFieldsDrawerOpen(false)} className="p-1 hover:bg-gray-800 rounded text-gray-400">
-                <CloseIcon size={18} />
-              </button>
-            </div>
-
-            {/* Search */}
-            <div className="p-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={14} />
-                <input
-                  type="text"
-                  value={fieldsSearchQuery}
-                  onChange={(e) => setFieldsSearchQuery(e.target.value)}
-                  placeholder="Search for new or existing fields"
-                  className="w-full bg-[#1a1a1b] border border-[#2a2a2b] rounded-lg py-2 pl-10 pr-4 text-xs text-white focus:outline-none focus:border-purple-500 transition-all placeholder:text-gray-600"
-                />
-              </div>
-            </div>
-
-            {/* Sections */}
-            <div className="flex-1 overflow-y-auto custom-scrollbar pb-20">
-              {/* Shown Section */}
-              <div className="px-4 py-2">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Shown</h3>
-                  <button
-                    onClick={() => setActiveColumns(['Assignee'])} // Keep at least Task Name (handled by table)
-                    className="text-[10px] text-gray-500 hover:text-white transition-colors font-bold uppercase"
-                  >
-                    Hide all
-                  </button>
-                </div>
-                {[
-                  { label: 'Task Name', icon: <Type size={14} />, fixed: true },
-                  { label: 'Assignee', icon: <UserIcon size={14} /> },
-                  { label: 'Due date', icon: <Calendar size={14} /> },
-                  { label: 'Priority', icon: <Flag size={14} /> },
-                  ...activeColumns.filter(c => !['Assignee', 'Due date', 'Priority'].includes(c)).map(c => ({ label: c, icon: <Hash size={14} /> }))
-                ].filter(f => f.label.toLowerCase().includes(fieldsSearchQuery.toLowerCase())).map(field => (
-                  <div key={field.label} className="flex items-center justify-between px-2 py-2 hover:bg-white/5 rounded-lg transition-colors group">
-                    <div className="flex items-center gap-3">
-                      <GripVertical size={14} className="text-gray-700 cursor-grab active:cursor-grabbing" />
-                      {field.icon}
-                      <span className={`text-xs font-medium ${field.fixed ? 'text-gray-500' : 'text-gray-300 group-hover:text-white'}`}>{field.label}</span>
-                    </div>
-                    {!field.fixed && (
-                      <button
-                        onClick={() => {
-                          if (activeColumns.includes(field.label)) {
-                            setActiveColumns(prev => prev.filter(c => c !== field.label));
-                          } else {
-                            setActiveColumns(prev => [...prev, field.label]);
-                          }
-                        }}
-                        className={`w-7 h-4 rounded-full p-0.5 transition-colors ${activeColumns.includes(field.label) ? 'bg-purple-600' : 'bg-gray-700'}`}
-                      >
-                        <div className={`w-3 h-3 bg-white rounded-full transition-transform ${activeColumns.includes(field.label) ? 'translate-x-3' : 'translate-x-0'}`} />
-                      </button>
-                    )}
-                    {field.fixed && (
-                      <button className="w-7 h-4 rounded-full p-0.5 bg-purple-600/50 cursor-not-allowed">
-                        <div className="w-3 h-3 bg-white/50 rounded-full translate-x-3" />
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              {/* Popular Section */}
-              <div className="px-4 py-4 border-t border-gray-800/50 mt-2">
-                <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Popular</h3>
-                {[
-                  { label: 'Comments', icon: <MessageSquare size={14} /> },
-                  { label: 'Date created', icon: <Calendar size={14} /> },
-                  { label: 'Pull Requests', icon: <ArrowRightLeft size={14} /> },
-                  { label: 'Status', icon: <CircleDot size={14} /> },
-                ].filter(f => f.label.toLowerCase().includes(fieldsSearchQuery.toLowerCase())).map(field => (
-                  <div key={field.label} className="flex items-center justify-between px-2 py-2 hover:bg-white/5 rounded-lg transition-colors group">
-                    <div className="flex items-center gap-3">
-                      <div className="w-3.5 h-3.5" /> {/* Spacing for grip */}
-                      {field.icon}
-                      <span className="text-xs font-medium text-gray-300 group-hover:text-white">{field.label}</span>
-                    </div>
-                    <button
-                      onClick={() => {
-                        if (activeColumns.includes(field.label)) {
-                          setActiveColumns(prev => prev.filter(c => c !== field.label));
-                        } else {
-                          setActiveColumns(prev => [...prev, field.label]);
-                        }
-                      }}
-                      className={`w-7 h-4 rounded-full p-0.5 transition-colors ${activeColumns.includes(field.label) ? 'bg-purple-600' : 'bg-gray-700'}`}
-                    >
-                      <div className={`w-3 h-3 bg-white rounded-full transition-transform ${activeColumns.includes(field.label) ? 'translate-x-3' : 'translate-x-0'}`} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-
-              {/* Hidden Section */}
-              <div className="px-4 py-4 border-t border-gray-800/50 mt-2">
-                <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Hidden</h3>
-                {[
-                  { label: 'Assigned Comments', icon: <MessageSquare size={14} /> },
-                  { label: 'Created by', icon: <UserIcon size={14} /> },
-                  { label: 'Custom Task ID', icon: <Hash size={14} /> },
-                  { label: 'Date closed', icon: <Calendar size={14} /> },
-                  { label: 'Date done', icon: <Calendar size={14} /> },
-                  { label: 'Date updated', icon: <Calendar size={14} /> },
-                  { label: 'Dependencies', icon: <Activity size={14} /> },
-                  { label: 'Latest comment', icon: <MessageSquare size={14} /> },
-                  { label: 'Linked Docs', icon: <Files size={14} /> },
-                  { label: 'Linked tasks', icon: <Plus size={14} /> },
-                ].filter(f => f.label.toLowerCase().includes(fieldsSearchQuery.toLowerCase())).map(field => (
-                  <div key={field.label} className="flex items-center justify-between px-2 py-2 hover:bg-white/5 rounded-lg transition-colors group">
-                    <div className="flex items-center gap-3">
-                      <div className="w-3.5 h-3.5" /> {/* Spacing for grip */}
-                      {field.icon}
-                      <span className="text-xs font-medium text-gray-300 group-hover:text-white">{field.label}</span>
-                    </div>
-                    <button
-                      onClick={() => {
-                        if (activeColumns.includes(field.label)) {
-                          setActiveColumns(prev => prev.filter(c => c !== field.label));
-                        } else {
-                          setActiveColumns(prev => [...prev, field.label]);
-                        }
-                      }}
-                      className={`w-7 h-4 rounded-full p-0.5 transition-colors ${activeColumns.includes(field.label) ? 'bg-purple-600' : 'bg-gray-700'}`}
-                    >
-                      <div className={`w-3 h-3 bg-white rounded-full transition-transform ${activeColumns.includes(field.label) ? 'translate-x-3' : 'translate-x-0'}`} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Footer */}
-            <div className="p-4 border-t border-gray-800 bg-[#121213]">
-              <button
-                onClick={() => {
-                  setIsFieldsDrawerOpen(false);
-                  setIsCreateFieldOpen(true);
-                }}
-                className="w-full py-2.5 bg-purple-600 hover:bg-purple-700 rounded-lg text-sm font-bold text-white transition-all flex items-center justify-center shadow-lg shadow-purple-500/20 active:scale-95"
-              >
-                Create field
-              </button>
-            </div>
+      <div
+        className={`fixed inset-0 z-[100] bg-black/20 backdrop-blur-sm transition-opacity duration-300 ${isFieldsDrawerOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+          }`}
+        onClick={() => setIsFieldsDrawerOpen(false)}
+      />
+      <div
+        className={`fixed top-0 right-0 w-[320px] h-full bg-white dark:bg-[#121213] border-l border-gray-200 dark:border-gray-800 shadow-2xl z-[110] flex flex-col transition-transform duration-300 ease-in-out ${isFieldsDrawerOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}
+      >
+        {/* Header */}
+        <div className="px-4 h-14 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button onClick={() => setIsFieldsDrawerOpen(false)} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-500 dark:text-gray-400">
+              <ArrowLeft size={18} />
+            </button>
+            <span className="text-sm font-bold text-gray-900 dark:text-white">Fields</span>
           </div>
-        </>
-      )}
+          <button onClick={() => setIsFieldsDrawerOpen(false)} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-500 dark:text-gray-400">
+            <CloseIcon size={18} />
+          </button>
+        </div>
+
+        {/* Search */}
+        <div className="p-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={14} />
+            <input
+              type="text"
+              value={fieldsSearchQuery}
+              onChange={(e) => setFieldsSearchQuery(e.target.value)}
+              placeholder="Search for new or existing fields"
+              className="w-full bg-gray-50 dark:bg-[#1a1a1b] border border-gray-200 dark:border-[#2a2a2b] rounded-lg py-2 pl-10 pr-4 text-xs text-gray-900 dark:text-white focus:outline-none focus:border-purple-500 transition-all placeholder:text-gray-500 dark:placeholder:text-gray-600"
+            />
+          </div>
+        </div>
+
+        {/* Sections */}
+        <div className="flex-1 overflow-y-auto custom-scrollbar pb-20">
+          {/* Shown Section */}
+          <div className="px-4 py-2">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Shown</h3>
+              <button
+                onClick={() => setActiveColumns(['Assignee'])} // Keep at least Task Name (handled by table)
+                className="text-[10px] text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors font-bold uppercase"
+              >
+                Hide all
+              </button>
+            </div>
+            {[
+              { label: 'Task Name', icon: <Type size={14} />, fixed: true },
+              { label: 'Assignee', icon: <UserIcon size={14} /> },
+              { label: 'Due date', icon: <Calendar size={14} /> },
+              { label: 'Priority', icon: <Flag size={14} /> },
+              ...activeColumns.filter(c => !['Assignee', 'Due date', 'Priority'].includes(c)).map(c => ({ label: c, icon: <Hash size={14} /> }))
+            ].filter(f => f.label.toLowerCase().includes(fieldsSearchQuery.toLowerCase())).map(field => (
+              <div key={field.label} className="flex items-center justify-between px-2 py-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors group">
+                <div className="flex items-center gap-3">
+                  <GripVertical size={14} className="text-gray-400 dark:text-gray-700 cursor-grab active:cursor-grabbing" />
+                  {field.icon}
+                  <span className={`text-xs font-medium ${field.fixed ? 'text-gray-400 dark:text-gray-500' : 'text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white'}`}>{field.label}</span>
+                </div>
+                {!field.fixed && (
+                  <button
+                    onClick={() => {
+                      if (activeColumns.includes(field.label)) {
+                        setActiveColumns(prev => prev.filter(c => c !== field.label));
+                      } else {
+                        setActiveColumns(prev => [...prev, field.label]);
+                      }
+                    }}
+                    className={`w-7 h-4 rounded-full p-0.5 transition-colors ${activeColumns.includes(field.label) ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-700'}`}
+                  >
+                    <div className={`w-3 h-3 bg-white rounded-full transition-transform ${activeColumns.includes(field.label) ? 'translate-x-3' : 'translate-x-0'}`} />
+                  </button>
+                )}
+                {field.fixed && (
+                  <button className="w-7 h-4 rounded-full p-0.5 bg-gray-200 dark:bg-purple-600/50 cursor-not-allowed">
+                    <div className="w-3 h-3 bg-white/50 rounded-full translate-x-3" />
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Popular Section */}
+          <div className="px-4 py-4 border-t border-gray-100 dark:border-gray-800/50 mt-2">
+            <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Popular</h3>
+            {[
+              { label: 'Comments', icon: <MessageSquare size={14} /> },
+              { label: 'Date created', icon: <Calendar size={14} /> },
+              { label: 'Pull Requests', icon: <ArrowRightLeft size={14} /> },
+              { label: 'Status', icon: <CircleDot size={14} /> },
+            ].filter(f => f.label.toLowerCase().includes(fieldsSearchQuery.toLowerCase())).map(field => (
+              <div key={field.label} className="flex items-center justify-between px-2 py-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors group">
+                <div className="flex items-center gap-3">
+                  <div className="w-3.5 h-3.5" /> {/* Spacing for grip */}
+                  {field.icon}
+                  <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">{field.label}</span>
+                </div>
+                <button
+                  onClick={() => {
+                    if (activeColumns.includes(field.label)) {
+                      setActiveColumns(prev => prev.filter(c => c !== field.label));
+                    } else {
+                      setActiveColumns(prev => [...prev, field.label]);
+                    }
+                  }}
+                  className={`w-7 h-4 rounded-full p-0.5 transition-colors ${activeColumns.includes(field.label) ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-700'}`}
+                >
+                  <div className={`w-3 h-3 bg-white rounded-full transition-transform ${activeColumns.includes(field.label) ? 'translate-x-3' : 'translate-x-0'}`} />
+                </button>
+              </div>
+            ))}
+          </div>
+
+          {/* Hidden Section */}
+          <div className="px-4 py-4 border-t border-gray-100 dark:border-gray-800/50 mt-2">
+            <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Hidden</h3>
+            {[
+              { label: 'Assigned Comments', icon: <MessageSquare size={14} /> },
+              { label: 'Created by', icon: <UserIcon size={14} /> },
+              { label: 'Custom Task ID', icon: <Hash size={14} /> },
+              { label: 'Date closed', icon: <Calendar size={14} /> },
+              { label: 'Date done', icon: <Calendar size={14} /> },
+              { label: 'Date updated', icon: <Calendar size={14} /> },
+              { label: 'Dependencies', icon: <Activity size={14} /> },
+              { label: 'Latest comment', icon: <MessageSquare size={14} /> },
+              { label: 'Linked Docs', icon: <Files size={14} /> },
+              { label: 'Linked tasks', icon: <Plus size={14} /> },
+            ].filter(f => f.label.toLowerCase().includes(fieldsSearchQuery.toLowerCase())).map(field => (
+              <div key={field.label} className="flex items-center justify-between px-2 py-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors group">
+                <div className="flex items-center gap-3">
+                  <div className="w-3.5 h-3.5" /> {/* Spacing for grip */}
+                  {field.icon}
+                  <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">{field.label}</span>
+                </div>
+                <button
+                  onClick={() => {
+                    if (activeColumns.includes(field.label)) {
+                      setActiveColumns(prev => prev.filter(c => c !== field.label));
+                    } else {
+                      setActiveColumns(prev => [...prev, field.label]);
+                    }
+                  }}
+                  className={`w-7 h-4 rounded-full p-0.5 transition-colors ${activeColumns.includes(field.label) ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-700'}`}
+                >
+                  <div className={`w-3 h-3 bg-white rounded-full transition-transform ${activeColumns.includes(field.label) ? 'translate-x-3' : 'translate-x-0'}`} />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="p-4 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-[#121213]">
+          <button
+            onClick={() => {
+              setIsFieldsDrawerOpen(false);
+              setIsCreateFieldOpen(true);
+            }}
+            className="w-full py-2.5 bg-purple-600 hover:bg-purple-700 rounded-lg text-sm font-bold text-white transition-all flex items-center justify-center shadow-lg shadow-purple-500/20 active:scale-95"
+          >
+            Create field
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
