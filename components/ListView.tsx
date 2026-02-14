@@ -45,7 +45,11 @@ import {
   Globe,
   FunctionSquare,
   Shirt,
-  Trash
+  Trash,
+  Settings2,
+  ChevronLeft,
+  ChevronRight as CollapseIcon,
+  CheckCheck
 } from 'lucide-react';
 import { STATUS_COLORS, PRIORITY_COLORS } from '../constants';
 
@@ -85,6 +89,12 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
   const [currentGroupType, setCurrentGroupType] = useState<string>('Status');
   const [currentSortDir, setCurrentSortDir] = useState<'Ascending' | 'Descending'>('Ascending');
 
+  // Group Options functionality
+  const [renamingGroup, setRenamingGroup] = useState<string | null>(null);
+  const [renameValue, setRenameValue] = useState('');
+  const [hiddenStatuses, setHiddenStatuses] = useState<string[]>([]);
+  const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
+
   const addColumn = (label: string) => {
     if (!activeColumns.includes(label)) {
       setActiveColumns(prev => [...prev, label]);
@@ -94,6 +104,55 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
 
   const toggleStatusGroup = (status: string) => {
     setExpandedStatuses(prev => ({ ...prev, [status]: !prev[status] }));
+  };
+
+  // Group Options handlers
+  const handleRenameGroup = (oldName: string, newName: string) => {
+    if (newName.trim() && newName !== oldName) {
+      // Update expanded statuses
+      setExpandedStatuses(prev => {
+        const updated = { ...prev };
+        updated[newName] = updated[oldName];
+        delete updated[oldName];
+        return updated;
+      });
+    }
+    setRenamingGroup(null);
+    setRenameValue('');
+  };
+
+  const handleCollapseGroup = (status: string) => {
+    setExpandedStatuses(prev => ({ ...prev, [status]: false }));
+    setActiveGroupMenu(null);
+  };
+
+  const handleHideStatus = (status: string) => {
+    setHiddenStatuses(prev => [...prev, status]);
+    setActiveGroupMenu(null);
+  };
+
+  const handleSelectAll = (status: string) => {
+    const statusTasks = groupedTasks[status] || [];
+    const taskIds = statusTasks.map(t => t.id);
+    setSelectedTasks(prev => {
+      const newSelected = [...prev];
+      taskIds.forEach(id => {
+        if (!newSelected.includes(id)) newSelected.push(id);
+      });
+      return newSelected;
+    });
+    setActiveGroupMenu(null);
+  };
+
+  const handleCollapseAllGroups = () => {
+    setExpandedStatuses(prev => {
+      const updated = { ...prev };
+      Object.keys(updated).forEach(key => {
+        updated[key] = false;
+      });
+      return updated;
+    });
+    setActiveGroupMenu(null);
   };
 
   // Removed AI summary functions to match screenshot
@@ -272,6 +331,7 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
         {groupKeys.map(status => {
           const statusTasks = groupedTasks[status] || [];
           if (statusTasks.length === 0 && status !== 'To Do') return null;
+          if (hiddenStatuses.includes(status)) return null; // Skip hidden statuses
 
           return (
             <div key={status} className="space-y-4">
@@ -287,25 +347,129 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                       ? (PRIORITY_COLORS[status as any] || 'bg-gray-400')
                       : 'bg-purple-500'
                     }`} />
-                  <span className="text-[10px] font-bold text-gray-200 uppercase tracking-wide">
-                    {currentGroupType === 'Status'
-                      ? (status === 'In Progress' ? 'CLIENTS' : status === 'To Do' ? 'TO DO' : status)
-                      : status
-                    }
-                  </span>
+                  {renamingGroup === status ? (
+                    <input
+                      type="text"
+                      value={renameValue}
+                      onChange={(e) => setRenameValue(e.target.value)}
+                      onBlur={() => handleRenameGroup(status, renameValue)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') handleRenameGroup(status, renameValue);
+                        if (e.key === 'Escape') {
+                          setRenamingGroup(null);
+                          setRenameValue('');
+                        }
+                      }}
+                      onClick={(e) => e.stopPropagation()}
+                      className="text-[10px] font-bold text-gray-200 uppercase tracking-wide bg-transparent border-none outline-none focus:ring-1 focus:ring-purple-500 rounded px-1"
+                      autoFocus
+                    />
+                  ) : (
+                    <span className="text-[10px] font-bold text-gray-200 uppercase tracking-wide">
+                      {currentGroupType === 'Status'
+                        ? (status === 'In Progress' ? 'CLIENTS' : status === 'To Do' ? 'TO DO' : status)
+                        : status
+                      }
+                    </span>
+                  )}
                 </div>
                 <span className="text-[10px] font-bold text-gray-400 dark:text-gray-500">{statusTasks.length}</span>
 
                 <div className="flex items-center gap-2 ml-2 opacity-0 group-hover/header:opacity-100 transition-opacity">
-                  <button
-                    className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setActiveGroupMenu(activeGroupMenu === status ? null : status);
-                    }}
-                  >
-                    <MoreHorizontal size={14} />
-                  </button>
+                  <div className="relative">
+                    <button
+                      className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveGroupMenu(activeGroupMenu === status ? null : status);
+                      }}
+                    >
+                      <MoreHorizontal size={14} />
+                    </button>
+
+                    {/* Group Options Menu (Image 2) */}
+                    {activeGroupMenu === status && (
+                      <>
+                        <div className="fixed inset-0 z-[140]" onClick={() => setActiveGroupMenu(null)} />
+                        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 w-56 bg-white dark:bg-[#1c1c1e] border border-gray-200 dark:border-[#2c2c2e] rounded-xl shadow-2xl z-[150] overflow-hidden py-1 animate-in fade-in zoom-in duration-200">
+                          <div className="px-3 py-1.5 text-[10px] font-bold text-gray-500 uppercase tracking-widest">Group options</div>
+
+                          <div className="space-y-0.5 py-1">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setRenamingGroup(status);
+                                setRenameValue(status);
+                                setActiveGroupMenu(null);
+                              }}
+                              className="w-full px-4 py-2 flex items-center gap-3 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+                            >
+                              <Pencil size={14} /> Rename
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setIsCreatingStatus(true);
+                                setActiveGroupMenu(null);
+                              }}
+                              className="w-full px-4 py-2 flex items-center gap-3 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+                            >
+                              <Plus size={14} /> New status
+                            </button>
+                            <button className="w-full px-4 py-2 flex items-center gap-3 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+                              <Settings2 size={14} /> Edit statuses
+                            </button>
+                          </div>
+
+                          <div className="h-px bg-gray-100 dark:bg-white/5 my-1 mx-2" />
+
+                          <div className="space-y-0.5 py-1">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleCollapseGroup(status);
+                              }}
+                              className="w-full px-4 py-2 flex items-center gap-3 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+                            >
+                              <CollapseIcon size={14} /> Collapse group
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleHideStatus(status);
+                              }}
+                              className="w-full px-4 py-2 flex items-center gap-3 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+                            >
+                              <EyeOff size={14} /> Hide status
+                            </button>
+                          </div>
+
+                          <div className="h-px bg-gray-100 dark:bg-white/5 my-1 mx-2" />
+
+                          <div className="space-y-0.5 py-1">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleSelectAll(status);
+                              }}
+                              className="w-full px-4 py-2 flex items-center gap-3 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+                            >
+                              <CheckCheck size={14} /> Select all
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleCollapseAllGroups();
+                              }}
+                              className="w-full px-4 py-2 flex items-center gap-3 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+                            >
+                              <CollapseIcon size={14} /> Collapse all groups
+                            </button>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
                   <button
                     className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
                     onClick={(e) => {

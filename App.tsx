@@ -63,18 +63,7 @@ import {
   Archive,
   Trash,
   ArrowRight,
-  Pencil,
-  Send,
-  AtSign,
-  Pin,
-  Megaphone,
-  Pocket,
-  Command,
-  CheckCircle2,
-  Globe,
-  Orbit,
-  MousePointer2,
-  CheckCircle
+  Pencil
 } from 'lucide-react';
 import { MOCK_TASKS, STATUS_COLORS, PRIORITY_COLORS, USERS } from './constants';
 import { Task, ViewType, Status, Priority, User as UserType } from './types';
@@ -134,8 +123,6 @@ const App: React.FC = () => {
   const [isSpaceModalOpen, setIsSpaceModalOpen] = useState(false);
   const [isViewSelectorOpen, setIsViewSelectorOpen] = useState(false);
   const [isTaskOptionsOpen, setIsTaskOptionsOpen] = useState(false);
-  const [isCreateMenuOpen, setIsCreateMenuOpen] = useState(false);
-  const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
   const [viewSearchQuery, setViewSearchQuery] = useState('');
   const [activeSettingsTab, setActiveSettingsTab] = useState<SettingsTab>('General');
   const [isSavingSettings, setIsSavingSettings] = useState(false);
@@ -403,66 +390,9 @@ const App: React.FC = () => {
                   <h2 className="text-xl font-bold text-gray-900 dark:text-white">Home</h2>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-2 relative">
-                    <button
-                      onClick={() => setIsCreateMenuOpen(!isCreateMenuOpen)}
-                      className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors"
-                    >
-                      <Plus size={16} /> Create
-                    </button>
-
-                    {/* Image 1: Create Menu Popover */}
-                    {isCreateMenuOpen && (
-                      <>
-                        <div className="fixed inset-0 z-[100]" onClick={() => setIsCreateMenuOpen(false)} />
-                        <div className="absolute top-full right-0 mt-2 w-72 bg-[#1e1e1f] border border-gray-800 rounded-xl shadow-2xl z-[110] overflow-hidden py-1 animate-in fade-in zoom-in-95 duration-200">
-                          <div className="px-4 py-2 text-[10px] font-bold text-gray-500 uppercase tracking-widest border-b border-gray-800/50 mb-1">Create</div>
-
-                          <button className="w-full px-4 py-2.5 flex items-center justify-between text-gray-300 hover:bg-white/5 transition-colors group text-left">
-                            <div className="flex items-center gap-3">
-                              <CheckCircle2 size={16} className="text-gray-500 group-hover:text-purple-400" />
-                              <span className="text-sm font-medium">Task</span>
-                            </div>
-                            <span className="text-[10px] text-gray-600 font-bold">Alt T</span>
-                          </button>
-
-                          <button className="w-full px-4 py-2.5 flex items-center justify-between text-gray-300 hover:bg-white/5 transition-colors group text-left">
-                            <div className="flex items-center gap-3">
-                              <Send size={16} className="text-gray-500 group-hover:text-purple-400" />
-                              <span className="text-sm font-medium">Message</span>
-                            </div>
-                            <span className="text-[10px] text-gray-600 font-bold">Ctrl G</span>
-                          </button>
-
-                          <div className="h-px bg-gray-800/50 my-1 pb-1" />
-
-                          <button className="w-full px-4 py-3 flex flex-col text-left text-gray-300 hover:bg-white/5 transition-colors group">
-                            <div className="flex items-center gap-3 mb-0.5">
-                              <LayoutList size={16} className="text-gray-500 group-hover:text-purple-400" />
-                              <span className="text-sm font-medium">List</span>
-                            </div>
-                            <span className="text-[10px] text-gray-500 pl-7 leading-tight">Track tasks, projects, people & more</span>
-                          </button>
-
-                          <button className="w-full px-4 py-3 flex flex-col text-left text-gray-300 hover:bg-white/5 transition-colors group">
-                            <div className="flex items-center gap-3 mb-0.5">
-                              <Hash size={16} className="text-gray-500 group-hover:text-purple-400" />
-                              <span className="text-sm font-medium">Channel</span>
-                            </div>
-                            <span className="text-[10px] text-gray-500 pl-7 leading-tight">Conversations on specific topics</span>
-                          </button>
-
-                          <button className="w-full px-4 py-3 flex flex-col text-left text-gray-300 hover:bg-white/5 transition-colors group">
-                            <div className="flex items-center gap-3 mb-0.5">
-                              <Orbit size={16} className="text-gray-500 group-hover:text-purple-400" />
-                              <span className="text-sm font-medium">Space</span>
-                            </div>
-                            <span className="text-[10px] text-gray-500 pl-7 leading-tight">Organize work by team or department</span>
-                          </button>
-                        </div>
-                      </>
-                    )}
-                  </div>
+                  <button className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors">
+                    <Plus size={16} /> Create
+                  </button>
                 </div>
               </div>
 
@@ -475,48 +405,9 @@ const App: React.FC = () => {
                     { id: 'My Tasks', icon: <UserIcon size={18} /> },
                     { id: 'More', icon: <MoreHorizontal size={18} /> },
                   ].map(item => (
-                    <div
-                      key={item.id}
-                      className={`flex items-center gap-3 p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/5 cursor-pointer transition-all relative ${item.id === 'More' && isMoreMenuOpen ? 'bg-white dark:bg-white/5 text-gray-900 dark:text-white' : ''}`}
-                      onClick={() => {
-                        if (item.id === 'More') {
-                          setIsMoreMenuOpen(!isMoreMenuOpen);
-                        }
-                      }}
-                    >
+                    <div key={item.id} className="flex items-center gap-3 p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/5 cursor-pointer transition-all">
                       {item.icon}
                       <span className="text-sm font-medium">{item.id}</span>
-
-                      {item.id === 'More' && isMoreMenuOpen && (
-                        <>
-                          <div className="fixed inset-0 z-[100]" onClick={(e) => { e.stopPropagation(); setIsMoreMenuOpen(false); }} />
-                          <div className="absolute top-0 left-full ml-4 w-64 bg-[#1e1e1f] border border-gray-800 rounded-xl shadow-2xl z-[110] overflow-hidden py-1 animate-in fade-in zoom-in duration-200">
-                            {[
-                              { id: 'chat', label: 'Chat Activity', icon: <AtSign size={14} /> },
-                              { id: 'drafts', label: 'Drafts & Sent', icon: <Send size={14} /> },
-                              { id: 'posts', label: 'Posts', icon: <Megaphone size={14} /> },
-                              { id: 'channels', label: 'All Channels', icon: <LayoutGrid size={14} /> },
-                              { id: 'spaces', label: 'All Spaces', icon: <Orbit size={14} /> },
-                              { id: 'tasks', label: 'All Tasks', icon: <CheckCircle size={14} /> },
-                            ].map(subItem => (
-                              <button key={subItem.id} className="w-full px-4 py-2.5 flex items-center justify-between text-gray-300 hover:bg-white/5 transition-colors group/item text-left">
-                                <div className="flex items-center gap-3">
-                                  <div className="text-gray-500 group-hover/item:text-purple-400">
-                                    {subItem.icon}
-                                  </div>
-                                  <span className="text-sm font-medium">{subItem.label}</span>
-                                </div>
-                                <Pin size={12} className="text-gray-700 opacity-0 group-hover/item:opacity-100 hover:text-purple-400 transition-all" />
-                              </button>
-                            ))}
-                            <div className="h-px bg-gray-800/50 my-1 pb-1" />
-                            <button className="w-full px-4 py-3 flex items-center gap-3 text-gray-300 hover:bg-white/5 transition-colors group/item mt-1 text-left">
-                              <Settings size={14} className="text-gray-500 group-hover/item:text-purple-400" />
-                              <span className="text-sm font-medium">Customize</span>
-                            </button>
-                          </div>
-                        </>
-                      )}
                     </div>
                   ))}
                 </div>
@@ -554,6 +445,13 @@ const App: React.FC = () => {
                     <div className="p-2 text-xs text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white cursor-pointer flex items-center gap-2 group font-bold" onClick={() => setIsSpaceModalOpen(true)}>
                       <Plus size={14} className="group-hover:scale-110 transition-transform" /> New Space
                     </div>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-gray-200 dark:border-gray-800/50">
+                  <div className="text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Channels</div>
+                  <div className="space-y-1">
+                    <div className="p-2 text-xs text-gray-400 dark:text-gray-600 italic">No channels created</div>
                   </div>
                 </div>
               </nav>
@@ -1501,7 +1399,7 @@ const App: React.FC = () => {
           </div>
         )
       }
-    </div>
+    </div >
   );
 };
 
