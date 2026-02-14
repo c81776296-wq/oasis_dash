@@ -339,8 +339,8 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                 className="flex items-center gap-3 transition-colors group/header min-w-max p-1 h-8 cursor-pointer"
                 onClick={() => toggleStatusGroup(status)}
               >
-                {expandedStatuses[status] ? <ChevronDown size={14} className="text-gray-400" /> : <ChevronRight size={14} className="text-gray-400" />}
-                <div className="flex items-center gap-2 bg-[#2a2a35] px-2 py-0.5 rounded-md border border-white/5">
+                {expandedStatuses[status] ? <ChevronDown size={14} className="text-gray-500 dark:text-gray-400" /> : <ChevronRight size={14} className="text-gray-500 dark:text-gray-400" />}
+                <div className="flex items-center gap-2 bg-gray-100 dark:bg-[#2a2a35] px-2 py-0.5 rounded-md border border-gray-200 dark:border-white/5">
                   <div className={`w-2 h-2 rounded-full ${currentGroupType === 'Status'
                     ? (status === 'In Progress' ? 'bg-blue-500' : status === 'To Do' ? 'bg-gray-500' : STATUS_COLORS[status as Status] || 'bg-gray-400')
                     : currentGroupType === 'Priority'
@@ -361,11 +361,11 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                         }
                       }}
                       onClick={(e) => e.stopPropagation()}
-                      className="text-[10px] font-bold text-gray-200 uppercase tracking-wide bg-transparent border-none outline-none focus:ring-1 focus:ring-purple-500 rounded px-1"
+                      className="text-[10px] font-bold text-gray-700 dark:text-gray-200 uppercase tracking-wide bg-transparent border-none outline-none focus:ring-1 focus:ring-purple-500 rounded px-1"
                       autoFocus
                     />
                   ) : (
-                    <span className="text-[10px] font-bold text-gray-200 uppercase tracking-wide">
+                    <span className="text-[10px] font-bold text-gray-700 dark:text-gray-200 uppercase tracking-wide">
                       {currentGroupType === 'Status'
                         ? (status === 'In Progress' ? 'CLIENTS' : status === 'To Do' ? 'TO DO' : status)
                         : status
@@ -373,7 +373,7 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                     </span>
                   )}
                 </div>
-                <span className="text-[10px] font-bold text-gray-400 dark:text-gray-500">{statusTasks.length}</span>
+                <span className="text-[10px] font-bold text-gray-500 dark:text-gray-500">{statusTasks.length}</span>
 
                 <div className="flex items-center gap-2 ml-2 opacity-0 group-hover/header:opacity-100 transition-opacity">
                   <div className="relative">
@@ -519,17 +519,17 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
               {expandedStatuses[status] && (
                 <div className="overflow-hidden">
                   <table className="w-full text-left border-collapse">
-                    <thead className="text-[10px] font-bold text-gray-500 uppercase tracking-tight border-b border-gray-100 dark:border-gray-900/50">
+                    <thead className="text-[10px] font-bold text-gray-500 uppercase tracking-tight border-b border-gray-200 dark:border-gray-900/50">
                       <tr>
-                        <th className="px-4 py-2 w-full font-bold">Name</th>
+                        <th className="px-4 py-2 w-full font-bold text-left">Name</th>
                         {activeColumns.map(col => (
                           <th key={col} className="px-4 py-2 w-32 font-bold text-right pr-12">{col}</th>
                         ))}
                         <th
-                          className="px-4 py-2 w-10 flex justify-center items-center cursor-pointer hover:bg-white/5 transition-colors group"
+                          className="px-4 py-2 w-10 flex justify-center items-center cursor-pointer hover:bg-gray-100 dark:hover:bg-white/5 transition-colors group"
                           onClick={() => setIsCreateFieldOpen(true)}
                         >
-                          <Plus size={16} className="text-gray-500 group-hover:text-purple-500 transition-colors" />
+                          <Plus size={16} className="text-gray-400 dark:text-gray-500 group-hover:text-purple-500 transition-colors" />
                         </th>
                       </tr>
                     </thead>
@@ -537,43 +537,82 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                       {statusTasks.map(task => (
                         <React.Fragment key={task.id}>
                           <tr
-                            className="hover:bg-[#1a1a24] transition-all group cursor-pointer border-b border-white/[0.03]"
+                            className="hover:bg-gray-50 dark:hover:bg-[#1a1a24] transition-all group cursor-pointer border-b border-gray-100 dark:border-white/[0.03]"
                             onClick={() => onTaskClick(task)}
                             onMouseEnter={() => setHoveredTask(task.id)}
                             onMouseLeave={() => setHoveredTask(null)}
                           >
                             <td className="px-4 py-2.5 align-middle relative">
                               <div className="flex items-center gap-3">
-                                <Activity size={14} className="text-gray-500" />
-                                <span className={`text-xs font-bold ${task.status === 'Complete' ? 'line-through text-gray-600' : 'text-gray-200'}`}>
+                                {/* Hover icons - left side */}
+                                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      onToggleStatus(task.id);
+                                    }}
+                                    className="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
+                                  >
+                                    {task.status === 'Complete' ? (
+                                      <CheckCircle2 size={14} className="text-green-500" />
+                                    ) : (
+                                      <Circle size={14} className="text-gray-400" />
+                                    )}
+                                  </button>
+                                  <button
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
+                                  >
+                                    <Plus size={14} className="text-gray-400" />
+                                  </button>
+                                </div>
+
+                                <Activity size={14} className="text-gray-400" />
+                                <span className={`text-sm ${task.status === 'Complete' ? 'line-through text-gray-400' : 'text-gray-900 dark:text-gray-200'}`}>
                                   {task.title}
                                 </span>
                                 {task.tags.length > 0 && (
                                   <div className="flex items-center gap-2">
-                                    <div className="w-4 h-0.5 bg-gray-500/30 mx-1" />
+                                    <div className="w-4 h-0.5 bg-gray-300 dark:bg-gray-500/30 mx-1" />
                                     {task.tags.map(tag => (
-                                      <span key={tag} className="px-2 py-0.5 bg-purple-500/10 text-purple-400 rounded text-[9px] font-bold uppercase border border-purple-500/20">{tag}</span>
+                                      <span key={tag} className="px-2 py-0.5 bg-purple-100 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 rounded text-[9px] font-bold uppercase border border-purple-200 dark:border-purple-500/20">{tag}</span>
                                     ))}
                                   </div>
                                 )}
+
+                                {/* Hover icons - right side of task name */}
+                                <div className="flex items-center gap-1 ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <button
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
+                                  >
+                                    <UserIcon size={14} className="text-gray-400" />
+                                  </button>
+                                  <button
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
+                                  >
+                                    <Pencil size={14} className="text-gray-400" />
+                                  </button>
+                                </div>
                               </div>
                             </td>
                             {activeColumns.map(col => (
                               <td key={col} className="px-4 py-2.5">
                                 <div className="flex justify-end pr-8">
                                   {col === 'Assignee' && (
-                                    <div className="w-6 h-6 rounded-full border border-dashed border-gray-700 flex items-center justify-center">
-                                      <UserIcon size={12} className="text-gray-600" />
+                                    <div className="w-6 h-6 rounded-full border border-dashed border-gray-300 dark:border-gray-700 flex items-center justify-center">
+                                      <UserIcon size={12} className="text-gray-400 dark:text-gray-600" />
                                     </div>
                                   )}
-                                  {col === 'Due date' && <Calendar size={14} className="text-gray-700" />}
-                                  {col === 'Priority' && <Flag size={14} className="text-gray-700" />}
-                                  {!['Assignee', 'Due date', 'Priority'].includes(col) && <span className="text-[10px] text-gray-700 font-bold uppercase tracking-widest">-</span>}
+                                  {col === 'Due date' && <Calendar size={14} className="text-gray-400 dark:text-gray-700" />}
+                                  {col === 'Priority' && <Flag size={14} className="text-gray-400 dark:text-gray-700" />}
+                                  {!['Assignee', 'Due date', 'Priority'].includes(col) && <span className="text-[10px] text-gray-400 dark:text-gray-700 font-bold uppercase tracking-widest">-</span>}
                                 </div>
                               </td>
                             ))}
                             <td className="px-4 py-2.5 text-center">
-                              <MoreHorizontal size={14} className="text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity mx-auto" />
+                              <MoreHorizontal size={14} className="text-gray-400 dark:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity mx-auto" />
                             </td>
                           </tr>
                           {/* Removed AI Summary View */}
