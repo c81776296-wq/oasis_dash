@@ -93,7 +93,18 @@ import {
   Smile,
   AlertCircle,
   Tag,
-  Phone
+  Phone,
+  Sparkles,
+  Quote,
+  Code,
+  Strikethrough,
+  Square,
+  Minus,
+  Heading1,
+  Heading2,
+  Heading3,
+  Heading4,
+  GripVertical
 } from 'lucide-react';
 import { USERS, PRIORITY_COLORS, STATUS_COLORS, MOCK_TAGS, TEAMS, MOCK_TASKS } from './constants';
 import { Task, ViewType, Status, Priority, User as UserType } from './types';
@@ -103,6 +114,121 @@ import CalendarView from './components/CalendarView';
 import GanttView from './components/GanttView';
 import TeamView from './components/TeamView';
 import Overview from './components/Overview';
+
+const DOC_MENU_GROUPS = [
+  {
+    category: 'SUGGESTIONS',
+    items: [
+      { label: 'Banners', icon: Flag, color: 'text-gray-500' },
+      { label: 'Checklist', icon: CheckSquare, color: 'text-gray-500' },
+      { label: 'Oasis List (Table)', icon: TableIcon, color: 'text-gray-500' },
+      { label: 'Toggle list', icon: ChevronRight, color: 'text-gray-500' },
+      { label: 'Button', icon: Square, color: 'text-gray-500' },
+    ]
+  },
+  {
+    category: 'TEXT',
+    items: [
+      { label: 'Normal text', icon: Type, color: 'text-gray-500' },
+      { label: 'Heading 1', icon: Heading1, color: 'text-gray-500' },
+      { label: 'Heading 2', icon: Heading2, color: 'text-gray-500' },
+      { label: 'Heading 3', icon: Heading3, color: 'text-gray-500' },
+      { label: 'Heading 4', icon: Heading4, color: 'text-gray-500' },
+      { label: 'Numbered list', icon: ListOrdered, color: 'text-gray-500' },
+      { label: 'Toggle list', icon: ChevronRight, color: 'text-gray-500' },
+      { label: 'Banners', icon: Flag, color: 'text-gray-500' },
+      { label: 'Code block', icon: Code, color: 'text-gray-500' },
+      { label: 'Block quote', icon: Quote, color: 'text-gray-500' },
+      { label: 'Bulleted list', icon: List, color: 'text-gray-500' },
+      { label: 'Pull quote', icon: Quote, color: 'text-gray-500' },
+    ]
+  },
+  {
+    category: 'TEXT COLORS',
+    items: [
+      { label: 'Default', icon: Type, color: 'text-gray-700' },
+      { label: 'Red', icon: Type, color: 'text-red-500' },
+      { label: 'Orange', icon: Type, color: 'text-orange-500' },
+      { label: 'Yellow', icon: Type, color: 'text-yellow-500' },
+      { label: 'Blue', icon: Type, color: 'text-blue-500' },
+      { label: 'Purple', icon: Type, color: 'text-purple-500' },
+      { label: 'Pink', icon: Type, color: 'text-pink-500' },
+      { label: 'Green', icon: Type, color: 'text-green-500' },
+      { label: 'Grey', icon: Type, color: 'text-gray-500' },
+    ]
+  },
+  {
+    category: 'HIGHLIGHTS',
+    items: [
+      { label: 'Remove highlight', icon: X, color: 'text-gray-500' },
+      { label: 'Red highlight', icon: Square, color: 'text-red-500' },
+      { label: 'Orange highlight', icon: Square, color: 'text-orange-500' },
+      { label: 'Yellow highlight', icon: Square, color: 'text-yellow-500' },
+      { label: 'Blue highlight', icon: Square, color: 'text-blue-500' },
+      { label: 'Purple highlight', icon: Square, color: 'text-purple-500' },
+      { label: 'Pink highlight', icon: Square, color: 'text-pink-500' },
+      { label: 'Green highlight', icon: Square, color: 'text-green-500' },
+      { label: 'Grey highlight', icon: Square, color: 'text-gray-500' },
+    ]
+  },
+  {
+    category: 'BADGES',
+    items: [
+      { label: 'Remove badge', icon: X, color: 'text-gray-500' },
+      { label: 'Red badge', icon: Tag, color: 'text-red-500' },
+      { label: 'Strong red badge', icon: Tag, color: 'text-red-700' },
+      { label: 'Orange badge', icon: Tag, color: 'text-orange-500' },
+      { label: 'Strong orange badge', icon: Tag, color: 'text-orange-700' },
+      { label: 'Yellow badge', icon: Tag, color: 'text-yellow-500' },
+      { label: 'Strong yellow badge', icon: Tag, color: 'text-yellow-700' },
+      { label: 'Blue badge', icon: Tag, color: 'text-blue-500' },
+      { label: 'Strong blue badge', icon: Tag, color: 'text-blue-700' },
+      { label: 'Purple badge', icon: Tag, color: 'text-purple-500' },
+      { label: 'Strong purple badge', icon: Tag, color: 'text-purple-700' },
+      { label: 'Pink badge', icon: Tag, color: 'text-pink-500' },
+      { label: 'Strong pink badge', icon: Tag, color: 'text-pink-700' },
+      { label: 'Green badge', icon: Tag, color: 'text-green-500' },
+      { label: 'Strong green badge', icon: Tag, color: 'text-green-700' },
+      { label: 'Grey badge', icon: Tag, color: 'text-gray-500' },
+      { label: 'Strong grey badge', icon: Tag, color: 'text-gray-700' },
+    ]
+  },
+  {
+    category: 'INLINE',
+    items: [
+      { label: 'Mention a Task', icon: Check, color: 'text-gray-500' },
+      { label: 'Mention a Page', icon: FileText, color: 'text-gray-500' },
+    ]
+  },
+  {
+    category: 'VIEWS',
+    items: [
+      { label: 'Oasis List (Table)', icon: TableIcon, color: 'text-gray-500' },
+      { label: 'Oasis List (List)', icon: List, color: 'text-gray-500' },
+      { label: 'Oasis List (Board)', icon: Layout, color: 'text-gray-500' },
+    ]
+  },
+  {
+    category: 'FORMATTING',
+    items: [
+      { label: 'Clear format', icon: X, color: 'text-gray-500' },
+      { label: 'Bold', icon: Type, color: 'text-gray-500' },
+      { label: 'Italic', icon: Type, color: 'text-gray-500' },
+      { label: 'Strikethrough', icon: Strikethrough, color: 'text-gray-500' },
+      { label: 'Inline code', icon: Code, color: 'text-gray-500' },
+      { label: 'Website Link', icon: Link, color: 'text-gray-500' },
+    ]
+  },
+  {
+    category: 'ADVANCED BLOCKS',
+    items: [
+      { label: 'Divider', icon: Minus, color: 'text-gray-500' },
+      { label: 'Table', icon: TableIcon, color: 'text-gray-500' },
+      { label: 'Button', icon: Square, color: 'text-gray-500' },
+      { label: 'Markdown', icon: FileText, color: 'text-gray-500' },
+    ]
+  }
+];
 
 type NavigationContext = 'Everything' | 'Engineering' | 'Design' | 'Marketing' | 'Home' | 'Planner' | 'Teams' | 'My Tasks' | 'Pulse';
 type SettingsTab = 'General' | 'Workspace' | 'Security' | 'Notifications' | 'Integrations';
@@ -253,6 +379,27 @@ const App: React.FC = () => {
   const [modalActiveTab, setModalActiveTab] = useState<'Task' | 'Doc' | 'Reminder' | 'Whiteboard' | 'Dashboard'>('Task');
   const [docNewTitle, setDocNewTitle] = useState('');
   const [isDocPrivate, setIsDocPrivate] = useState(false);
+  const [showDocSlashMenu, setShowDocSlashMenu] = useState(false);
+  const [isWritingDoc, setIsWritingDoc] = useState(false);
+  const [docContent, setDocContent] = useState('');
+  const [selectedTextColor, setSelectedTextColor] = useState<string>('Default');
+  const [selectedHighlight, setSelectedHighlight] = useState<string | null>(null);
+  const [selectedBadge, setSelectedBadge] = useState<string | null>(null);
+  const [showDocTable, setShowDocTable] = useState(false);
+  const [showDocColumns, setShowDocColumns] = useState(false);
+  const [selectedColumns, setSelectedColumns] = useState<number>(2);
+  const [showOasisList, setShowOasisList] = useState(false);
+  const [oasisListSearch, setOasisListSearch] = useState('');
+  const [showReminderDatePicker, setShowReminderDatePicker] = useState(false);
+  const [showNotifyMenu, setShowNotifyMenu] = useState(false);
+  const [reminderDate, setReminderDate] = useState('');
+  const [selectedNotification, setSelectedNotification] = useState('On due date');
+  const [showWhiteboardFolderPicker, setShowWhiteboardFolderPicker] = useState(false);
+  const [isWhiteboardPrivate, setIsWhiteboardPrivate] = useState(false);
+  const [whiteboardName, setWhiteboardName] = useState('');
+  const [showDashboardFolderPicker, setShowDashboardFolderPicker] = useState(false);
+  const [isDashboardPrivate, setIsDashboardPrivate] = useState(false);
+  const [dashboardName, setDashboardName] = useState('');
 
   const handleContextSelect = (context: NavigationContext) => {
     setActiveContext(context);
@@ -290,6 +437,51 @@ const App: React.FC = () => {
     setTimeout(() => {
       setSelectedTask(null);
     }, 300);
+  };
+
+  // Handle doc menu item click
+  const handleDocMenuItemClick = (label: string) => {
+    // Text Colors
+    if (label.includes('Default') || label === 'Red' || label === 'Orange' || label === 'Yellow' ||
+      label === 'Blue' || label === 'Purple' || label === 'Pink' || label === 'Green' || label === 'Grey') {
+      setSelectedTextColor(label);
+    }
+    // Highlights
+    else if (label.includes('highlight')) {
+      if (label === 'Remove highlight') {
+        setSelectedHighlight(null);
+      } else {
+        setSelectedHighlight(label);
+      }
+    }
+    // Badges
+    else if (label.includes('badge')) {
+      if (label === 'Remove badge') {
+        setSelectedBadge(null);
+      } else {
+        setSelectedBadge(label);
+      }
+    }
+    // Table
+    else if (label === 'Table') {
+      setShowDocTable(true);
+      setIsWritingDoc(false);
+    }
+    // Column
+    else if (label === 'Column') {
+      setShowDocColumns(true);
+      setIsWritingDoc(false);
+      // Don't close the menu - let the submenu appear
+      return;
+    }
+    // Oasis List
+    else if (label === 'Oasis List' || label.includes('Oasis List')) {
+      setShowOasisList(true);
+      setIsWritingDoc(false);
+    }
+    // Other formatting options would be handled here
+    // For now, we just close the menu
+    setShowDocSlashMenu(false);
   };
 
   // Handle outside click for notifications
@@ -1205,7 +1397,7 @@ const App: React.FC = () => {
                           <div className="absolute bottom-full left-0 mb-2 w-56 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100 py-1">
                             <div className="px-3 py-2 text-[10px] font-bold text-gray-400 border-b border-gray-100 dark:border-gray-800 mb-1 flex items-center justify-between">
                               <span>Task Types</span>
-                              <span className="opacity-50 cursor-help" title="ClickUp Task Types help users categorize different kinds of work.">?</span>
+                              <span className="opacity-50 cursor-help" title="Oasis Task Types help users categorize different kinds of work.">?</span>
                             </div>
                             {[
                               { label: 'Task', icon: CircleIcon, default: true },
@@ -1773,9 +1965,332 @@ const App: React.FC = () => {
                         onChange={e => setDocNewTitle(e.target.value)}
                       />
 
-                      <div className="flex items-center gap-3 text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400 cursor-text transition-colors group">
-                        <FileText size={20} className="group-hover:scale-110 transition-transform" />
-                        <span className="text-lg font-medium">Start writing</span>
+                      <div className="relative">
+                        {showDocTable ? (
+                          <div className="space-y-4">
+                            {/* Table */}
+                            <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                              <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700">
+                                <button className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-gray-500">
+                                  <Pencil size={14} />
+                                </button>
+                                <button className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-gray-500">
+                                  <LayoutList size={14} />
+                                </button>
+                                <button className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-gray-500">
+                                  <Copy size={14} />
+                                </button>
+                                <div className="flex-1" />
+                                <button className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-gray-500">
+                                  <Maximize2 size={14} />
+                                </button>
+                                <button className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-gray-500">
+                                  <MoreHorizontal size={14} />
+                                </button>
+                              </div>
+                              <table className="w-full">
+                                <tbody>
+                                  <tr className="border-b border-gray-200 dark:border-gray-700">
+                                    <td className="border-r border-gray-200 dark:border-gray-700 p-0 w-8 bg-gray-50 dark:bg-gray-800/30">
+                                      <div className="flex items-center justify-center h-full">
+                                        <GripVertical size={12} className="text-gray-400" />
+                                      </div>
+                                    </td>
+                                    <td className="border-r border-gray-200 dark:border-gray-700 p-2 min-w-[200px]">
+                                      <input
+                                        type="text"
+                                        className="w-full bg-transparent border-none outline-none text-sm text-gray-900 dark:text-white focus:ring-1 focus:ring-purple-500 rounded px-1"
+                                        placeholder=""
+                                      />
+                                    </td>
+                                    <td className="border-r border-gray-200 dark:border-gray-700 p-2 min-w-[200px]">
+                                      <input
+                                        type="text"
+                                        className="w-full bg-transparent border-none outline-none text-sm text-gray-900 dark:text-white focus:ring-1 focus:ring-purple-500 rounded px-1"
+                                        placeholder=""
+                                      />
+                                    </td>
+                                    <td className="p-2 min-w-[200px]">
+                                      <input
+                                        type="text"
+                                        className="w-full bg-transparent border-none outline-none text-sm text-gray-900 dark:text-white focus:ring-1 focus:ring-purple-500 rounded px-1"
+                                        placeholder=""
+                                      />
+                                    </td>
+                                  </tr>
+                                  <tr className="border-b border-gray-200 dark:border-gray-700">
+                                    <td className="border-r border-gray-200 dark:border-gray-700 p-0 w-8 bg-gray-50 dark:bg-gray-800/30">
+                                      <div className="flex items-center justify-center h-full">
+                                        <GripVertical size={12} className="text-gray-400" />
+                                      </div>
+                                    </td>
+                                    <td className="border-r border-gray-200 dark:border-gray-700 p-2">
+                                      <input
+                                        type="text"
+                                        className="w-full bg-transparent border-none outline-none text-sm text-gray-900 dark:text-white focus:ring-1 focus:ring-purple-500 rounded px-1"
+                                        placeholder=""
+                                      />
+                                    </td>
+                                    <td className="border-r border-gray-200 dark:border-gray-700 p-2">
+                                      <input
+                                        type="text"
+                                        className="w-full bg-transparent border-none outline-none text-sm text-gray-900 dark:text-white focus:ring-1 focus:ring-purple-500 rounded px-1"
+                                        placeholder=""
+                                      />
+                                    </td>
+                                    <td className="p-2">
+                                      <input
+                                        type="text"
+                                        className="w-full bg-transparent border-none outline-none text-sm text-gray-900 dark:text-white focus:ring-1 focus:ring-purple-500 rounded px-1"
+                                        placeholder=""
+                                      />
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+
+                            {/* Write something prompt below table */}
+                            <div
+                              className="flex items-center gap-3 text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400 cursor-text transition-colors group relative h-10"
+                              onClick={() => setIsWritingDoc(true)}
+                            >
+                              <div
+                                className="opacity-0 group-hover:opacity-100 absolute -left-8 p-1 hover:bg-gray-100 dark:hover:bg-white/5 rounded transition-all cursor-pointer"
+                                onClick={(e) => { e.stopPropagation(); setShowDocSlashMenu(true); }}
+                              >
+                                <Plus size={16} />
+                              </div>
+                              <span className="text-sm font-medium">Write something</span>
+                            </div>
+                          </div>
+                        ) : showDocColumns ? (
+                          <div className="space-y-4">
+                            {/* Columns Layout */}
+                            <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${selectedColumns}, 1fr)` }}>
+                              {Array.from({ length: selectedColumns }).map((_, index) => (
+                                <div
+                                  key={index}
+                                  className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 min-h-[150px] relative group"
+                                >
+                                  <div
+                                    className="opacity-0 group-hover:opacity-100 absolute -left-8 top-1 p-1 hover:bg-gray-100 dark:hover:bg-white/5 rounded transition-all cursor-pointer"
+                                    onClick={() => setShowDocSlashMenu(true)}
+                                  >
+                                    <Plus size={16} className="text-gray-400" />
+                                  </div>
+                                  <span className="text-sm text-gray-400 dark:text-gray-600">Write something</span>
+                                </div>
+                              ))}
+                            </div>
+
+                            {/* Write something prompt below columns */}
+                            <div
+                              className="flex items-center gap-3 text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400 cursor-text transition-colors group relative h-10"
+                              onClick={() => setIsWritingDoc(true)}
+                            >
+                              <div
+                                className="opacity-0 group-hover:opacity-100 absolute -left-8 p-1 hover:bg-gray-100 dark:hover:bg-white/5 rounded transition-all cursor-pointer"
+                                onClick={(e) => { e.stopPropagation(); setShowDocSlashMenu(true); }}
+                              >
+                                <Plus size={16} />
+                              </div>
+                              <span className="text-sm font-medium">Write something</span>
+                            </div>
+                          </div>
+                        ) : showOasisList ? (
+                          <div className="space-y-4">
+                            {/* Oasis List */}
+                            <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden bg-white dark:bg-[#1e1e1e]">
+                              <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                                <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                                  <span className="font-medium">/Oasis List (List)</span>
+                                </div>
+                              </div>
+
+                              <div className="p-4">
+                                <h3 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+                                  ADD LIST OF TASKS
+                                </h3>
+
+                                {/* Tabs */}
+                                <div className="flex gap-4 mb-4 border-b border-gray-200 dark:border-gray-700">
+                                  <button className="pb-2 text-sm font-medium text-purple-600 border-b-2 border-purple-600">
+                                    Search
+                                  </button>
+                                  <button className="pb-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+                                    Browse or New List
+                                  </button>
+                                </div>
+
+                                {/* Search Input */}
+                                <div className="relative mb-4">
+                                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-purple-500" size={16} />
+                                  <input
+                                    type="text"
+                                    placeholder="Filter by name..."
+                                    value={oasisListSearch}
+                                    onChange={(e) => setOasisListSearch(e.target.value)}
+                                    className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-[#121213] text-sm text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                  />
+                                </div>
+
+                                {/* Paste URL */}
+                                <div className="text-center py-6">
+                                  <p className="text-xs text-gray-400 dark:text-gray-600 italic">
+                                    Paste URL or search List name
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Write something prompt below Oasis List */}
+                            <div
+                              className="flex items-center gap-3 text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400 cursor-text transition-colors group relative h-10"
+                              onClick={() => setIsWritingDoc(true)}
+                            >
+                              <div
+                                className="opacity-0 group-hover:opacity-100 absolute -left-8 p-1 hover:bg-gray-100 dark:hover:bg-white/5 rounded transition-all cursor-pointer"
+                                onClick={(e) => { e.stopPropagation(); setShowDocSlashMenu(true); }}
+                              >
+                                <Plus size={16} />
+                              </div>
+                              <span className="text-sm font-medium">Write something</span>
+                            </div>
+                          </div>
+                        ) : !isWritingDoc ? (
+                          <div
+                            onClick={() => setIsWritingDoc(true)}
+                            className="flex items-center gap-3 text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400 cursor-text transition-colors group relative h-10"
+                          >
+                            <div
+                              className="opacity-0 group-hover:opacity-100 absolute -left-8 p-1 hover:bg-gray-100 dark:hover:bg-white/5 rounded transition-all cursor-pointer"
+                              onClick={(e) => { e.stopPropagation(); setShowDocSlashMenu(true); }}
+                            >
+                              <Plus size={16} />
+                            </div>
+                            <FileText size={20} className="group-hover:scale-110 transition-transform" />
+                            <span className="text-lg font-medium">Start writing</span>
+                          </div>
+                        ) : (
+                          <div className="flex items-start gap-3 relative group min-h-[100px]">
+                            <div
+                              className="absolute -left-8 top-1 p-1 hover:bg-gray-100 dark:hover:bg-white/5 rounded transition-all cursor-pointer opacity-0 group-hover:opacity-100"
+                              onClick={() => setShowDocSlashMenu(true)}
+                            >
+                              <Plus size={16} className="text-gray-400" />
+                            </div>
+                            <textarea
+                              autoFocus
+                              placeholder="Write something or type '/' for commands"
+                              value={docContent}
+                              onChange={(e) => setDocContent(e.target.value)}
+                              className={`w-full bg-transparent border-none text-lg placeholder:text-gray-300 dark:placeholder:text-gray-700 focus:outline-none resize-none
+                                ${selectedTextColor === 'Red' ? 'text-red-500' : ''}
+                                ${selectedTextColor === 'Orange' ? 'text-orange-500' : ''}
+                                ${selectedTextColor === 'Yellow' ? 'text-yellow-500' : ''}
+                                ${selectedTextColor === 'Blue' ? 'text-blue-500' : ''}
+                                ${selectedTextColor === 'Purple' ? 'text-purple-500' : ''}
+                                ${selectedTextColor === 'Pink' ? 'text-pink-500' : ''}
+                                ${selectedTextColor === 'Green' ? 'text-green-500' : ''}
+                                ${selectedTextColor === 'Grey' ? 'text-gray-500' : ''}
+                                ${selectedTextColor === 'Default' ? 'text-gray-700 dark:text-gray-300' : ''}
+                                ${selectedHighlight?.includes('Red') ? 'bg-red-100 dark:bg-red-900/30' : ''}
+                                ${selectedHighlight?.includes('Orange') ? 'bg-orange-100 dark:bg-orange-900/30' : ''}
+                                ${selectedHighlight?.includes('Yellow') ? 'bg-yellow-100 dark:bg-yellow-900/30' : ''}
+                                ${selectedHighlight?.includes('Blue') ? 'bg-blue-100 dark:bg-blue-900/30' : ''}
+                                ${selectedHighlight?.includes('Purple') ? 'bg-purple-100 dark:bg-purple-900/30' : ''}
+                                ${selectedHighlight?.includes('Pink') ? 'bg-pink-100 dark:bg-pink-900/30' : ''}
+                                ${selectedHighlight?.includes('Green') ? 'bg-green-100 dark:bg-green-900/30' : ''}
+                                ${selectedHighlight?.includes('Grey') ? 'bg-gray-100 dark:bg-gray-900/30' : ''}
+                              `}
+                              rows={5}
+                              onKeyDown={(e) => {
+                                if (e.key === '/') {
+                                  setShowDocSlashMenu(true);
+                                }
+                              }}
+                            />
+
+                            {/* Formatting Indicators */}
+                            {(selectedTextColor !== 'Default' || selectedHighlight || selectedBadge) && (
+                              <div className="flex items-center gap-2 mt-2 flex-wrap">
+                                {selectedTextColor !== 'Default' && (
+                                  <div className="flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-xs">
+                                    <span className="text-gray-500">Color:</span>
+                                    <span className={`font-bold ${selectedTextColor === 'Red' ? 'text-red-500' :
+                                      selectedTextColor === 'Orange' ? 'text-orange-500' :
+                                        selectedTextColor === 'Yellow' ? 'text-yellow-500' :
+                                          selectedTextColor === 'Blue' ? 'text-blue-500' :
+                                            selectedTextColor === 'Purple' ? 'text-purple-500' :
+                                              selectedTextColor === 'Pink' ? 'text-pink-500' :
+                                                selectedTextColor === 'Green' ? 'text-green-500' :
+                                                  'text-gray-500'
+                                      }`}>{selectedTextColor}</span>
+                                    <button onClick={() => setSelectedTextColor('Default')} className="ml-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded p-0.5">
+                                      <X size={12} />
+                                    </button>
+                                  </div>
+                                )}
+                                {selectedHighlight && (
+                                  <div className="flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-xs">
+                                    <span className="text-gray-500">Highlight:</span>
+                                    <span className="font-bold">{selectedHighlight.replace(' highlight', '')}</span>
+                                    <button onClick={() => setSelectedHighlight(null)} className="ml-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded p-0.5">
+                                      <X size={12} />
+                                    </button>
+                                  </div>
+                                )}
+                                {selectedBadge && (
+                                  <div className={`flex items-center gap-1 px-2 py-1 rounded text-xs font-bold ${selectedBadge.includes('Red') ? 'bg-red-500 text-white' :
+                                    selectedBadge.includes('Orange') ? 'bg-orange-500 text-white' :
+                                      selectedBadge.includes('Yellow') ? 'bg-yellow-500 text-white' :
+                                        selectedBadge.includes('Blue') ? 'bg-blue-500 text-white' :
+                                          selectedBadge.includes('Purple') ? 'bg-purple-500 text-white' :
+                                            selectedBadge.includes('Pink') ? 'bg-pink-500 text-white' :
+                                              selectedBadge.includes('Green') ? 'bg-green-500 text-white' :
+                                                'bg-gray-500 text-white'
+                                    } ${selectedBadge.includes('Strong') ? 'shadow-lg' : ''}`}>
+                                    <Tag size={12} />
+                                    <span>{selectedBadge.replace(' badge', '')}</span>
+                                    <button onClick={() => setSelectedBadge(null)} className="ml-1 hover:opacity-80 rounded p-0.5">
+                                      <X size={12} />
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {showDocSlashMenu && (
+                          <>
+                            <div className="fixed inset-0 z-40" onClick={() => setShowDocSlashMenu(false)} />
+                            <div className="absolute top-10 left-0 w-[480px] bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200 max-h-[500px] overflow-y-auto custom-scrollbar flex flex-col">
+                              <div className="p-4 flex flex-col gap-6">
+                                {DOC_MENU_GROUPS.map((group) => (
+                                  <div key={group.category} className="space-y-2">
+                                    <h4 className="text-[10px] font-black text-gray-400 dark:text-gray-600 uppercase tracking-widest px-2">{group.category}</h4>
+                                    <div className="grid grid-cols-2 gap-1">
+                                      {group.items.map((item) => (
+                                        <div
+                                          key={item.label}
+                                          onClick={() => handleDocMenuItemClick(item.label)}
+                                          className="flex items-center gap-3 px-3 py-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg cursor-pointer transition-colors group/item"
+                                        >
+                                          <div className="w-6 h-6 bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center">
+                                            <item.icon size={14} className={`${item.color} group-hover/item:scale-110 transition-transform`} />
+                                          </div>
+                                          <span className="text-xs font-bold text-gray-700 dark:text-gray-300">{item.label}</span>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </>
+                        )}
                       </div>
                     </div>
 
@@ -1786,11 +2301,42 @@ const App: React.FC = () => {
                         {[
                           { label: 'Table', icon: TableIcon },
                           { label: 'Column', icon: Layout },
-                          { label: 'ClickUp List', icon: List }
+                          { label: 'Oasis List', icon: List }
                         ].map(item => (
-                          <div key={item.label} className="flex items-center gap-3 px-3 py-2 text-gray-400 dark:text-gray-600 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl cursor-pointer transition-all group">
+                          <div
+                            key={item.label}
+                            onClick={() => handleDocMenuItemClick(item.label)}
+                            className="flex items-center gap-3 px-3 py-2 text-gray-400 dark:text-gray-600 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl cursor-pointer transition-all group relative"
+                          >
                             <item.icon size={18} className="group-hover:scale-110 transition-transform" />
                             <span className="text-sm font-bold">{item.label}</span>
+
+                            {/* Column Selection Submenu */}
+                            {item.label === 'Column' && showDocColumns && (
+                              <>
+                                <div className="fixed inset-0 z-[60]" onClick={(e) => { e.stopPropagation(); setShowDocColumns(false); }} />
+                                <div className="absolute left-full top-0 ml-2 w-40 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-[70] overflow-hidden animate-in fade-in slide-in-from-left-2 duration-200">
+                                  <div className="px-2 py-1 text-[10px] font-bold text-gray-400 dark:text-gray-600 uppercase tracking-widest border-b border-gray-200 dark:border-gray-700">
+                                    /Columns
+                                  </div>
+                                  {[2, 3, 4, 5].map((num) => (
+                                    <div
+                                      key={num}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setSelectedColumns(num);
+                                        setShowDocColumns(true);
+                                        setShowDocSlashMenu(false);
+                                      }}
+                                      className="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 dark:hover:bg-white/5 cursor-pointer transition-colors"
+                                    >
+                                      <LayoutGrid size={14} className="text-gray-500" />
+                                      <span className="text-sm text-gray-700 dark:text-gray-300">{num} Columns</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </>
+                            )}
                           </div>
                         ))}
                       </div>
@@ -1815,6 +2361,463 @@ const App: React.FC = () => {
                       className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-black text-sm rounded-xl transition-all shadow-lg shadow-purple-500/20 active:scale-95"
                     >
                       Create Doc
+                    </button>
+                  </div>
+                </div>
+              ) : modalActiveTab === 'Reminder' ? (
+                <div className="flex flex-col h-full animate-in fade-in slide-in-from-right-4 duration-300">
+                  <div className="p-8 space-y-6 flex-1">
+                    {/* Reminder Name Input */}
+                    <input
+                      type="text"
+                      autoFocus
+                      placeholder="Reminder name or type '/' for commands"
+                      className="w-full bg-transparent border-none text-2xl font-medium text-gray-900 dark:text-white placeholder:text-gray-300 dark:placeholder:text-gray-700 focus:outline-none"
+                    />
+
+                    {/* Add Description Section */}
+                    <div className="relative">
+                      {!isWritingDoc ? (
+                        <div
+                          onClick={() => setIsWritingDoc(true)}
+                          className="flex items-center gap-3 text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400 cursor-text transition-colors group relative h-10"
+                        >
+                          <div
+                            className="opacity-0 group-hover:opacity-100 absolute -left-8 p-1 hover:bg-gray-100 dark:hover:bg-white/5 rounded transition-all cursor-pointer"
+                            onClick={(e) => { e.stopPropagation(); setShowDocSlashMenu(true); }}
+                          >
+                            <Plus size={16} />
+                          </div>
+                          <FileText size={18} className="group-hover:scale-110 transition-transform" />
+                          <span className="text-sm font-medium">Add description</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-start gap-3 relative group min-h-[100px]">
+                          <div
+                            className="absolute -left-8 top-1 p-1 hover:bg-gray-100 dark:hover:bg-white/5 rounded transition-all cursor-pointer opacity-0 group-hover:opacity-100"
+                            onClick={() => setShowDocSlashMenu(true)}
+                          >
+                            <Plus size={16} className="text-gray-400" />
+                          </div>
+                          <textarea
+                            autoFocus
+                            placeholder="Write or type '/' for commands and AI actions"
+                            value={docContent}
+                            onChange={(e) => setDocContent(e.target.value)}
+                            className={`w-full bg-transparent border-none text-sm placeholder:text-gray-300 dark:placeholder:text-gray-700 focus:outline-none resize-none
+                              ${selectedTextColor === 'Red' ? 'text-red-500' : ''}
+                              ${selectedTextColor === 'Orange' ? 'text-orange-500' : ''}
+                              ${selectedTextColor === 'Yellow' ? 'text-yellow-500' : ''}
+                              ${selectedTextColor === 'Blue' ? 'text-blue-500' : ''}
+                              ${selectedTextColor === 'Purple' ? 'text-purple-500' : ''}
+                              ${selectedTextColor === 'Pink' ? 'text-pink-500' : ''}
+                              ${selectedTextColor === 'Green' ? 'text-green-500' : ''}
+                              ${selectedTextColor === 'Grey' ? 'text-gray-500' : ''}
+                              ${selectedTextColor === 'Default' ? 'text-gray-700 dark:text-gray-300' : ''}
+                              ${selectedHighlight?.includes('Red') ? 'bg-red-100 dark:bg-red-900/30' : ''}
+                              ${selectedHighlight?.includes('Orange') ? 'bg-orange-100 dark:bg-orange-900/30' : ''}
+                              ${selectedHighlight?.includes('Yellow') ? 'bg-yellow-100 dark:bg-yellow-900/30' : ''}
+                              ${selectedHighlight?.includes('Blue') ? 'bg-blue-100 dark:bg-blue-900/30' : ''}
+                              ${selectedHighlight?.includes('Purple') ? 'bg-purple-100 dark:bg-purple-900/30' : ''}
+                              ${selectedHighlight?.includes('Pink') ? 'bg-pink-100 dark:bg-pink-900/30' : ''}
+                              ${selectedHighlight?.includes('Green') ? 'bg-green-100 dark:bg-green-900/30' : ''}
+                              ${selectedHighlight?.includes('Grey') ? 'bg-gray-100 dark:bg-gray-900/30' : ''}
+                            `}
+                            rows={5}
+                            onKeyDown={(e) => {
+                              if (e.key === '/') {
+                                setShowDocSlashMenu(true);
+                              }
+                            }}
+                          />
+                        </div>
+                      )}
+
+                      {/* Slash Menu for Reminder */}
+                      {showDocSlashMenu && (
+                        <>
+                          <div className="fixed inset-0 z-40" onClick={() => setShowDocSlashMenu(false)} />
+                          <div className="absolute top-10 left-0 w-[480px] bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200 max-h-[500px] overflow-y-auto custom-scrollbar flex flex-col">
+                            <div className="p-4 flex flex-col gap-6">
+                              {DOC_MENU_GROUPS.map((group) => (
+                                <div key={group.category} className="space-y-2">
+                                  <h4 className="text-[10px] font-black text-gray-400 dark:text-gray-600 uppercase tracking-widest px-2">{group.category}</h4>
+                                  <div className="grid grid-cols-2 gap-1">
+                                    {group.items.map((item) => (
+                                      <div
+                                        key={item.label}
+                                        onClick={() => handleDocMenuItemClick(item.label)}
+                                        className="flex items-center gap-3 px-3 py-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg cursor-pointer transition-colors group/item"
+                                      >
+                                        <div className="w-6 h-6 bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center">
+                                          <item.icon size={14} className={`${item.color} group-hover/item:scale-110 transition-transform`} />
+                                        </div>
+                                        <span className="text-xs font-bold text-gray-700 dark:text-gray-300">{item.label}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex items-center gap-3 pt-4">
+                      {/* Today Button with Date Picker */}
+                      <div className="relative">
+                        <button
+                          onClick={() => setShowReminderDatePicker(!showReminderDatePicker)}
+                          className="flex items-center gap-2 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                        >
+                          <Calendar size={14} />
+                          {reminderDate || 'Today'}
+                        </button>
+
+                        {showReminderDatePicker && (
+                          <>
+                            <div className="fixed inset-0 z-40" onClick={() => setShowReminderDatePicker(false)} />
+                            <div className="absolute top-full left-0 mt-2 w-64 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                              {/* Time Input */}
+                              <div className="p-3 border-b border-gray-200 dark:border-gray-700">
+                                <input
+                                  type="text"
+                                  placeholder="Try 'Tomorrow at 2 PM'..."
+                                  className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-xs bg-white dark:bg-[#121213] text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                />
+                              </div>
+
+                              {/* Quick Options */}
+                              <div className="p-2 border-b border-gray-200 dark:border-gray-700">
+                                {[
+                                  { label: 'Later', time: 'in 2 hours' },
+                                  { label: 'Tomorrow', time: 'Tue, 8:00 AM' },
+                                  { label: 'In 2 days', time: 'Wed, 8:00 AM' },
+                                  { label: 'Next week', time: 'Mon, 8:00 AM' }
+                                ].map((option) => (
+                                  <div
+                                    key={option.label}
+                                    onClick={() => {
+                                      setReminderDate(option.label);
+                                      setShowReminderDatePicker(false);
+                                    }}
+                                    className="flex items-center justify-between px-3 py-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg cursor-pointer transition-colors group"
+                                  >
+                                    <div className="flex items-center gap-2">
+                                      <Clock size={14} className="text-gray-400" />
+                                      <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{option.label}</span>
+                                    </div>
+                                    <span className="text-xs text-gray-400">{option.time}</span>
+                                  </div>
+                                ))}
+                                <div className="flex items-center justify-between px-3 py-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg cursor-pointer transition-colors group">
+                                  <div className="flex items-center gap-2">
+                                    <Zap size={14} className="text-purple-500" />
+                                    <span className="text-xs font-medium text-purple-600 dark:text-purple-400">Set Recurring</span>
+                                  </div>
+                                  <ChevronRight size={14} className="text-gray-400" />
+                                </div>
+                              </div>
+
+                              {/* Calendar */}
+                              <div className="p-3">
+                                <div className="flex items-center justify-between mb-3">
+                                  <span className="text-xs font-bold text-gray-700 dark:text-gray-300">Feb 2026</span>
+                                  <div className="flex items-center gap-1">
+                                    <button className="text-xs text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">Today</button>
+                                    <ChevronDown size={14} className="text-gray-400" />
+                                    <ChevronDown size={14} className="text-gray-400 rotate-180" />
+                                  </div>
+                                </div>
+
+                                {/* Calendar Grid */}
+                                <div className="grid grid-cols-7 gap-1 text-center">
+                                  {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((day) => (
+                                    <div key={day} className="text-[10px] font-bold text-gray-400 py-1">{day}</div>
+                                  ))}
+                                  {Array.from({ length: 35 }, (_, i) => {
+                                    const day = i - 6; // Adjust for calendar start
+                                    const isToday = day === 16;
+                                    const isCurrentMonth = day > 0 && day <= 29;
+                                    return (
+                                      <button
+                                        key={i}
+                                        className={`text-xs py-1 rounded-lg transition-colors ${isToday
+                                          ? 'bg-purple-600 text-white font-bold'
+                                          : isCurrentMonth
+                                            ? 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5'
+                                            : 'text-gray-300 dark:text-gray-700'
+                                          }`}
+                                      >
+                                        {day > 0 && day <= 29 ? day : day <= 0 ? 31 + day : day - 29}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            </div>
+                          </>
+                        )}
+                      </div>
+
+                      <button className="flex items-center gap-2 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                        <UserIcon size={14} />
+                        For me
+                      </button>
+
+                      {/* Notify Me Button with Menu */}
+                      <div className="relative">
+                        <button
+                          onClick={() => setShowNotifyMenu(!showNotifyMenu)}
+                          className="flex items-center gap-2 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                        >
+                          <Bell size={14} />
+                          Notify me
+                        </button>
+
+                        {showNotifyMenu && (
+                          <>
+                            <div className="fixed inset-0 z-40" onClick={() => setShowNotifyMenu(false)} />
+                            <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                              <div className="p-1">
+                                <div className="px-3 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                                  NOTIFY ME
+                                </div>
+                                {[
+                                  { label: 'On due date', icon: Check },
+                                  { label: '10 minutes before', icon: null },
+                                  { label: '1 hour before', icon: null },
+                                  { label: 'Custom...', icon: null },
+                                  { label: "Don't notify", icon: null }
+                                ].map((option, index) => (
+                                  <div
+                                    key={option.label}
+                                    onClick={() => {
+                                      setSelectedNotification(option.label);
+                                      setShowNotifyMenu(false);
+                                    }}
+                                    className={`flex items-center justify-between px-3 py-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg cursor-pointer transition-colors ${index === 3 ? 'border-t border-gray-200 dark:border-gray-700 mt-1 pt-2' : ''
+                                      }`}
+                                  >
+                                    <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{option.label}</span>
+                                    {selectedNotification === option.label && option.icon && (
+                                      <Check size={14} className="text-purple-600" />
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Reminder Footer */}
+                  <div className="p-6 border-t border-gray-100 dark:border-gray-800/50 flex items-center justify-between mt-auto">
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="file"
+                        id="reminder-file-upload"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            console.log('File uploaded:', file.name);
+                            // Handle file upload logic here
+                          }
+                        }}
+                      />
+                      <label htmlFor="reminder-file-upload">
+                        <Paperclip size={18} className="text-gray-400 cursor-pointer hover:text-gray-600 dark:hover:text-gray-300 transition-colors" />
+                      </label>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setIsModalOpen(false)}
+                      className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-black text-sm rounded-xl transition-all shadow-lg shadow-purple-500/20 active:scale-95"
+                    >
+                      Create Reminder
+                    </button>
+                  </div>
+                </div>
+              ) : modalActiveTab === 'Whiteboard' ? (
+                <div className="flex flex-col h-full animate-in fade-in slide-in-from-right-4 duration-300">
+                  <div className="p-8 space-y-6 flex-1">
+                    {/* Whiteboard Folder Selector */}
+                    <div className="relative">
+                      <div
+                        onClick={() => setShowWhiteboardFolderPicker(!showWhiteboardFolderPicker)}
+                        className="flex items-center gap-2 px-2.5 py-1 text-xs font-bold text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 cursor-pointer w-fit rounded-lg border border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-white/5 transition-all"
+                      >
+                        <LayoutList size={14} />
+                        <span>My Whiteboards</span>
+                        <ChevronDown size={14} />
+                      </div>
+
+                      {showWhiteboardFolderPicker && (
+                        <>
+                          <div className="fixed inset-0 z-40" onClick={() => setShowWhiteboardFolderPicker(false)} />
+                          <div className="absolute top-full left-0 mt-2 w-72 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                            {/* Search */}
+                            <div className="p-3 border-b border-gray-200 dark:border-gray-700">
+                              <div className="relative">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
+                                <input
+                                  type="text"
+                                  placeholder="Search..."
+                                  className="w-full pl-9 pr-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-xs bg-white dark:bg-[#121213] text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                />
+                              </div>
+                            </div>
+
+                            {/* Workspace */}
+                            <div className="p-2">
+                              <div className="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg cursor-pointer transition-colors">
+                                <Hash size={14} className="text-gray-400" />
+                                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Workspace</span>
+                              </div>
+                            </div>
+
+                            {/* Spaces */}
+                            <div className="p-2 border-t border-gray-200 dark:border-gray-700">
+                              <div className="px-3 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                                Spaces
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Whiteboard Name Input */}
+                    <input
+                      type="text"
+                      autoFocus
+                      placeholder="Name this Whiteboard..."
+                      value={whiteboardName}
+                      onChange={(e) => setWhiteboardName(e.target.value)}
+                      className="w-full bg-transparent border-none text-2xl font-medium text-gray-900 dark:text-white placeholder:text-gray-300 dark:placeholder:text-gray-700 focus:outline-none"
+                    />
+
+                    {/* Whiteboard Canvas Area */}
+                    <div className="flex-1 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-xl min-h-[300px] flex items-center justify-center bg-gray-50/50 dark:bg-gray-900/20">
+                      <div className="text-center space-y-3">
+                        <div className="w-16 h-16 bg-white dark:bg-gray-800 rounded-2xl flex items-center justify-center mx-auto shadow-sm">
+                          <PenTool size={32} className="text-gray-300 dark:text-gray-600" />
+                        </div>
+                        <p className="text-sm font-medium text-gray-400 dark:text-gray-600">
+                          Your whiteboard canvas will appear here
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Whiteboard Footer */}
+                  <div className="p-6 border-t border-gray-100 dark:border-gray-800/50 flex items-center justify-between mt-auto">
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setIsWhiteboardPrivate(!isWhiteboardPrivate)}
+                        className={`w-10 h-5 rounded-full relative transition-colors duration-200 focus:outline-none ${isWhiteboardPrivate ? 'bg-purple-600' : 'bg-gray-200 dark:bg-gray-700'}`}
+                      >
+                        <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow-md transition-transform duration-200 ${isWhiteboardPrivate ? 'translate-x-5' : 'translate-x-0'}`} />
+                      </button>
+                      <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Private</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setIsModalOpen(false)}
+                      className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-black text-sm rounded-xl transition-all shadow-lg shadow-purple-500/20 active:scale-95"
+                    >
+                      Create Whiteboard
+                    </button>
+                  </div>
+                </div>
+              ) : modalActiveTab === 'Dashboard' ? (
+                <div className="flex flex-col h-full animate-in fade-in slide-in-from-right-4 duration-300">
+                  <div className="p-8 space-y-6 flex-1">
+                    {/* Dashboard Folder Selector */}
+                    <div className="relative">
+                      <div
+                        onClick={() => setShowDashboardFolderPicker(!showDashboardFolderPicker)}
+                        className="flex items-center gap-2 px-2.5 py-1 text-xs font-bold text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 cursor-pointer w-fit rounded-lg border border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-white/5 transition-all"
+                      >
+                        <LayoutList size={14} />
+                        <span>My Dashboards</span>
+                        <ChevronDown size={14} />
+                      </div>
+
+                      {showDashboardFolderPicker && (
+                        <>
+                          <div className="fixed inset-0 z-40" onClick={() => setShowDashboardFolderPicker(false)} />
+                          <div className="absolute top-full left-0 mt-2 w-72 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                            {/* Search */}
+                            <div className="p-3 border-b border-gray-200 dark:border-gray-700">
+                              <div className="relative">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
+                                <input
+                                  type="text"
+                                  placeholder="Search..."
+                                  className="w-full pl-9 pr-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-xs bg-white dark:bg-[#121213] text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                />
+                              </div>
+                            </div>
+
+                            {/* Spaces */}
+                            <div className="p-2">
+                              <div className="px-3 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                                Spaces
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Dashboard Name Input */}
+                    <input
+                      type="text"
+                      autoFocus
+                      placeholder="Name this Dashboard..."
+                      value={dashboardName}
+                      onChange={(e) => setDashboardName(e.target.value)}
+                      className="w-full bg-transparent border-none text-2xl font-medium text-gray-900 dark:text-white placeholder:text-gray-300 dark:placeholder:text-gray-700 focus:outline-none"
+                    />
+
+                    {/* Dashboard Canvas Area */}
+                    <div className="flex-1 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-xl min-h-[300px] flex items-center justify-center bg-gray-50/50 dark:bg-gray-900/20">
+                      <div className="text-center space-y-3">
+                        <div className="w-16 h-16 bg-white dark:bg-gray-800 rounded-2xl flex items-center justify-center mx-auto shadow-sm">
+                          <BarChart3 size={32} className="text-gray-300 dark:text-gray-600" />
+                        </div>
+                        <p className="text-sm font-medium text-gray-400 dark:text-gray-600">
+                          Your dashboard widgets will appear here
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Dashboard Footer */}
+                  <div className="p-6 border-t border-gray-100 dark:border-gray-800/50 flex items-center justify-between mt-auto">
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setIsDashboardPrivate(!isDashboardPrivate)}
+                        className={`w-10 h-5 rounded-full relative transition-colors duration-200 focus:outline-none ${isDashboardPrivate ? 'bg-purple-600' : 'bg-gray-200 dark:bg-gray-700'}`}
+                      >
+                        <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow-md transition-transform duration-200 ${isDashboardPrivate ? 'translate-x-5' : 'translate-x-0'}`} />
+                      </button>
+                      <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Private</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setIsModalOpen(false)}
+                      className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-black text-sm rounded-xl transition-all shadow-lg shadow-purple-500/20 active:scale-95"
+                    >
+                      Create Dashboard
                     </button>
                   </div>
                 </div>

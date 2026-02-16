@@ -101,7 +101,7 @@ const Overview: React.FC<OverviewProps> = ({ tasks }) => {
                                 <Plus size={10} className="text-gray-500" />
                             </div>
                         </div>
-                        <p className="text-xs text-gray-500 font-medium max-w-[200px]">Bookmarks make it easy to save ClickUp items or any URL from around the web.</p>
+                        <p className="text-xs text-gray-500 font-medium max-w-[200px]">Bookmarks make it easy to save Oasis items or any URL from around the web.</p>
                         <button className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-[10px] font-bold rounded-lg transition-colors shadow-sm">Add Bookmark</button>
                     </div>
                 </div>
