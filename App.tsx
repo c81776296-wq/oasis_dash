@@ -48,6 +48,10 @@ import {
   Paperclip,
   Info,
   BarChart3,
+  MessageCircle,
+  Send,
+  Video,
+  Trophy,
   MessageSquare as MessageIcon,
   Layout as FormIcon,
   Edit3 as WhiteboardIcon,
@@ -400,6 +404,69 @@ const App: React.FC = () => {
   const [showDashboardFolderPicker, setShowDashboardFolderPicker] = useState(false);
   const [isDashboardPrivate, setIsDashboardPrivate] = useState(false);
   const [dashboardName, setDashboardName] = useState('');
+
+  // Inbox states
+  const [isInboxOpen, setIsInboxOpen] = useState(false);
+  const [isInboxSettingsOpen, setIsInboxSettingsOpen] = useState(false);
+  const [inboxActiveTab, setInboxActiveTab] = useState<'Priority' | 'Other' | 'Later' | 'Cleared'>('Priority');
+  const [showInboxFilter, setShowInboxFilter] = useState(false);
+  const [inboxShowAllTab, setInboxShowAllTab] = useState(true);
+  const [inboxGroupByDate, setInboxGroupByDate] = useState(true);
+  const [inboxSortNewest, setInboxSortNewest] = useState(true);
+  const [inboxDisplayMode, setInboxDisplayMode] = useState<'fullscreen' | 'inline'>('fullscreen');
+  const [inboxFilterMentions, setInboxFilterMentions] = useState(false);
+  const [inboxFilterAssigned, setInboxFilterAssigned] = useState(false);
+  const [inboxFilterUnread, setInboxFilterUnread] = useState(false);
+  const [inboxFilterReminders, setInboxFilterReminders] = useState(false);
+
+  // Replies states
+  const [isRepliesOpen, setIsRepliesOpen] = useState(false);
+  const [repliesActiveTab, setRepliesActiveTab] = useState<'Unread' | 'Read'>('Unread');
+
+  // Assigned Comments states
+  const [isAssignedCommentsOpen, setIsAssignedCommentsOpen] = useState(false);
+  const [assignedCommentsActiveTab, setAssignedCommentsActiveTab] = useState<'Assigned to me' | 'Unassigned to me'>('Assigned to me');
+  const [showAssignedCommentsFilter, setShowAssignedCommentsFilter] = useState(false);
+  const [showAssignedCommentsDateFilter, setShowAssignedCommentsDateFilter] = useState(false);
+  const [assignedCommentsResolved, setAssignedCommentsResolved] = useState(true);
+  const [assignedCommentsDatePeriod, setAssignedCommentsDatePeriod] = useState('Last 90 Days');
+  const [assignedCommentsFilterTasks, setAssignedCommentsFilterTasks] = useState(false);
+  const [assignedCommentsFilterDocs, setAssignedCommentsFilterDocs] = useState(false);
+  const [assignedCommentsFilterChats, setAssignedCommentsFilterChats] = useState(false);
+  const [assignedCommentsSearch, setAssignedCommentsSearch] = useState('');
+
+  // My Tasks states
+  const [showMyTasksSubmenu, setShowMyTasksSubmenu] = useState(false);
+  const [myTasksActiveView, setMyTasksActiveView] = useState<'Assigned to me' | 'Today & Overdue' | 'Personal List' | null>(null);
+
+  // More menu and Customize modal states
+  const [showMoreSubmenu, setShowMoreSubmenu] = useState(false);
+  const [isCustomizeModalOpen, setIsCustomizeModalOpen] = useState(false);
+  const [customizeActiveTab, setCustomizeActiveTab] = useState<'Navigation' | 'Home' | 'Sections'>('Navigation');
+  const [navInbox, setNavInbox] = useState(true);
+  const [navReplies, setNavReplies] = useState(true);
+  const [navAssignedComments, setNavAssignedComments] = useState(true);
+  const [navMyTasks, setNavMyTasks] = useState(true);
+  const [navChatActivity, setNavChatActivity] = useState(false);
+  const [navDraftsSent, setNavDraftsSent] = useState(false);
+  const [navPosts, setNavPosts] = useState(false);
+  const [navAllChannels, setNavAllChannels] = useState(false);
+  const [navAllSpaces, setNavAllSpaces] = useState(false);
+  const [navAllTasks, setNavAllTasks] = useState(false);
+  const [homeHome, setHomeHome] = useState(true);
+  const [homeSpaces, setHomeSpaces] = useState(false);
+  const [homeChat, setHomeChat] = useState(false);
+  const [homePlanner, setHomePlanner] = useState(true);
+  const [homeAI, setHomeAI] = useState(true);
+  const [homeTeams, setHomeTeams] = useState(true);
+  const [homeDocs, setHomeDocs] = useState(false);
+  const [homeDashboards, setHomeDashboards] = useState(false);
+  const [homeWhiteboards, setHomeWhiteboards] = useState(false);
+  const [homeForms, setHomeForms] = useState(false);
+  const [homeClips, setHomeClips] = useState(false);
+  const [homeGoals, setHomeGoals] = useState(false);
+  const [homeTimesheets, setHomeTimesheets] = useState(false);
+  const [homeAppearance, setHomeAppearance] = useState<'icons-only' | 'icons-labels'>('icons-labels');
 
   const handleContextSelect = (context: NavigationContext) => {
     setActiveContext(context);
@@ -759,18 +826,100 @@ const App: React.FC = () => {
               <nav className="space-y-4 overflow-y-auto flex-1 custom-scrollbar pr-2">
                 <div className="space-y-1">
                   {[
-                    { id: 'Inbox', icon: <Inbox size={18} /> },
-                    { id: 'Replies', icon: <Reply size={18} /> },
-                    { id: 'Assigned Comments', icon: <MessageSquare size={18} /> },
-                    { id: 'My Tasks', icon: <UserIcon size={18} /> },
-                    { id: 'More', icon: <MoreHorizontal size={18} /> },
-                  ].map(item => (
-                    <div key={item.id} className="flex items-center gap-3 p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/5 cursor-pointer transition-all">
-                      {item.icon}
-                      <span className="text-sm font-medium">{item.id}</span>
+                    { id: 'Inbox', icon: <Inbox size={18} />, visible: navInbox },
+                    { id: 'Replies', icon: <Reply size={18} />, visible: navReplies },
+                    { id: 'Assigned Comments', icon: <MessageSquare size={18} />, visible: navAssignedComments },
+                    { id: 'My Tasks', icon: <UserIcon size={18} />, visible: navMyTasks },
+                    { id: 'Chat Activity', icon: <MessageCircle size={18} />, visible: navChatActivity },
+                    { id: 'Drafts & Sent', icon: <Send size={18} />, visible: navDraftsSent },
+                    { id: 'Posts', icon: <FileText size={18} />, visible: navPosts },
+                    { id: 'All Channels', icon: <Hash size={18} />, visible: navAllChannels },
+                    { id: 'All Spaces', icon: <Layers size={18} />, visible: navAllSpaces },
+                    { id: 'All Tasks', icon: <Check size={18} />, visible: navAllTasks },
+                    { id: 'More', icon: <MoreHorizontal size={18} />, visible: true },
+                  ].filter(item => item.visible).map(item => (
+                    <div key={item.id}>
+                      <div
+                        onClick={() => {
+                          if (item.id === 'Inbox') setIsInboxOpen(true);
+                          if (item.id === 'Replies') setIsRepliesOpen(true);
+                          if (item.id === 'Assigned Comments') setIsAssignedCommentsOpen(true);
+                          if (item.id === 'My Tasks') setShowMyTasksSubmenu(!showMyTasksSubmenu);
+                          if (item.id === 'More') setShowMoreSubmenu(!showMoreSubmenu);
+                        }}
+                        className={`flex items-center gap-3 p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/5 cursor-pointer transition-all ${
+                          (item.id === 'Inbox' && isInboxOpen) || 
+                          (item.id === 'Replies' && isRepliesOpen) || 
+                          (item.id === 'Assigned Comments' && isAssignedCommentsOpen) 
+                            ? 'bg-white dark:bg-white/5 text-gray-900 dark:text-white' 
+                            : ''
+                        }`}
+                      >
+                        {item.icon}
+                        <span className="text-sm font-medium">{item.id}</span>
+                      </div>
+
+                      {/* My Tasks Submenu */}
+                      {item.id === 'My Tasks' && showMyTasksSubmenu && (
+                        <div className="ml-6 mt-1 space-y-1 animate-in fade-in slide-in-from-top-2 duration-200">
+                          {[
+                            { label: 'Assigned to me', icon: <UserIcon size={16} /> },
+                            { label: 'Today & Overdue', icon: <Calendar size={16} /> },
+                            { label: 'Personal List', icon: <UserIcon size={16} /> }
+                          ].map((subItem) => (
+                            <div
+                              key={subItem.label}
+                              onClick={() => setMyTasksActiveView(subItem.label as any)}
+                              className="flex items-center gap-3 p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/5 cursor-pointer transition-all"
+                            >
+                              {subItem.icon}
+                              <span className="text-sm font-medium">{subItem.label}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* More Submenu */}
+                      {item.id === 'More' && showMoreSubmenu && (
+                        <div className="ml-6 mt-1 space-y-1 animate-in fade-in slide-in-from-top-2 duration-200">
+                          {[
+                            { label: 'Chat Activity', icon: <MessageCircle size={16} />, shortcut: '⌘' },
+                            { label: 'Drafts & Sent', icon: <Send size={16} />, shortcut: '⌘' },
+                            { label: 'Posts', icon: <FileText size={16} />, shortcut: '⌘' },
+                            { label: 'All Channels', icon: <Hash size={16} />, shortcut: '⌘' },
+                            { label: 'All Spaces', icon: <Layers size={16} />, shortcut: '⌘' },
+                            { label: 'All Tasks', icon: <Check size={16} />, shortcut: '⌘' }
+                          ].map((subItem) => (
+                            <div
+                              key={subItem.label}
+                              className="flex items-center justify-between p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/5 cursor-pointer transition-all group"
+                            >
+                              <div className="flex items-center gap-3">
+                                {subItem.icon}
+                                <span className="text-sm font-medium">{subItem.label}</span>
+                              </div>
+                              <span className="text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">{subItem.shortcut}</span>
+                            </div>
+                          ))}
+                          
+                          <div className="border-t border-gray-200 dark:border-gray-700 my-2" />
+                          
+                          <div
+                            onClick={() => {
+                              setIsCustomizeModalOpen(true);
+                              setShowMoreSubmenu(false);
+                            }}
+                            className="flex items-center gap-3 p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/5 cursor-pointer transition-all"
+                          >
+                            <Settings size={16} />
+                            <span className="text-sm font-medium">Customize</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
+
 
                 <div className="pt-2">
                   <div className="flex items-center justify-between text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3 hover:text-gray-900 dark:hover:text-gray-300 cursor-pointer group">
@@ -853,6 +1002,186 @@ const App: React.FC = () => {
           )}
         </div>
       </aside>
+
+      {/* Assigned Comments Panel */}
+      {isAssignedCommentsOpen && (
+        <>
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[300]" onClick={() => setIsAssignedCommentsOpen(false)} />
+          <div className="fixed right-0 top-0 bottom-0 w-full max-w-4xl bg-white dark:bg-[#1e1e1e] shadow-2xl z-[301] animate-in slide-in-from-right duration-300 flex flex-col">
+            {/* Assigned Comments Header */}
+            <div className="border-b border-gray-200 dark:border-gray-800 p-4">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold text-gray-900 dark:text-white">Assigned Comments</h2>
+                <button
+                  onClick={() => setIsAssignedCommentsOpen(false)}
+                  className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              {/* Tabs */}
+              <div className="flex items-center gap-6 border-b border-gray-200 dark:border-gray-800 mb-4">
+                {(['Assigned to me', 'Unassigned to me'] as const).map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setAssignedCommentsActiveTab(tab)}
+                    className={`pb-3 text-sm font-bold relative transition-colors ${assignedCommentsActiveTab === tab
+                      ? 'text-gray-900 dark:text-white'
+                      : 'text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                      }`}
+                  >
+                    {tab}
+                    {assignedCommentsActiveTab === tab && (
+                      <div className="absolute bottom-0 left-0 w-full h-0.5 bg-purple-500 animate-in fade-in slide-in-from-bottom-1 duration-200" />
+                    )}
+                  </button>
+                ))}
+              </div>
+
+              {/* Filters Row */}
+              <div className="flex items-center gap-2 flex-wrap">
+                {/* Filter Button */}
+                <div className="relative">
+                  <button
+                    onClick={() => setShowAssignedCommentsFilter(!showAssignedCommentsFilter)}
+                    className="flex items-center gap-2 px-3 py-1.5 border border-gray-200 dark:border-gray-700 rounded-lg text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                  >
+                    <Filter size={14} />
+                    Filter
+                  </button>
+
+                  {showAssignedCommentsFilter && (
+                    <>
+                      <div className="fixed inset-0 z-40" onClick={() => setShowAssignedCommentsFilter(false)} />
+                      <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                        <div className="p-2">
+                          {[
+                            { label: 'Tasks', icon: Check, state: assignedCommentsFilterTasks, setState: setAssignedCommentsFilterTasks },
+                            { label: 'Docs', icon: FileText, state: assignedCommentsFilterDocs, setState: setAssignedCommentsFilterDocs },
+                            { label: 'Chats', icon: Hash, state: assignedCommentsFilterChats, setState: setAssignedCommentsFilterChats }
+                          ].map((filter) => (
+                            <button
+                              key={filter.label}
+                              onClick={() => filter.setState(!filter.state)}
+                              className="w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors"
+                            >
+                              <filter.icon size={14} className="text-gray-400" />
+                              <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{filter.label}</span>
+                              {filter.state && <Check size={14} className="text-purple-600 ml-auto" />}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {/* Resolved Toggle */}
+                <button
+                  onClick={() => setAssignedCommentsResolved(!assignedCommentsResolved)}
+                  className={`flex items-center gap-2 px-3 py-1.5 border rounded-lg text-xs font-medium transition-colors ${assignedCommentsResolved
+                    ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-600'
+                    : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5'
+                    }`}
+                >
+                  <Check size={14} />
+                  Resolved
+                </button>
+
+                {/* Date Period Selector */}
+                <div className="relative">
+                  <button
+                    onClick={() => setShowAssignedCommentsDateFilter(!showAssignedCommentsDateFilter)}
+                    className="flex items-center gap-2 px-3 py-1.5 border border-gray-200 dark:border-gray-700 rounded-lg text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                  >
+                    <Calendar size={14} />
+                    {assignedCommentsDatePeriod}
+                    <ChevronDown size={14} />
+                  </button>
+
+                  {showAssignedCommentsDateFilter && (
+                    <>
+                      <div className="fixed inset-0 z-40" onClick={() => setShowAssignedCommentsDateFilter(false)} />
+                      <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                        <div className="p-2">
+                          <div className="px-3 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                            Date Period
+                          </div>
+                          {[
+                            'All Time',
+                            'Last 30 Days',
+                            'Last 60 Days',
+                            'Last 90 Days',
+                            'Last 180 Days'
+                          ].map((period) => (
+                            <button
+                              key={period}
+                              onClick={() => {
+                                setAssignedCommentsDatePeriod(period);
+                                setShowAssignedCommentsDateFilter(false);
+                              }}
+                              className="w-full flex items-center justify-between px-3 py-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors text-left"
+                            >
+                              <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{period}</span>
+                              {assignedCommentsDatePeriod === period && <Check size={14} className="text-purple-600" />}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {/* Search */}
+                <div className="ml-auto relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
+                  <input
+                    type="text"
+                    placeholder="Search"
+                    value={assignedCommentsSearch}
+                    onChange={(e) => setAssignedCommentsSearch(e.target.value)}
+                    className="pl-9 pr-3 py-1.5 border border-gray-200 dark:border-gray-700 rounded-lg text-xs bg-white dark:bg-[#121213] text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 w-48"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Assigned Comments Content */}
+            <div className="flex-1 overflow-auto p-8 flex items-center justify-center">
+              <div className="text-center space-y-4 max-w-md">
+                <div className="w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto relative">
+                  <div className="w-16 h-16 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center">
+                    <MessageSquare size={32} className="text-gray-300 dark:text-gray-600" />
+                  </div>
+                  <div className="absolute bottom-0 right-0 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center border-4 border-white dark:border-[#1e1e1e]">
+                    <Check size={16} className="text-white" />
+                  </div>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">You're all caught up</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Looks like you don't have any assigned messages
+                </p>
+                <button className="mt-4 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+                  Clear filters
+                </button>
+              </div>
+            </div>
+
+            {/* Assigned Comments Footer */}
+            <div className="border-t border-gray-200 dark:border-gray-800 p-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
+                <input
+                  type="text"
+                  placeholder="Search messages"
+                  className="w-full pl-9 pr-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-xs bg-white dark:bg-[#121213] text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+              </div>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden bg-white dark:bg-black relative">
@@ -1072,6 +1401,153 @@ const App: React.FC = () => {
             </div>
           </div>
         </header>
+      {/* My Tasks Full-Screen Views */}
+      {myTasksActiveView && (
+        <div className="absolute top-14 inset-x-0 bottom-0 bg-white dark:bg-[#1e1e1e] z-30 flex flex-col animate-in fade-in zoom-in-95 duration-200">
+          {/* Header */}
+          <div className="border-b border-gray-200 dark:border-gray-800 p-4 flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+              <div 
+                onClick={() => setMyTasksActiveView(null)}
+                className="flex items-center gap-2 hover:text-gray-900 dark:hover:text-white cursor-pointer transition-colors"
+              >
+                <UserIcon size={16} />
+                <span>My Tasks</span>
+              </div>
+              <span>/</span>
+              <span className="text-gray-900 dark:text-white font-medium flex items-center gap-2">
+                {myTasksActiveView === 'Assigned to me' && <UserIcon size={16} />}
+                {myTasksActiveView === 'Today & Overdue' && <Calendar size={16} />}
+                {myTasksActiveView === 'Personal List' && <UserIcon size={16} />}
+                {myTasksActiveView}
+              </span>
+            </div>
+            <button 
+              onClick={() => setMyTasksActiveView(null)}
+              className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+            >
+              <X size={20} />
+            </button>
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 overflow-hidden relative">
+            {myTasksActiveView === 'Assigned to me' && (
+              <div className="absolute inset-0 flex items-center justify-center p-8 bg-gray-50/50 dark:bg-black/20">
+                <div className="text-center space-y-4 max-w-md animate-in slide-in-from-bottom-5 duration-300">
+                  <div className="w-16 h-16 bg-white dark:bg-gray-800 rounded-2xl shadow-sm flex items-center justify-center mx-auto border border-gray-100 dark:border-gray-700">
+                    <Check size={32} className="text-purple-500" />
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                    Tasks assigned to you will appear here
+                  </h3>
+                  <button className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors shadow-lg shadow-purple-500/20">
+                    Browse tasks
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {myTasksActiveView === 'Today & Overdue' && (
+              <div className="absolute inset-0 overflow-auto bg-gray-50/50 dark:bg-black/20 p-8">
+                <div className="max-w-5xl mx-auto animate-in slide-in-from-bottom-5 duration-300">
+                  <div className="bg-white dark:bg-[#121213] border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm overflow-hidden">
+                    <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+                      <h2 className="text-lg font-bold text-gray-900 dark:text-white">My Work</h2>
+                    </div>
+                    
+                    <div className="flex flex-col items-center justify-center py-32">
+                      <div className="w-16 h-16 bg-gray-50 dark:bg-gray-800 rounded-2xl flex items-center justify-center mb-4">
+                        <Layers size={32} className="text-gray-300 dark:text-gray-600" />
+                      </div>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                        Tasks and Reminders assigned to you will show here
+                      </p>
+                      <button className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors inline-flex items-center gap-2 shadow-lg shadow-purple-500/20">
+                        <Plus size={16} />
+                        Add task or reminder
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {myTasksActiveView === 'Personal List' && (
+              <div className="absolute inset-0 flex flex-col bg-white dark:bg-[#1e1e1e]">
+                {/* Toolbar */}
+                <div className="border-b border-gray-200 dark:border-gray-800 px-6 py-3">
+                  <div className="flex items-center gap-4">
+                    <button className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md transition-colors">
+                      <Filter size={14} />
+                      Filter
+                    </button>
+                    <div className="h-4 w-px bg-gray-200 dark:bg-gray-700" />
+                    <button className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors">
+                      <LayoutList size={14} />
+                      Me
+                    </button>
+                    <button className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors">
+                      <Hash size={14} />
+                      Tags
+                    </button>
+                    
+                    <div className="ml-auto flex items-center gap-2">
+                      <div className="relative">
+                        <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                        <input 
+                          type="text" 
+                          placeholder="Search" 
+                          className="pl-8 pr-3 py-1.5 bg-gray-100 dark:bg-gray-800 border-none rounded-md text-xs w-48 focus:ring-2 focus:ring-purple-500"
+                        />
+                      </div>
+                      <button className="p-1.5 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
+                        <Settings size={16} />
+                      </button>
+                      <button className="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-medium rounded-md transition-colors shadow-sm">
+                        Add view
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Table Header */}
+                <div className="border-b border-gray-200 dark:border-gray-800 px-8 py-2 bg-gray-50/50 dark:bg-gray-800/30">
+                  <div className="grid grid-cols-12 gap-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    <div className="col-span-6 pl-2">Task Name</div>
+                    <div className="col-span-2">Assignee</div>
+                    <div className="col-span-2">Due Date</div>
+                    <div className="col-span-2">Priority</div>
+                  </div>
+                </div>
+
+                {/* Add Task Row */}
+                <div className="px-6 py-2 border-b border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group">
+                  <div className="flex items-center gap-4 pl-2">
+                    <button className="w-5 h-5 rounded border-2 border-gray-300 dark:border-gray-600 hover:border-purple-500 flex items-center justify-center text-transparent hover:text-purple-500 transition-all">
+                      <Check size={12} />
+                    </button>
+                    <input
+                      type="text"
+                      placeholder="+ New Task"
+                      className="flex-1 bg-transparent border-none text-sm text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none py-2"
+                    />
+                  </div>
+                </div>
+
+                {/* Empty State */}
+                <div className="flex-1 flex flex-col items-center justify-center text-center p-8 opacity-50">
+                  <div className="w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
+                    <LayoutList size={40} className="text-gray-300 dark:text-gray-600" />
+                  </div>
+                  <h3 className="text-sm font-medium text-gray-900 dark:text-white">No tasks found</h3>
+                  <p className="text-xs text-gray-500">Create a task to get started</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
         <div className="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-black px-6 shrink-0 h-12 flex items-center justify-between">
           <div className="flex items-center gap-6 h-full">
@@ -1272,9 +1748,8 @@ const App: React.FC = () => {
                     </button>
                   ))}
                 </div>
-                <div className="flex items-center gap-2 mb-3">
-                  <button className="p-1.5 hover:bg-gray-800 rounded text-gray-500"><Maximize2 size={16} /></button>
-                  <button onClick={() => setIsModalOpen(false)} className="p-1.5 hover:bg-gray-800 rounded text-gray-500"><X size={16} /></button>
+                <div className="mb-3">
+                  <button onClick={() => setIsModalOpen(false)} className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"><X size={16} /></button>
                 </div>
               </div>
 
@@ -3652,7 +4127,513 @@ const App: React.FC = () => {
           </div>
         </div>
       </div>
-    </div >
+
+      {/* Replies Panel */}
+      {isRepliesOpen && (
+        <>
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[300]" onClick={() => setIsRepliesOpen(false)} />
+          <div className="fixed right-0 top-0 bottom-0 w-full max-w-2xl bg-white dark:bg-[#1e1e1e] shadow-2xl z-[301] animate-in slide-in-from-right duration-300 flex flex-col">
+            {/* Replies Header */}
+            <div className="border-b border-gray-200 dark:border-gray-800 p-4">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold text-gray-900 dark:text-white">Replies</h2>
+                <button
+                  onClick={() => setIsRepliesOpen(false)}
+                  className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              {/* Tabs */}
+              <div className="flex items-center gap-6 border-b border-gray-200 dark:border-gray-800">
+                {(['Unread', 'Read'] as const).map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setRepliesActiveTab(tab)}
+                    className={`pb-3 text-sm font-bold relative transition-colors ${repliesActiveTab === tab
+                      ? 'text-gray-900 dark:text-white'
+                      : 'text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                      }`}
+                  >
+                    {tab}
+                    {repliesActiveTab === tab && (
+                      <div className="absolute bottom-0 left-0 w-full h-0.5 bg-purple-500 animate-in fade-in slide-in-from-bottom-1 duration-200" />
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Replies Content */}
+            <div className="flex-1 overflow-auto p-8 flex items-center justify-center">
+              <div className="text-center space-y-4 max-w-md">
+                <div className="w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto relative">
+                  <div className="w-16 h-16 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center">
+                    <MessageSquare size={32} className="text-gray-300 dark:text-gray-600" />
+                  </div>
+                  <div className="absolute bottom-0 right-0 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center border-4 border-white dark:border-[#1e1e1e]">
+                    <Check size={16} className="text-white" />
+                  </div>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">You're all caught up</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Looks like you don't have any unread replies
+                </p>
+                <button className="mt-4 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+                  Read old replies
+                </button>
+              </div>
+            </div>
+
+            {/* Replies Footer */}
+            <div className="border-t border-gray-200 dark:border-gray-800 p-4">
+              <button className="w-full flex items-center justify-between px-3 py-2 text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
+                <span>Draft</span>
+                <ChevronRight size={14} />
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Inbox Panel */}
+      {isInboxOpen && (
+        <>
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[300]" onClick={() => setIsInboxOpen(false)} />
+          <div className="fixed right-0 top-0 bottom-0 w-full max-w-2xl bg-white dark:bg-[#1e1e1e] shadow-2xl z-[301] animate-in slide-in-from-right duration-300">
+            {/* Inbox Header */}
+            <div className="border-b border-gray-200 dark:border-gray-800">
+              {/* Tabs */}
+              <div className="flex items-center justify-between px-4 pt-4">
+                <div className="flex items-center gap-6">
+                  {(['Priority', 'Other', 'Later', 'Cleared'] as const).map((tab) => (
+                    <button
+                      key={tab}
+                      onClick={() => setInboxActiveTab(tab)}
+                      className={`pb-3 text-sm font-bold relative transition-colors ${inboxActiveTab === tab
+                        ? 'text-gray-900 dark:text-white'
+                        : 'text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                        }`}
+                    >
+                      {tab}
+                      {inboxActiveTab === tab && (
+                        <div className="absolute bottom-0 left-0 w-full h-0.5 bg-purple-500 animate-in fade-in slide-in-from-bottom-1 duration-200" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  onClick={() => setIsInboxOpen(false)}
+                  className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              {/* Filter and Settings */}
+              <div className="flex items-center gap-2 px-4 pb-3">
+                {/* Filter Button */}
+                <div className="relative">
+                  <button
+                    onClick={() => setShowInboxFilter(!showInboxFilter)}
+                    className="flex items-center gap-2 px-3 py-1.5 border border-gray-200 dark:border-gray-700 rounded-lg text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                  >
+                    <Filter size={14} />
+                    Filter
+                  </button>
+
+                  {showInboxFilter && (
+                    <>
+                      <div className="fixed inset-0 z-40" onClick={() => setShowInboxFilter(false)} />
+                      <div className="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                        <div className="p-2">
+                          {[
+                            { label: 'Mentions', icon: '@', count: 1, state: inboxFilterMentions, setState: setInboxFilterMentions },
+                            { label: 'Assigned to me', icon: '@', count: 2, state: inboxFilterAssigned, setState: setInboxFilterAssigned },
+                            { label: 'Unread', icon: '📧', count: 3, state: inboxFilterUnread, setState: setInboxFilterUnread },
+                            { label: 'Reminders', icon: '🔔', count: 4, state: inboxFilterReminders, setState: setInboxFilterReminders }
+                          ].map((filter) => (
+                            <button
+                              key={filter.label}
+                              onClick={() => filter.setState(!filter.state)}
+                              className="w-full flex items-center justify-between px-3 py-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors"
+                            >
+                              <div className="flex items-center gap-3">
+                                <span className="text-sm">{filter.icon}</span>
+                                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{filter.label}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs text-gray-400">{filter.count}</span>
+                                {filter.state && <Check size={14} className="text-purple-600" />}
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {/* Settings Button */}
+                <button
+                  onClick={() => setIsInboxSettingsOpen(true)}
+                  className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                >
+                  <Settings size={16} />
+                </button>
+
+                <button className="ml-auto flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
+                  <Check size={14} />
+                  Clear All
+                </button>
+              </div>
+            </div>
+
+            {/* Inbox Content */}
+            <div className="flex-1 overflow-auto p-8">
+              <div className="flex flex-col items-center justify-center h-full text-center">
+                <div className="w-24 h-24 bg-purple-100 dark:bg-purple-900/20 rounded-full flex items-center justify-center mb-4">
+                  <Inbox size={48} className="text-purple-400" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Inbox Zero</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400 max-w-md">
+                  Congratulations! You cleared your important notifications 🎉
+                </p>
+              </div>
+            </div>
+
+            {/* Inbox Footer */}
+            <div className="border-t border-gray-200 dark:border-gray-800 p-4">
+              <button className="w-full flex items-center justify-between px-3 py-2 text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
+                <span>Draft</span>
+                <ChevronRight size={14} />
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Inbox Settings Panel */}
+      {isInboxSettingsOpen && (
+        <>
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[400]" onClick={() => setIsInboxSettingsOpen(false)} />
+          <div className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white dark:bg-[#1e1e1e] shadow-2xl z-[401] animate-in slide-in-from-right duration-300">
+            {/* Settings Header */}
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white">Customize Inbox</h2>
+              <button
+                onClick={() => setIsInboxSettingsOpen(false)}
+                className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Settings Content */}
+            <div className="p-6 space-y-6 overflow-auto">
+              {/* Toggle Options */}
+              <div className="space-y-4">
+                {[
+                  { label: 'Show All tab', icon: '@', state: inboxShowAllTab, setState: setInboxShowAllTab },
+                  { label: 'Group by date', icon: '📅', state: inboxGroupByDate, setState: setInboxGroupByDate },
+                  { label: 'Sort by newest first', icon: '↕️', state: inboxSortNewest, setState: setInboxSortNewest }
+                ].map((option) => (
+                  <div key={option.label} className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="text-lg">{option.icon}</span>
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{option.label}</span>
+                    </div>
+                    <button
+                      onClick={() => option.setState(!option.state)}
+                      className={`w-11 h-6 rounded-full relative transition-colors duration-200 ${option.state ? 'bg-purple-600' : 'bg-gray-200 dark:bg-gray-700'
+                        }`}
+                    >
+                      <div className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-200 ${option.state ? 'translate-x-5' : 'translate-x-0'
+                        }`} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              {/* Important Notifications */}
+              <div className="pt-4 border-t border-gray-200 dark:border-gray-800">
+                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Important notifications</h3>
+                <button className="w-full flex items-center justify-between px-3 py-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
+                  <div className="flex items-center gap-3">
+                    <Zap size={16} className="text-gray-400" />
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Customize importance</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-400">11/42</span>
+                    <ChevronRight size={14} className="text-gray-400" />
+                  </div>
+                </button>
+              </div>
+
+              {/* Display Mode */}
+              <div className="pt-4 border-t border-gray-200 dark:border-gray-800">
+                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Display mode</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => setInboxDisplayMode('fullscreen')}
+                    className={`relative p-4 border-2 rounded-xl transition-all ${inboxDisplayMode === 'fullscreen'
+                      ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
+                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                      }`}
+                  >
+                    {inboxDisplayMode === 'fullscreen' && (
+                      <div className="absolute top-2 right-2 w-4 h-4 bg-purple-600 rounded-full flex items-center justify-center">
+                        <div className="w-2 h-2 bg-white rounded-full" />
+                      </div>
+                    )}
+                    <div className="bg-purple-100 dark:bg-purple-900/30 rounded-lg p-3 mb-2">
+                      <div className="space-y-1.5">
+                        <div className="h-1 bg-purple-300 dark:bg-purple-700 rounded w-3/4" />
+                        <div className="h-1 bg-purple-200 dark:bg-purple-800 rounded w-full" />
+                        <div className="h-1 bg-purple-200 dark:bg-purple-800 rounded w-2/3" />
+                      </div>
+                    </div>
+                    <p className="text-xs font-medium text-gray-700 dark:text-gray-300">Fullscreen</p>
+                  </button>
+
+                  <button
+                    onClick={() => setInboxDisplayMode('inline')}
+                    className={`relative p-4 border-2 rounded-xl transition-all ${inboxDisplayMode === 'inline'
+                      ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
+                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                      }`}
+                  >
+                    {inboxDisplayMode === 'inline' && (
+                      <div className="absolute top-2 right-2 w-4 h-4 bg-purple-600 rounded-full flex items-center justify-center">
+                        <div className="w-2 h-2 bg-white rounded-full" />
+                      </div>
+                    )}
+                    <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-3 mb-2">
+                      <div className="space-y-1.5">
+                        <div className="h-1 bg-gray-300 dark:bg-gray-600 rounded w-full" />
+                        <div className="h-1 bg-gray-300 dark:bg-gray-600 rounded w-full" />
+                        <div className="h-1 bg-gray-300 dark:bg-gray-600 rounded w-3/4" />
+                      </div>
+                    </div>
+                    <p className="text-xs font-medium text-gray-700 dark:text-gray-300">Inline</p>
+                  </button>
+                </div>
+              </div>
+
+              {/* Additional Settings */}
+              <div className="pt-4 border-t border-gray-200 dark:border-gray-800 space-y-2">
+                <button className="w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
+                  <Settings size={16} className="text-gray-400" />
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Notification settings</span>
+                </button>
+                <button className="w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
+                  <Hash size={16} className="text-gray-400" />
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Keyboard shortcuts</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+      {/* Customize Modal */}
+      {isCustomizeModalOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[500] flex items-center justify-center p-4 animate-in fade-in duration-200" onClick={() => setIsCustomizeModalOpen(false)}>
+          <div className="bg-white dark:bg-[#1e1e1e] w-full max-w-lg rounded-xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
+            {/* Header */}
+            <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex items-start justify-between">
+              <div>
+                <h2 className="text-lg font-bold text-gray-900 dark:text-white">Customize</h2>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Personalize and organize your ClickUp interface</p>
+              </div>
+              <button 
+                onClick={() => setIsCustomizeModalOpen(false)}
+                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Tabs */}
+            <div className="flex items-center gap-1 p-2 bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-800">
+              {['Navigation', 'Home', 'Sections'].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setCustomizeActiveTab(tab as any)}
+                  className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-colors ${
+                    customizeActiveTab === tab
+                      ? 'bg-white dark:bg-[#2a2a2a] text-gray-900 dark:text-white shadow-sm'
+                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/5'
+                  }`}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+
+            {/* Content */}
+            <div className="p-0 overflow-y-auto flex-1 custom-scrollbar">
+              {customizeActiveTab === 'Navigation' && (
+                <div className="p-4 space-y-1">
+                  {[
+                    { label: 'Inbox', icon: <Inbox size={16} />, state: navInbox, setState: setNavInbox },
+                    { label: 'Replies', icon: <Reply size={16} />, state: navReplies, setState: setNavReplies },
+                    { label: 'Assigned Comments', icon: <MessageIcon size={16} />, state: navAssignedComments, setState: setNavAssignedComments },
+                    { label: 'My Tasks', icon: <UserIcon size={16} />, state: navMyTasks, setState: setNavMyTasks },
+                    { label: 'Chat Activity', icon: <MessageCircle size={16} />, state: navChatActivity, setState: setNavChatActivity },
+                    { label: 'Drafts & Sent', icon: <Send size={16} />, state: navDraftsSent, setState: setNavDraftsSent },
+                    { label: 'Posts', icon: <FileText size={16} />, state: navPosts, setState: setNavPosts },
+                    { label: 'All Channels', icon: <Hash size={16} />, state: navAllChannels, setState: setNavAllChannels },
+                    { label: 'All Spaces', icon: <Layers size={16} />, state: navAllSpaces, setState: setNavAllSpaces },
+                    { label: 'All Tasks', icon: <Check size={16} />, state: navAllTasks, setState: setNavAllTasks },
+                  ].map((item) => (
+                    <label key={item.label} className="flex items-center gap-3 p-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg cursor-pointer group transition-colors">
+                      <div className={`w-5 h-5 rounded flex items-center justify-center transition-colors ${
+                        item.state ? 'bg-purple-600 text-white' : 'border border-gray-300 dark:border-gray-600 group-hover:border-gray-400'
+                      }`}>
+                        {item.state && <Check size={14} />}
+                      </div>
+                      <input 
+                        type="checkbox" 
+                        checked={item.state} 
+                        onChange={() => item.setState(!item.state)}
+                        className="hidden"
+                      />
+                      <div className="text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors">
+                        {item.icon}
+                      </div>
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
+                        {item.label}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              )}
+
+              {customizeActiveTab === 'Home' && (
+                <div className="p-4 space-y-6">
+                  <div className="space-y-1">
+                    {[
+                      { label: 'Home', icon: <Home size={16} />, state: homeHome, setState: setHomeHome },
+                      { label: 'Spaces', icon: <Layers size={16} />, state: homeSpaces, setState: setHomeSpaces },
+                      { label: 'Chat', icon: <MessageCircle size={16} />, state: homeChat, setState: setHomeChat },
+                      { label: 'Planner', icon: <Calendar size={16} />, state: homePlanner, setState: setHomePlanner },
+                      { label: 'AI', icon: <Sparkles size={16} />, state: homeAI, setState: setHomeAI },
+                      { label: 'Teams', icon: <Users size={16} />, state: homeTeams, setState: setHomeTeams },
+                      { label: 'Docs', icon: <FileText size={16} />, state: homeDocs, setState: setHomeDocs },
+                      { label: 'Dashboards', icon: <LayoutGrid size={16} />, state: homeDashboards, setState: setHomeDashboards },
+                      { label: 'Whiteboards', icon: <WhiteboardIcon size={16} />, state: homeWhiteboards, setState: setHomeWhiteboards },
+                      { label: 'Forms', icon: <FormIcon size={16} />, state: homeForms, setState: setHomeForms },
+                      { label: 'Clips', icon: <Video size={16} />, state: homeClips, setState: setHomeClips },
+                      { label: 'Goals', icon: <Trophy size={16} />, state: homeGoals, setState: setHomeGoals },
+                      { label: 'Timesheets', icon: <Clock size={16} />, state: homeTimesheets, setState: setHomeTimesheets },
+                    ].map((item) => (
+                      <label key={item.label} className="flex items-center gap-3 p-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg cursor-pointer group transition-colors">
+                        <div className={`w-5 h-5 rounded flex items-center justify-center transition-colors ${
+                          item.state ? 'bg-purple-600 text-white' : 'border border-gray-300 dark:border-gray-600 group-hover:border-gray-400'
+                        }`}>
+                          {item.state && <Check size={14} />}
+                        </div>
+                        <input 
+                          type="checkbox" 
+                          checked={item.state} 
+                          onChange={() => item.setState(!item.state)}
+                          className="hidden"
+                        />
+                        <div className="text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors">
+                          {item.icon}
+                        </div>
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
+                          {item.label}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+
+                  {/* Appearance */}
+                  <div className="pt-4 border-t border-gray-200 dark:border-gray-800">
+                    <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-3">Appearance</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <label className="cursor-pointer group">
+                        <input 
+                          type="radio" 
+                          name="appearance" 
+                          checked={homeAppearance === 'icons-only'} 
+                          onChange={() => setHomeAppearance('icons-only')}
+                          className="hidden" 
+                        />
+                        <div className={`p-4 border-2 rounded-xl transition-all ${
+                          homeAppearance === 'icons-only' 
+                            ? 'border-purple-600 bg-purple-50 dark:bg-purple-900/20' 
+                            : 'border-gray-200 dark:border-gray-700 group-hover:border-purple-300'
+                        }`}>
+                          <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-3 aspect-video mb-2 flex items-center gap-2">
+                             <div className="w-6 h-6 bg-gray-300 dark:bg-gray-600 rounded" />
+                             <div className="w-16 h-2 bg-gray-200 dark:bg-gray-700 rounded" />
+                          </div>
+                          <span className="text-sm font-medium text-gray-900 dark:text-white">Icons only</span>
+                        </div>
+                      </label>
+                      <label className="cursor-pointer group">
+                        <input 
+                          type="radio" 
+                          name="appearance" 
+                          checked={homeAppearance === 'icons-labels'} 
+                          onChange={() => setHomeAppearance('icons-labels')}
+                          className="hidden" 
+                        />
+                         <div className={`p-4 border-2 rounded-xl transition-all ${
+                          homeAppearance === 'icons-labels' 
+                            ? 'border-purple-600 bg-purple-50 dark:bg-purple-900/20' 
+                            : 'border-gray-200 dark:border-gray-700 group-hover:border-purple-300'
+                        }`}>
+                          <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-3 aspect-video mb-2 flex flex-col gap-2">
+                             <div className="flex items-center gap-2">
+                               <div className="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded" />
+                               <div className="w-12 h-2 bg-gray-200 dark:bg-gray-700 rounded" />
+                             </div>
+                             <div className="flex items-center gap-2">
+                               <div className="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded" />
+                               <div className="w-10 h-2 bg-gray-200 dark:bg-gray-700 rounded" />
+                             </div>
+                          </div>
+                          <span className="text-sm font-medium text-gray-900 dark:text-white">Icons & Labels</span>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {customizeActiveTab === 'Sections' && (
+                <div className="p-4 space-y-2">
+                  {[
+                    'Favorites',
+                    'Spaces',
+                    'Channels',
+                    'Direct Messages'
+                  ].map((section) => (
+                     <div key={section} className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-800 rounded-lg bg-white dark:bg-[#1e1e1e] hover:border-gray-300 dark:hover:border-gray-700 transition-colors group cursor-grab active:cursor-grabbing">
+                        <div className="flex items-center gap-3">
+                           <MoreVertical size={16} className="text-gray-300 cursor-grab" />
+                           <span className="text-sm font-medium text-gray-900 dark:text-white">{section}</span>
+                        </div>
+                     </div>
+                  ))}
+                  
+                  <button className="w-full flex items-center justify-center gap-2 p-3 mt-4 border border-dashed border-gray-300 dark:border-gray-700 rounded-lg text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                    <Plus size={16} />
+                    <span className="text-sm font-medium">Create section</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+
+    </div>
   );
 };
 
