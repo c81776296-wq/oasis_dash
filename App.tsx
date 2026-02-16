@@ -250,6 +250,9 @@ const App: React.FC = () => {
   const [showMoreOptionsPicker, setShowMoreOptionsPicker] = useState(false);
   const [showWatcherPicker, setShowWatcherPicker] = useState(false);
   const [watcherSearchQuery, setWatcherSearchQuery] = useState('');
+  const [modalActiveTab, setModalActiveTab] = useState<'Task' | 'Doc' | 'Reminder' | 'Whiteboard' | 'Dashboard'>('Task');
+  const [docNewTitle, setDocNewTitle] = useState('');
+  const [isDocPrivate, setIsDocPrivate] = useState(false);
 
   const handleContextSelect = (context: NavigationContext) => {
     setActiveContext(context);
@@ -484,6 +487,7 @@ const App: React.FC = () => {
             </div>
           </div>
         );
+      case 'Integrations':
         return (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
             <h4 className="text-sm font-bold text-gray-700 dark:text-gray-300">Active Integrations</h4>
@@ -1064,10 +1068,15 @@ const App: React.FC = () => {
               {/* Tabs Header */}
               <div className="flex items-center justify-between px-6 pt-4 border-b border-gray-100 dark:border-gray-800/50">
                 <div className="flex items-center gap-6">
-                  {['Task', 'Doc', 'Reminder', 'Whiteboard', 'Dashboard'].map((tab, idx) => (
-                    <button key={tab} className={`pb-3 text-sm font-bold relative ${idx === 0 ? 'text-gray-900 dark:text-white' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}>
+                  {['Task', 'Doc', 'Reminder', 'Whiteboard', 'Dashboard'].map((tab) => (
+                    <button
+                      key={tab}
+                      type="button"
+                      onClick={() => setModalActiveTab(tab as any)}
+                      className={`pb-3 text-sm font-bold relative transition-colors ${modalActiveTab === tab ? 'text-gray-900 dark:text-white' : 'text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}
+                    >
                       {tab}
-                      {idx === 0 && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-purple-500" />}
+                      {modalActiveTab === tab && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-purple-500 animate-in fade-in slide-in-from-bottom-1 duration-200" />}
                     </button>
                   ))}
                 </div>
@@ -1077,10 +1086,10 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              <form onSubmit={handleCreateTask} className="p-6 space-y-6 relative">
-                {/* Location and Type Selectors */}
-                <div className="flex items-center gap-3 relative z-20">
-                  <div className="relative">
+              {modalActiveTab === 'Task' ? (
+                <form onSubmit={handleCreateTask} className="p-6 space-y-6 relative">
+                  {/* Location and Type Selectors */}
+                  <div className="flex items-center gap-3 relative z-20">
                     <div
                       onClick={() => setShowLocationPicker(!showLocationPicker)}
                       className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/50 rounded-lg text-xs font-bold text-gray-600 dark:text-gray-300 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
@@ -1091,7 +1100,7 @@ const App: React.FC = () => {
                     </div>
 
                     {showLocationPicker && (
-                      <>
+                      <div>
                         <div className="fixed inset-0 z-40" onClick={() => setShowLocationPicker(false)} />
                         <div className="absolute top-full left-0 mt-2 w-72 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100 flex flex-col">
                           {/* Search */}
@@ -1165,595 +1174,668 @@ const App: React.FC = () => {
                             </div>
                           </div>
                         </div>
-                      </>
+                      </div>
                     )}
-                  </div>
 
-                  <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/50 rounded-lg text-xs font-bold text-gray-600 dark:text-gray-300 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors relative">
-                    <div
-                      className="flex items-center gap-2 w-full h-full"
-                      onClick={() => setShowTaskTypePicker(!showTaskTypePicker)}
-                    >
-                      {(() => {
-                        const type = [
-                          { label: 'Task', icon: CircleIcon },
-                          { label: 'Milestone', icon: Diamond },
-                          { label: 'Form Response', icon: FileMinus },
-                          { label: 'Meeting Note', icon: MessageNote }
-                        ].find(t => t.label === (newTask.taskType || 'Task')) || { icon: CircleIcon, label: 'Task' };
-                        return (
-                          <>
-                            <type.icon size={14} className="text-gray-500" />
-                            <span>{type.label}</span>
-                          </>
-                        );
-                      })()}
-                      <ChevronDown size={14} className={`text-gray-500 transition-transform ${showTaskTypePicker ? 'rotate-180' : ''}`} />
-                    </div>
-
-                    {showTaskTypePicker && (
-                      <>
-                        <div className="fixed inset-0 z-40" onClick={() => setShowTaskTypePicker(false)} />
-                        <div className="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100 py-1">
-                          <div className="px-3 py-2 text-[10px] font-bold text-gray-400 border-b border-gray-100 dark:border-gray-800 mb-1 flex items-center justify-between">
-                            <span>Task Types</span>
-                            <span className="opacity-50 cursor-help" title="ClickUp Task Types help users categorize different kinds of work.">?</span>
-                          </div>
-                          {[
-                            { label: 'Task', icon: CircleIcon, default: true },
+                    <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/50 rounded-lg text-xs font-bold text-gray-600 dark:text-gray-300 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors relative">
+                      <div
+                        className="flex items-center gap-2 w-full h-full"
+                        onClick={() => setShowTaskTypePicker(!showTaskTypePicker)}
+                      >
+                        {(() => {
+                          const type = [
+                            { label: 'Task', icon: CircleIcon },
                             { label: 'Milestone', icon: Diamond },
                             { label: 'Form Response', icon: FileMinus },
                             { label: 'Meeting Note', icon: MessageNote }
-                          ].map((type) => (
-                            <div
-                              key={type.label}
-                              onClick={() => {
-                                setNewTask({ ...newTask, taskType: type.label });
-                                setShowTaskTypePicker(false);
-                              }}
-                              className="flex items-center gap-3 px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/5 cursor-pointer transition-colors group"
-                            >
-                              <type.icon size={14} className={`${(newTask.taskType || 'Task') === type.label ? 'text-purple-500' : 'text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300'}`} />
-                              <span className={`text-xs font-medium flex-1 ${(newTask.taskType || 'Task') === type.label ? 'text-purple-600 dark:text-purple-400' : 'text-gray-700 dark:text-gray-200'}`}>
-                                {type.label} {type.default && <span className="text-gray-400 font-normal ml-1">(default)</span>}
-                              </span>
-                              {(newTask.taskType || 'Task') === type.label && <Check size={14} className="text-purple-500" />}
+                          ].find(t => t.label === (newTask.taskType || 'Task')) || { icon: CircleIcon, label: 'Task' };
+                          return (
+                            <div className="flex items-center gap-2">
+                              <type.icon size={14} className="text-gray-500" />
+                              <span>{type.label}</span>
                             </div>
-                          ))}
+                          );
+                        })()}
+                        <ChevronDown size={14} className={`text-gray-500 transition-transform ${showTaskTypePicker ? 'rotate-180' : ''}`} />
+                      </div>
+
+                      {showTaskTypePicker && (
+                        <div>
+                          <div className="fixed inset-0 z-40" onClick={() => setShowTaskTypePicker(false)} />
+                          <div className="absolute bottom-full left-0 mb-2 w-56 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100 py-1">
+                            <div className="px-3 py-2 text-[10px] font-bold text-gray-400 border-b border-gray-100 dark:border-gray-800 mb-1 flex items-center justify-between">
+                              <span>Task Types</span>
+                              <span className="opacity-50 cursor-help" title="ClickUp Task Types help users categorize different kinds of work.">?</span>
+                            </div>
+                            {[
+                              { label: 'Task', icon: CircleIcon, default: true },
+                              { label: 'Milestone', icon: Diamond },
+                              { label: 'Form Response', icon: FileMinus },
+                              { label: 'Meeting Note', icon: MessageNote }
+                            ].map((type) => (
+                              <div
+                                key={type.label}
+                                onClick={() => {
+                                  setNewTask({ ...newTask, taskType: type.label });
+                                  setShowTaskTypePicker(false);
+                                }}
+                                className="flex items-center gap-3 px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/5 cursor-pointer transition-colors group"
+                              >
+                                <type.icon size={14} className={`${(newTask.taskType || 'Task') === type.label ? 'text-purple-500' : 'text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300'}`} />
+                                <span className={`text-xs font-medium flex-1 ${(newTask.taskType || 'Task') === type.label ? 'text-purple-600 dark:text-purple-400' : 'text-gray-700 dark:text-gray-200'}`}>
+                                  {type.label} {type.default && <span className="text-gray-400 font-normal ml-1">(default)</span>}
+                                </span>
+                                {(newTask.taskType || 'Task') === type.label && <Check size={14} className="ml-auto text-purple-500" />}
+                              </div>
+                            ))}
+                          </div>
                         </div>
-                      </>
-                    )}
+                      )}
+                    </div>
                   </div>
-                </div>
 
-                {/* Title Input */}
-                <div className="space-y-4">
-                  <input
-                    type="text"
-                    autoFocus
-                    required
-                    placeholder="Task Name"
-                    className="w-full bg-transparent border-none text-2xl font-bold text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:outline-none"
-                    value={newTask.title}
-                    onChange={e => setNewTask({ ...newTask, title: e.target.value })}
-                  />
+                  {/* Title Input */}
+                  <div className="space-y-4">
+                    <input
+                      type="text"
+                      autoFocus
+                      required
+                      placeholder="Task Name"
+                      className="w-full bg-transparent border-none text-2xl font-bold text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:outline-none"
+                      value={newTask.title}
+                      onChange={e => setNewTask({ ...newTask, title: e.target.value })}
+                    />
 
-                  <div className="flex flex-col gap-3">
-                    {isDescriptionInputOpen || newTask.description ? (
-                      <textarea
-                        className="w-full bg-transparent border border-gray-200 dark:border-gray-700 rounded-lg p-3 text-sm min-h-[100px] focus:outline-none focus:ring-1 focus:ring-purple-500 resize-none text-gray-700 dark:text-gray-300 placeholder:text-gray-400"
-                        placeholder="Add a description..."
-                        value={newTask.description}
-                        onChange={e => setNewTask({ ...newTask, description: e.target.value })}
-                        autoFocus
-                      />
-                    ) : (
+                    <div className="flex flex-col gap-3">
+                      {isDescriptionInputOpen || newTask.description ? (
+                        <textarea
+                          className="w-full bg-transparent border border-gray-200 dark:border-gray-700 rounded-lg p-3 text-sm min-h-[100px] focus:outline-none focus:ring-1 focus:ring-purple-500 resize-none text-gray-700 dark:text-gray-300 placeholder:text-gray-400"
+                          placeholder="Add a description..."
+                          value={newTask.description}
+                          onChange={e => setNewTask({ ...newTask, description: e.target.value })}
+                          autoFocus
+                        />
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => setIsDescriptionInputOpen(true)}
+                          className="flex items-center gap-2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors text-sm font-medium w-fit"
+                        >
+                          <FileText size={18} />
+                          Add description
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Field Buttons */}
+                  <div className="flex flex-wrap items-center gap-2 pt-2 relative z-10">
+                    {/* Status Picker */}
+                    <div className="relative">
                       <button
                         type="button"
-                        onClick={() => setIsDescriptionInputOpen(true)}
-                        className="flex items-center gap-2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors text-sm font-medium w-fit"
+                        onClick={() => setShowStatusPicker(!showStatusPicker)}
+                        className={`px-3 py-1.5 text-white rounded-lg text-[10px] font-black uppercase tracking-wider cursor-pointer border border-transparent hover:brightness-110 transition-all ${STATUS_COLORS[newTask.status || 'TO DO']}`}
                       >
-                        <FileText size={18} />
-                        Add description
+                        {newTask.status || 'TO DO'}
                       </button>
-                    )}
-                  </div>
-                </div>
-
-                {/* Field Buttons */}
-                <div className="flex flex-wrap items-center gap-2 pt-2 relative z-10">
-                  {/* Status Picker */}
-                  <div className="relative">
-                    <button
-                      type="button"
-                      onClick={() => setShowStatusPicker(!showStatusPicker)}
-                      className={`px-3 py-1.5 text-white rounded-lg text-[10px] font-black uppercase tracking-wider cursor-pointer border border-transparent hover:brightness-110 transition-all ${STATUS_COLORS[newTask.status || 'TO DO']}`}
-                    >
-                      {newTask.status || 'TO DO'}
-                    </button>
-                    {showStatusPicker && (
-                      <>
-                        <div className="fixed inset-0 z-40" onClick={() => setShowStatusPicker(false)} />
-                        <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-[#2a2a2b] border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
-                          <div className="p-2 space-y-1">
-                            {Object.keys(STATUS_COLORS).map(status => (
-                              <div
-                                key={status}
-                                onClick={() => {
-                                  setNewTask({ ...newTask, status: status as Status });
-                                  setShowStatusPicker(false);
-                                }}
-                                className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg cursor-pointer transition-colors"
-                              >
-                                <div className={`w-2 h-2 rounded-full ${STATUS_COLORS[status]?.split(' ')[0] || 'bg-gray-400'}`} />
-                                <span className="text-xs font-bold text-gray-700 dark:text-gray-200 uppercase">{status}</span>
-                                {newTask.status === status && <Check size={12} className="ml-auto text-purple-500" />}
-                              </div>
-                            ))}
-
-                            {/* Create New Status Input */}
-                            <div className="border-t border-gray-100 dark:border-gray-700 mt-2 pt-2 px-2 pb-1">
-                              <input
-                                type="text"
-                                placeholder="+ Create new status"
-                                className="w-full bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-gray-700 rounded-md py-1 px-2 text-[10px] text-gray-700 dark:text-gray-200 focus:outline-none focus:border-purple-500/50"
-                                onKeyDown={(e) => {
-                                  if (e.key === 'Enter') {
-                                    const val = (e.target as HTMLInputElement).value.toUpperCase();
-                                    if (val) {
-                                      setNewTask({ ...newTask, status: val });
-                                      setShowStatusPicker(false);
-                                    }
-                                  }
-                                }}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </>
-                    )}
-                  </div>
-
-                  {/* Assignee Picker */}
-                  <div className="relative">
-                    <button
-                      type="button"
-                      onClick={() => setShowAssigneePicker(!showAssigneePicker)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 dark:bg-gray-800/30 hover:bg-gray-200 dark:hover:bg-gray-800/50 border border-gray-200 dark:border-gray-800 rounded-lg text-xs font-bold text-gray-500 dark:text-gray-400 transition-colors"
-                    >
-                      <UserIcon size={14} />
-                      {newTask.assignee ? newTask.assignee.name.split(' ')[0] : 'Assignee'}
-                    </button>
-                    {showAssigneePicker && (
-                      <>
-                        <div className="fixed inset-0 z-40" onClick={() => setShowAssigneePicker(false)} />
-                        <div className="absolute top-full left-0 mt-2 w-64 bg-white dark:bg-[#2a2a2b] border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
-                          <div className="p-3 border-b border-gray-100 dark:border-gray-700">
-                            <input placeholder="Search people..." className="w-full bg-transparent text-xs text-gray-700 dark:text-white placeholder:text-gray-400 outline-none" autoFocus />
-                          </div>
-                          <div className="p-2 space-y-1 max-h-48 overflow-y-auto custom-scrollbar">
-                            {USERS.map(user => (
-                              <div
-                                key={user.id}
-                                onClick={() => {
-                                  setNewTask({ ...newTask, assignee: user });
-                                  setShowAssigneePicker(false);
-                                }}
-                                className="flex items-center gap-3 px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg cursor-pointer transition-colors"
-                              >
-                                <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden text-[10px] font-bold">
-                                  {user.avatar ? <img src={user.avatar} alt={user.name} /> : user.name[0]}
-                                </div>
-                                <span className="text-sm text-gray-700 dark:text-gray-200">{user.name}</span>
-                                {newTask.assignee?.id === user.id && <Check size={14} className="ml-auto text-purple-500" />}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </>
-                    )}
-                  </div>
-
-                  {/* Due Date Picker (Mini Calendar) */}
-                  <div className="relative">
-                    <button
-                      type="button"
-                      onClick={() => setShowDatePicker(!showDatePicker)}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 dark:bg-gray-800/30 hover:bg-gray-200 dark:hover:bg-gray-800/50 border border-gray-200 dark:border-gray-800 rounded-lg text-xs font-bold transition-colors ${newTask.dueDate ? 'text-purple-600 dark:text-purple-400' : 'text-gray-500 dark:text-gray-400'}`}
-                    >
-                      <Calendar size={14} />
-                      {newTask.dueDate ? new Date(newTask.dueDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : 'Due date'}
-                    </button>
-                    {showDatePicker && (
-                      <>
-                        <div className="fixed inset-0 z-40" onClick={() => setShowDatePicker(false)} />
-                        <div className="absolute top-full left-0 mt-2 w-72 bg-white dark:bg-[#2a2a2b] border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100 p-4">
-                          <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-sm font-bold text-gray-800 dark:text-white">
-                              {currentCalendarDate.toLocaleString('default', { month: 'long', year: 'numeric' })}
-                            </h3>
-                            <div className="flex items-center gap-1">
-                              <button onClick={() => setCurrentCalendarDate(new Date(currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1)))} className="p-1 hover:bg-gray-100 dark:hover:bg-white/10 rounded"><ChevronLeft size={16} /></button>
-                              <button onClick={() => setCurrentCalendarDate(new Date(currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1)))} className="p-1 hover:bg-gray-100 dark:hover:bg-white/10 rounded"><ChevronRight size={16} /></button>
-                            </div>
-                          </div>
-                          <div className="grid grid-cols-7 gap-1 text-center mb-2">
-                            {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(d => (
-                              <div key={d} className="text-[10px] font-bold text-gray-400 uppercase">{d}</div>
-                            ))}
-                          </div>
-                          <div className="grid grid-cols-7 gap-1">
-                            {Array.from({ length: getDaysInMonth(currentCalendarDate).firstDay }).map((_, i) => (
-                              <div key={`empty-${i}`} />
-                            ))}
-                            {Array.from({ length: getDaysInMonth(currentCalendarDate).days }).map((_, i) => {
-                              const day = i + 1;
-                              const date = new Date(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth(), day);
-                              const isSelected = newTask.dueDate && new Date(newTask.dueDate).toDateString() === date.toDateString();
-                              const isToday = new Date().toDateString() === date.toDateString();
-
-                              return (
-                                <button
-                                  key={day}
+                      {showStatusPicker && (
+                        <>
+                          <div className="fixed inset-0 z-40" onClick={() => setShowStatusPicker(false)} />
+                          <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-[#2a2a2b] border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
+                            <div className="p-2 space-y-1">
+                              {Object.keys(STATUS_COLORS).map(status => (
+                                <div
+                                  key={status}
                                   onClick={() => {
-                                    setNewTask({ ...newTask, dueDate: date.toISOString() });
-                                    setShowDatePicker(false);
+                                    setNewTask({ ...newTask, status: status as Status });
+                                    setShowStatusPicker(false);
                                   }}
-                                  className={`
+                                  className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg cursor-pointer transition-colors"
+                                >
+                                  <div className={`w-2 h-2 rounded-full ${STATUS_COLORS[status]?.split(' ')[0] || 'bg-gray-400'}`} />
+                                  <span className="text-xs font-bold text-gray-700 dark:text-gray-200 uppercase">{status}</span>
+                                  {newTask.status === status && <Check size={12} className="ml-auto text-purple-500" />}
+                                </div>
+                              ))}
+
+                              {/* Create New Status Input */}
+                              <div className="border-t border-gray-100 dark:border-gray-700 mt-2 pt-2 px-2 pb-1">
+                                <input
+                                  type="text"
+                                  placeholder="+ Create new status"
+                                  className="w-full bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-gray-700 rounded-md py-1 px-2 text-[10px] text-gray-700 dark:text-gray-200 focus:outline-none focus:border-purple-500/50"
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      const val = (e.target as HTMLInputElement).value.toUpperCase();
+                                      if (val) {
+                                        setNewTask({ ...newTask, status: val });
+                                        setShowStatusPicker(false);
+                                      }
+                                    }
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Assignee Picker */}
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={() => setShowAssigneePicker(!showAssigneePicker)}
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 dark:bg-gray-800/30 hover:bg-gray-200 dark:hover:bg-gray-800/50 border border-gray-200 dark:border-gray-800 rounded-lg text-xs font-bold text-gray-500 dark:text-gray-400 transition-colors"
+                      >
+                        <UserIcon size={14} />
+                        {newTask.assignee ? newTask.assignee.name.split(' ')[0] : 'Assignee'}
+                      </button>
+                      {showAssigneePicker && (
+                        <>
+                          <div className="fixed inset-0 z-40" onClick={() => setShowAssigneePicker(false)} />
+                          <div className="absolute top-full left-0 mt-2 w-64 bg-white dark:bg-[#2a2a2b] border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
+                            <div className="p-3 border-b border-gray-100 dark:border-gray-700">
+                              <input placeholder="Search people..." className="w-full bg-transparent text-xs text-gray-700 dark:text-white placeholder:text-gray-400 outline-none" autoFocus />
+                            </div>
+                            <div className="p-2 space-y-1 max-h-48 overflow-y-auto custom-scrollbar">
+                              {USERS.map(user => (
+                                <div
+                                  key={user.id}
+                                  onClick={() => {
+                                    setNewTask({ ...newTask, assignee: user });
+                                    setShowAssigneePicker(false);
+                                  }}
+                                  className="flex items-center gap-3 px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg cursor-pointer transition-colors"
+                                >
+                                  <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden text-[10px] font-bold">
+                                    {user.avatar ? <img src={user.avatar} alt={user.name} /> : user.name[0]}
+                                  </div>
+                                  <span className="text-sm text-gray-700 dark:text-gray-200">{user.name}</span>
+                                  {newTask.assignee?.id === user.id && <Check size={14} className="ml-auto text-purple-500" />}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Due Date Picker (Mini Calendar) */}
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={() => setShowDatePicker(!showDatePicker)}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 dark:bg-gray-800/30 hover:bg-gray-200 dark:hover:bg-gray-800/50 border border-gray-200 dark:border-gray-800 rounded-lg text-xs font-bold transition-colors ${newTask.dueDate ? 'text-purple-600 dark:text-purple-400' : 'text-gray-500 dark:text-gray-400'}`}
+                      >
+                        <Calendar size={14} />
+                        {newTask.dueDate ? new Date(newTask.dueDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : 'Due date'}
+                      </button>
+                      {showDatePicker && (
+                        <>
+                          <div className="fixed inset-0 z-40" onClick={() => setShowDatePicker(false)} />
+                          <div className="absolute top-full left-0 mt-2 w-72 bg-white dark:bg-[#2a2a2b] border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100 p-4">
+                            <div className="flex items-center justify-between mb-4">
+                              <h3 className="text-sm font-bold text-gray-800 dark:text-white">
+                                {currentCalendarDate.toLocaleString('default', { month: 'long', year: 'numeric' })}
+                              </h3>
+                              <div className="flex items-center gap-1">
+                                <button onClick={() => setCurrentCalendarDate(new Date(currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1)))} className="p-1 hover:bg-gray-100 dark:hover:bg-white/10 rounded"><ChevronLeft size={16} /></button>
+                                <button onClick={() => setCurrentCalendarDate(new Date(currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1)))} className="p-1 hover:bg-gray-100 dark:hover:bg-white/10 rounded"><ChevronRight size={16} /></button>
+                              </div>
+                            </div>
+                            <div className="grid grid-cols-7 gap-1 text-center mb-2">
+                              {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(d => (
+                                <div key={d} className="text-[10px] font-bold text-gray-400 uppercase">{d}</div>
+                              ))}
+                            </div>
+                            <div className="grid grid-cols-7 gap-1">
+                              {Array.from({ length: getDaysInMonth(currentCalendarDate).firstDay }).map((_, i) => (
+                                <div key={`empty-${i}`} />
+                              ))}
+                              {Array.from({ length: getDaysInMonth(currentCalendarDate).days }).map((_, i) => {
+                                const day = i + 1;
+                                const date = new Date(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth(), day);
+                                const isSelected = newTask.dueDate && new Date(newTask.dueDate).toDateString() === date.toDateString();
+                                const isToday = new Date().toDateString() === date.toDateString();
+
+                                return (
+                                  <button
+                                    key={day}
+                                    onClick={() => {
+                                      setNewTask({ ...newTask, dueDate: date.toISOString() });
+                                      setShowDatePicker(false);
+                                    }}
+                                    className={`
                                         w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium transition-all
                                         ${isSelected ? 'bg-purple-600 text-white' : 'hover:bg-gray-100 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300'}
                                         ${isToday && !isSelected ? 'text-purple-600 font-bold border border-purple-200 dark:border-purple-900' : ''}
                                       `}
-                                >
-                                  {day}
-                                </button>
-                              );
-                            })}
-                          </div>
-                          <button
-                            onClick={() => {
-                              setNewTask({ ...newTask, dueDate: undefined });
-                              setShowDatePicker(false);
-                            }}
-                            className="w-full mt-3 py-2 text-xs font-bold text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 transition-colors border-t border-gray-100 dark:border-gray-700 pt-2"
-                          >
-                            Clear Date
-                          </button>
-                        </div>
-                      </>
-                    )}
-                  </div>
-
-                  {/* Priority Picker */}
-                  <div className="relative">
-                    <button
-                      type="button"
-                      onClick={() => setShowPriorityPicker(!showPriorityPicker)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 dark:bg-gray-800/30 hover:bg-gray-200 dark:hover:bg-gray-800/50 border border-gray-200 dark:border-gray-800 rounded-lg text-xs font-bold text-gray-500 dark:text-gray-400 transition-colors"
-                    >
-                      <Flag
-                        size={14}
-                        className={(!newTask.priority || newTask.priority === 'Clear') ? '' : (PRIORITY_COLORS[newTask.priority]?.split(' ')[1] || '')}
-                        fill={(!newTask.priority || newTask.priority === 'Clear') ? 'none' : 'currentColor'}
-                      />
-                      {(!newTask.priority || newTask.priority === 'Clear') ? 'Priority' : newTask.priority}
-                    </button>
-                    {showPriorityPicker && (
-                      <>
-                        <div className="fixed inset-0 z-40" onClick={() => setShowPriorityPicker(false)} />
-                        <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-[#2a2a2b] border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
-                          <div className="p-1 space-y-0.5">
-                            {Object.keys(PRIORITY_COLORS).filter(p => p !== 'Clear').map(p => (
-                              <div
-                                key={p}
-                                onClick={() => {
-                                  setNewTask({ ...newTask, priority: p as Priority });
-                                  setShowPriorityPicker(false);
-                                }}
-                                className="flex items-center gap-3 px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg cursor-pointer transition-colors"
-                              >
-                                <Flag
-                                  size={14}
-                                  className={PRIORITY_COLORS[p]?.split(' ')[1] || ''}
-                                  fill="currentColor"
-                                />
-                                <span className="text-xs font-bold text-gray-700 dark:text-gray-200">{p}</span>
-                                {newTask.priority === p && <Check size={12} className="ml-auto text-purple-500" />}
-                              </div>
-                            ))}
-                          </div>
-                          <div className="border-t border-gray-100 dark:border-gray-700 p-1">
-                            <div
+                                  >
+                                    {day}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                            <button
                               onClick={() => {
-                                setNewTask({ ...newTask, priority: 'Clear' });
-                                setShowPriorityPicker(false);
+                                setNewTask({ ...newTask, dueDate: undefined });
+                                setShowDatePicker(false);
                               }}
-                              className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg cursor-pointer transition-colors text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                              className="w-full mt-3 py-2 text-xs font-bold text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 transition-colors border-t border-gray-100 dark:border-gray-700 pt-2"
                             >
-                              <X size={14} />
-                              <span className="text-xs font-bold">Clear</span>
-                            </div>
+                              Clear Date
+                            </button>
                           </div>
-                        </div>
-                      </>
-                    )}
-                  </div>
+                        </>
+                      )}
+                    </div>
 
-                  <div className="relative">
-                    <button
-                      type="button"
-                      onClick={() => setShowTagPicker(!showTagPicker)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 dark:bg-gray-800/30 hover:bg-gray-200 dark:hover:bg-gray-800/50 border border-gray-200 dark:border-gray-800 rounded-lg text-xs font-bold text-gray-500 dark:text-gray-400 transition-colors"
-                    >
-                      <Hash size={14} /> Tags
-                    </button>
-                    {showTagPicker && (
-                      <>
-                        <div className="fixed inset-0 z-40" onClick={() => setShowTagPicker(false)} />
-                        <div className="absolute top-full left-0 mt-2 w-64 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100 flex flex-col">
-                          <div className="p-3 border-b border-gray-100 dark:border-gray-700/50">
-                            <input
-                              placeholder="Search or add tags..."
-                              className="w-full bg-transparent text-xs text-gray-700 dark:text-white placeholder:text-gray-400 outline-none"
-                              autoFocus
-                              value={tagSearchQuery}
-                              onChange={e => setTagSearchQuery(e.target.value)}
-                            />
-                          </div>
-                          <div className="p-2 space-y-1 max-h-48 overflow-y-auto custom-scrollbar">
-                            {MOCK_TAGS.filter(t => t.toLowerCase().includes(tagSearchQuery.toLowerCase())).map(tag => (
-                              <div key={tag} className="flex items-center px-3 py-1.5 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg cursor-pointer transition-colors">
-                                <span className="px-2 py-0.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded text-xs font-bold">{tag}</span>
-                              </div>
-                            ))}
-                            {MOCK_TAGS.length === 0 && <div className="p-2 text-xs text-center text-gray-400">No tags found</div>}
-                          </div>
-                        </div>
-                      </>
-                    )}
-                  </div>
-
-                  <div className="relative">
-                    <button
-                      type="button"
-                      onClick={() => setShowMoreOptionsPicker(!showMoreOptionsPicker)}
-                      className="p-1.5 bg-gray-100 dark:bg-gray-800/30 hover:bg-gray-200 dark:hover:bg-gray-800/50 border border-gray-200 dark:border-gray-800 rounded-lg text-gray-500 dark:text-gray-400"
-                    >
-                      <MoreHorizontal size={14} />
-                    </button>
-                    {showMoreOptionsPicker && (
-                      <>
-                        <div className="fixed inset-0 z-40" onClick={() => setShowMoreOptionsPicker(false)} />
-                        <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100 py-1">
-                          {[
-                            { label: 'Time Estimate', icon: Hourglass },
-                            { label: 'Dependencies', icon: Link2 },
-                            { label: 'Subtasks', icon: SubtaskIcon },
-                            { label: 'Checklist', icon: ListChecks },
-                          ].map(opt => (
-                            <div key={opt.label} className="flex items-center gap-3 px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/5 cursor-pointer transition-colors text-gray-700 dark:text-gray-200">
-                              <opt.icon size={14} className="text-gray-500" />
-                              <span className="text-xs font-medium">{opt.label}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                {/* Custom Fields Section */}
-                <div className="space-y-3 pt-4 relative">
-                  <h4 className="text-[10px] font-black text-gray-400 dark:text-gray-600 uppercase tracking-widest">Custom Fields</h4>
-                  <div className="relative inline-block">
-                    <button
-                      type="button"
-                      onClick={() => setShowCustomFieldPicker(!showCustomFieldPicker)}
-                      className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 dark:bg-gray-800/30 hover:bg-gray-200 dark:hover:bg-gray-800/50 border border-gray-200 dark:border-gray-800 rounded-lg text-xs font-bold text-gray-500 dark:text-gray-400 transition-colors"
-                    >
-                      <Plus size={14} /> Create new field
-                    </button>
-
-                    {showCustomFieldPicker && (
-                      <>
-                        <div className="fixed inset-0 z-40" onClick={() => setShowCustomFieldPicker(false)} />
-                        <div className="absolute top-full left-0 mt-2 w-60 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100 flex flex-col">
-                          <div className="p-3 border-b border-gray-100 dark:border-gray-700/50">
-                            <div className="relative">
-                              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                              <input
-                                placeholder="Search..."
-                                autoFocus
-                                className="w-full bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-gray-700/50 rounded-lg py-1.5 pl-9 pr-3 text-xs text-gray-700 dark:text-gray-200 focus:outline-none focus:border-purple-500/50 transition-colors placeholder:text-gray-400"
-                                value={customFieldSearchQuery}
-                                onChange={e => setCustomFieldSearchQuery(e.target.value)}
-                              />
-                            </div>
-                          </div>
-                          <div className="max-h-[300px] overflow-y-auto custom-scrollbar p-1">
-                            {[
-                              {
-                                category: 'AI Fields', items: [
-                                  { label: 'Summary', icon: Type, color: 'text-purple-500' },
-                                  { label: 'Custom Text', icon: TextCursorInput, color: 'text-purple-500' },
-                                  { label: 'Custom Dropdown', icon: ListOrdered, color: 'text-purple-500' }
-                                ]
-                              },
-                              {
-                                category: 'All', items: [
-                                  { label: 'Dropdown', icon: ListOrdered, color: 'text-green-500' },
-                                  { label: 'Text', icon: Type, color: 'text-blue-500' },
-                                  { label: 'Date', icon: Calendar, color: 'text-orange-500' },
-                                  { label: 'Text area (Long Text)', icon: FileText, color: 'text-blue-500' },
-                                  { label: 'Number', icon: Hash, color: 'text-teal-500' },
-                                  { label: 'Labels', icon: Tag, color: 'text-green-600' },
-                                  { label: 'Checkbox', icon: CheckSquare, color: 'text-pink-500' },
-                                  { label: 'Money', icon: DollarSign, color: 'text-green-500' },
-                                  { label: 'Website', icon: Globe, color: 'text-red-500' },
-                                  { label: 'Formula', icon: Sigma, color: 'text-emerald-500' },
-                                  { label: 'Email', icon: Mail, color: 'text-red-500' },
-                                  { label: 'Phone', icon: Phone, color: 'text-red-400' },
-                                  { label: 'Location', icon: MapPin, color: 'text-red-600' },
-                                  { label: 'Rating', icon: Star, color: 'text-orange-400' },
-                                  { label: 'Signature', icon: PenTool, color: 'text-green-600' }
-                                ]
-                              }
-                            ].map((group, idx) => (
-                              <div key={idx}>
-                                <div className="px-3 py-2 text-[10px] font-bold text-gray-400">{group.category}</div>
-                                {group.items.filter(i => i.label.toLowerCase().includes(customFieldSearchQuery.toLowerCase())).map(item => (
-                                  <div key={item.label} className="flex items-center gap-3 px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg cursor-pointer transition-colors">
-                                    <item.icon size={14} className={item.color} />
-                                    <span className="text-xs font-medium text-gray-700 dark:text-gray-200">{item.label}</span>
-                                  </div>
-                                ))}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                {/* Footer */}
-                <div className="pt-8 flex items-center justify-between border-t border-gray-100 dark:border-gray-800/50 mt-4">
-                  <div>
-                    {/* Templates removed as requested */}
-                  </div>
-
-                  <div className="flex items-center gap-6">
-                    <div className="flex items-center gap-4 text-gray-400 dark:text-gray-500">
-                      <input
-                        type="file"
-                        ref={fileInputRef}
-                        className="hidden"
-                        onChange={handleFileUpload}
-                      />
+                    {/* Priority Picker */}
+                    <div className="relative">
                       <button
                         type="button"
-                        onClick={() => fileInputRef.current?.click()}
-                        className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors tooltip tooltip-top"
-                        title="Attach file"
+                        onClick={() => setShowPriorityPicker(!showPriorityPicker)}
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 dark:bg-gray-800/30 hover:bg-gray-200 dark:hover:bg-gray-800/50 border border-gray-200 dark:border-gray-800 rounded-lg text-xs font-bold text-gray-500 dark:text-gray-400 transition-colors"
                       >
-                        <Paperclip size={18} />
+                        <Flag
+                          size={14}
+                          className={(!newTask.priority || newTask.priority === 'Clear') ? '' : (PRIORITY_COLORS[newTask.priority]?.split(' ')[1] || '')}
+                          fill={(!newTask.priority || newTask.priority === 'Clear') ? 'none' : 'currentColor'}
+                        />
+                        {(!newTask.priority || newTask.priority === 'Clear') ? 'Priority' : newTask.priority}
                       </button>
-                      <div className="flex items-center gap-1 hover:text-gray-600 dark:hover:text-gray-300 cursor-pointer relative">
-                        <div onClick={() => setShowWatcherPicker(!showWatcherPicker)} className="flex items-center gap-1">
-                          <Bell size={18} />
-                          <span className="text-sm font-bold">1</span>
-                        </div>
-
-                        {showWatcherPicker && (
-                          <>
-                            <div className="fixed inset-0 z-40" onClick={() => setShowWatcherPicker(false)} />
-                            <div className="absolute bottom-full right-0 mb-2 w-72 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200">
-                              <div className="p-3 border-b border-gray-100 dark:border-gray-800/50">
-                                <div className="relative">
-                                  <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                                  <input
-                                    placeholder="Search or enter email..."
-                                    className="w-full bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-gray-700/50 rounded-lg py-1.5 pl-9 pr-3 text-xs text-gray-700 dark:text-gray-200 focus:outline-none focus:border-purple-500/50 transition-colors placeholder:text-gray-400"
-                                    autoFocus
-                                    value={watcherSearchQuery}
-                                    onChange={e => setWatcherSearchQuery(e.target.value)}
+                      {showPriorityPicker && (
+                        <>
+                          <div className="fixed inset-0 z-40" onClick={() => setShowPriorityPicker(false)} />
+                          <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-[#2a2a2b] border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
+                            <div className="p-1 space-y-0.5">
+                              {Object.keys(PRIORITY_COLORS).filter(p => p !== 'Clear').map(p => (
+                                <div
+                                  key={p}
+                                  onClick={() => {
+                                    setNewTask({ ...newTask, priority: p as Priority });
+                                    setShowPriorityPicker(false);
+                                  }}
+                                  className="flex items-center gap-3 px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg cursor-pointer transition-colors"
+                                >
+                                  <Flag
+                                    size={14}
+                                    className={PRIORITY_COLORS[p]?.split(' ')[1] || ''}
+                                    fill="currentColor"
                                   />
+                                  <span className="text-xs font-bold text-gray-700 dark:text-gray-200">{p}</span>
+                                  {newTask.priority === p && <Check size={12} className="ml-auto text-purple-500" />}
                                 </div>
-                              </div>
-                              <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
-                                <div className="p-2">
-                                  <div className="px-3 py-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-wider">People</div>
-                                  <div className="space-y-0.5">
-                                    {/* Current User "Me" */}
-                                    <div className="flex items-center gap-3 px-3 py-2 bg-gray-50 dark:bg-white/5 rounded-lg border border-purple-500/30 cursor-pointer group">
-                                      <div className="w-6 h-6 rounded-full bg-[#3d2b27] flex items-center justify-center text-[10px] font-bold text-white border border-green-500 relative">
-                                        A
-                                        <div className="absolute -right-0.5 -bottom-0.5 w-2 h-2 bg-green-500 rounded-full border border-white dark:border-[#1e1e1e]" />
-                                      </div>
-                                      <span className="text-sm font-medium text-gray-700 dark:text-gray-200">Me</span>
-                                    </div>
-                                    {USERS.filter(u => u.id !== '1' && (u.name.toLowerCase().includes(watcherSearchQuery.toLowerCase()) || u.email.toLowerCase().includes(watcherSearchQuery.toLowerCase()))).map(user => (
-                                      <div key={user.id} className="flex items-center gap-3 px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg cursor-pointer transition-colors group">
-                                        <div className="w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-[10px] font-bold text-gray-500 relative overflow-hidden">
-                                          {user.avatar ? <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" /> : user.name[0]}
-                                          <div className="absolute -right-0.5 -bottom-0.5 w-2 h-2 bg-gray-300 rounded-full border border-white dark:border-[#1e1e1e]" />
-                                        </div>
-                                        <span className="text-sm font-medium text-gray-700 dark:text-gray-200 truncate flex-1">{user.email || user.name}</span>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                                <div className="p-2 border-t border-gray-100 dark:border-gray-800/50">
-                                  <div className="px-3 py-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Teams</div>
-                                  <div className="space-y-0.5">
-                                    {TEAMS.filter(t => t.name.toLowerCase().includes(watcherSearchQuery.toLowerCase())).map(team => (
-                                      <div key={team.id} className="flex items-center gap-3 px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg cursor-pointer transition-colors group">
-                                        <div className={`w-6 h-6 rounded-lg ${team.color} flex items-center justify-center text-[10px] font-bold text-white relative`}>
-                                          {team.name[0]}
-                                          <div className="absolute -right-1 -bottom-1 bg-white dark:bg-[#1e1e1e] rounded-full p-0.5 shadow-sm">
-                                            <Users size={10} className="text-gray-400" />
-                                          </div>
-                                        </div>
-                                        <span className="text-sm font-medium text-gray-700 dark:text-gray-200 flex-1">{team.name}</span>
-                                        <span className="text-[10px] font-bold text-gray-400">{team.membersCount} people</span>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
+                              ))}
+                            </div>
+                            <div className="border-t border-gray-100 dark:border-gray-700 p-1">
+                              <div
+                                onClick={() => {
+                                  setNewTask({ ...newTask, priority: 'Clear' });
+                                  setShowPriorityPicker(false);
+                                }}
+                                className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg cursor-pointer transition-colors text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                              >
+                                <X size={14} />
+                                <span className="text-xs font-bold">Clear</span>
                               </div>
                             </div>
-                          </>
-                        )}
-                      </div>
+                          </div>
+                        </>
+                      )}
                     </div>
 
-                    <div className="flex items-center relative">
+                    <div className="relative">
                       <button
-                        type="submit"
-                        className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-black text-sm rounded-l-xl transition-colors shadow-lg shadow-purple-500/10"
+                        type="button"
+                        onClick={() => setShowTagPicker(!showTagPicker)}
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 dark:bg-gray-800/30 hover:bg-gray-200 dark:hover:bg-gray-800/50 border border-gray-200 dark:border-gray-800 rounded-lg text-xs font-bold text-gray-500 dark:text-gray-400 transition-colors"
                       >
-                        Create Task
+                        <Hash size={14} /> Tags
                       </button>
-                      <div className="w-px h-10 bg-purple-500/50" />
-                      <div className="relative">
+                      {showTagPicker && (
+                        <>
+                          <div className="fixed inset-0 z-40" onClick={() => setShowTagPicker(false)} />
+                          <div className="absolute top-full left-0 mt-2 w-64 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100 flex flex-col">
+                            <div className="p-3 border-b border-gray-100 dark:border-gray-700/50">
+                              <input
+                                placeholder="Search or add tags..."
+                                className="w-full bg-transparent text-xs text-gray-700 dark:text-white placeholder:text-gray-400 outline-none"
+                                autoFocus
+                                value={tagSearchQuery}
+                                onChange={e => setTagSearchQuery(e.target.value)}
+                              />
+                            </div>
+                            <div className="p-2 space-y-1 max-h-48 overflow-y-auto custom-scrollbar">
+                              {MOCK_TAGS.filter(t => t.toLowerCase().includes(tagSearchQuery.toLowerCase())).map(tag => (
+                                <div key={tag} className="flex items-center px-3 py-1.5 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg cursor-pointer transition-colors">
+                                  <span className="px-2 py-0.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded text-xs font-bold">{tag}</span>
+                                </div>
+                              ))}
+                              {MOCK_TAGS.length === 0 && <div className="p-2 text-xs text-center text-gray-400">No tags found</div>}
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={() => setShowMoreOptionsPicker(!showMoreOptionsPicker)}
+                        className="p-1.5 bg-gray-100 dark:bg-gray-800/30 hover:bg-gray-200 dark:hover:bg-gray-800/50 border border-gray-200 dark:border-gray-800 rounded-lg text-gray-500 dark:text-gray-400"
+                      >
+                        <MoreHorizontal size={14} />
+                      </button>
+                      {showMoreOptionsPicker && (
+                        <>
+                          <div className="fixed inset-0 z-40" onClick={() => setShowMoreOptionsPicker(false)} />
+                          <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100 py-1">
+                            {[
+                              { label: 'Time Estimate', icon: Hourglass },
+                              { label: 'Dependencies', icon: Link2 },
+                              { label: 'Subtasks', icon: SubtaskIcon },
+                              { label: 'Checklist', icon: ListChecks },
+                            ].map(opt => (
+                              <div key={opt.label} className="flex items-center gap-3 px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/5 cursor-pointer transition-colors text-gray-700 dark:text-gray-200">
+                                <opt.icon size={14} className="text-gray-500" />
+                                <span className="text-xs font-medium">{opt.label}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Custom Fields Section */}
+                  <div className="space-y-3 pt-4 relative">
+                    <h4 className="text-[10px] font-black text-gray-400 dark:text-gray-600 uppercase tracking-widest">Custom Fields</h4>
+                    <div className="relative inline-block">
+                      <button
+                        type="button"
+                        onClick={() => setShowCustomFieldPicker(!showCustomFieldPicker)}
+                        className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 dark:bg-gray-800/30 hover:bg-gray-200 dark:hover:bg-gray-800/50 border border-gray-200 dark:border-gray-800 rounded-lg text-xs font-bold text-gray-500 dark:text-gray-400 transition-colors"
+                      >
+                        <Plus size={14} /> Create new field
+                      </button>
+
+                      {showCustomFieldPicker && (
+                        <>
+                          <div className="fixed inset-0 z-40" onClick={() => setShowCustomFieldPicker(false)} />
+                          <div className="absolute bottom-full left-0 mb-2 w-60 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100 flex flex-col">
+                            <div className="p-3 border-b border-gray-100 dark:border-gray-700/50">
+                              <div className="relative">
+                                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                                <input
+                                  placeholder="Search..."
+                                  autoFocus
+                                  className="w-full bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-gray-700/50 rounded-lg py-1.5 pl-9 pr-3 text-xs text-gray-700 dark:text-gray-200 focus:outline-none focus:border-purple-500/50 transition-colors placeholder:text-gray-400"
+                                  value={customFieldSearchQuery}
+                                  onChange={e => setCustomFieldSearchQuery(e.target.value)}
+                                />
+                              </div>
+                            </div>
+                            <div className="max-h-[300px] overflow-y-auto custom-scrollbar p-1">
+                              {[
+                                {
+                                  category: 'AI Fields', items: [
+                                    { label: 'Summary', icon: Type, color: 'text-purple-500' },
+                                    { label: 'Custom Text', icon: TextCursorInput, color: 'text-purple-500' },
+                                    { label: 'Custom Dropdown', icon: ListOrdered, color: 'text-purple-500' }
+                                  ]
+                                },
+                                {
+                                  category: 'All', items: [
+                                    { label: 'Dropdown', icon: ListOrdered, color: 'text-green-500' },
+                                    { label: 'Text', icon: Type, color: 'text-blue-500' },
+                                    { label: 'Date', icon: Calendar, color: 'text-orange-500' },
+                                    { label: 'Text area (Long Text)', icon: FileText, color: 'text-blue-500' },
+                                    { label: 'Number', icon: Hash, color: 'text-teal-500' },
+                                    { label: 'Labels', icon: Tag, color: 'text-green-600' },
+                                    { label: 'Checkbox', icon: CheckSquare, color: 'text-pink-500' },
+                                    { label: 'Money', icon: DollarSign, color: 'text-green-500' },
+                                    { label: 'Website', icon: Globe, color: 'text-red-500' },
+                                    { label: 'Formula', icon: Sigma, color: 'text-emerald-500' },
+                                    { label: 'Email', icon: Mail, color: 'text-red-500' },
+                                    { label: 'Phone', icon: Phone, color: 'text-red-400' },
+                                    { label: 'Location', icon: MapPin, color: 'text-red-600' },
+                                    { label: 'Rating', icon: Star, color: 'text-orange-400' },
+                                    { label: 'Signature', icon: PenTool, color: 'text-green-600' }
+                                  ]
+                                }
+                              ].map((group, idx) => (
+                                <div key={idx}>
+                                  <div className="px-3 py-2 text-[10px] font-bold text-gray-400">{group.category}</div>
+                                  {group.items.filter(i => i.label.toLowerCase().includes(customFieldSearchQuery.toLowerCase())).map(item => (
+                                    <div key={item.label} className="flex items-center gap-3 px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg cursor-pointer transition-colors">
+                                      <item.icon size={14} className={item.color} />
+                                      <span className="text-xs font-medium text-gray-700 dark:text-gray-200">{item.label}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Footer */}
+                  <div className="pt-8 flex items-center justify-between border-t border-gray-100 dark:border-gray-800/50 mt-4">
+                    <div>
+                      {/* Templates removed as requested */}
+                    </div>
+
+                    <div className="flex items-center gap-6">
+                      <div className="flex items-center gap-4 text-gray-400 dark:text-gray-500">
+                        <input
+                          type="file"
+                          ref={fileInputRef}
+                          className="hidden"
+                          onChange={handleFileUpload}
+                        />
                         <button
                           type="button"
-                          onClick={() => setShowCreateOptions(!showCreateOptions)}
-                          className="px-2 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-r-xl transition-colors shadow-lg shadow-purple-500/10"
+                          onClick={() => fileInputRef.current?.click()}
+                          className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors tooltip tooltip-top"
+                          title="Attach file"
                         >
-                          <ChevronDown size={14} />
+                          <Paperclip size={18} />
                         </button>
-                        {showCreateOptions && (
-                          <>
-                            <div className="fixed inset-0 z-40" onClick={() => setShowCreateOptions(false)} />
-                            <div className="absolute bottom-full right-0 mb-2 w-56 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100 py-1">
-                              <button onClick={() => { handleCreateTask(undefined, 'open'); setShowCreateOptions(false); }} className="w-full text-left px-4 py-2.5 text-xs font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors flex items-center justify-between">
-                                Create and open <ChevronRight size={12} />
-                              </button>
-                              <button onClick={() => { handleCreateTask(undefined, 'start-another'); setShowCreateOptions(false); }} className="w-full text-left px-4 py-2.5 text-xs font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors flex items-center justify-between">
-                                Create and start another <ChevronRight size={12} />
-                              </button>
-                              <button onClick={() => { handleCreateTask(undefined, 'duplicate'); setShowCreateOptions(false); }} className="w-full text-left px-4 py-2.5 text-xs font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors flex items-center justify-between">
-                                Create and duplicate <ChevronRight size={12} />
-                              </button>
-                            </div>
-                          </>
-                        )}
+                        <div className="flex items-center gap-1 hover:text-gray-600 dark:hover:text-gray-300 cursor-pointer relative">
+                          <div onClick={() => setShowWatcherPicker(!showWatcherPicker)} className="flex items-center gap-1">
+                            <Bell size={18} />
+                            <span className="text-sm font-bold">1</span>
+                          </div>
+
+                          {showWatcherPicker && (
+                            <>
+                              <div className="fixed inset-0 z-40" onClick={() => setShowWatcherPicker(false)} />
+                              <div className="absolute bottom-full right-0 mb-2 w-72 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200">
+                                <div className="p-3 border-b border-gray-100 dark:border-gray-800/50">
+                                  <div className="relative">
+                                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                                    <input
+                                      placeholder="Search or enter email..."
+                                      className="w-full bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-gray-700/50 rounded-lg py-1.5 pl-9 pr-3 text-xs text-gray-700 dark:text-gray-200 focus:outline-none focus:border-purple-500/50 transition-colors placeholder:text-gray-400"
+                                      autoFocus
+                                      value={watcherSearchQuery}
+                                      onChange={e => setWatcherSearchQuery(e.target.value)}
+                                    />
+                                  </div>
+                                </div>
+                                <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
+                                  <div className="p-2">
+                                    <div className="px-3 py-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-wider">People</div>
+                                    <div className="space-y-0.5">
+                                      {/* Current User "Me" */}
+                                      <div className="flex items-center gap-3 px-3 py-2 bg-gray-50 dark:bg-white/5 rounded-lg border border-purple-500/30 cursor-pointer group">
+                                        <div className="w-6 h-6 rounded-full bg-[#3d2b27] flex items-center justify-center text-[10px] font-bold text-white border border-green-500 relative">
+                                          A
+                                          <div className="absolute -right-0.5 -bottom-0.5 w-2 h-2 bg-green-500 rounded-full border border-white dark:border-[#1e1e1e]" />
+                                        </div>
+                                        <span className="text-sm font-medium text-gray-700 dark:text-gray-200">Me</span>
+                                      </div>
+                                      {USERS.filter(u => u.id !== '1' && (u.name.toLowerCase().includes(watcherSearchQuery.toLowerCase()) || u.email.toLowerCase().includes(watcherSearchQuery.toLowerCase()))).map(user => (
+                                        <div key={user.id} className="flex items-center gap-3 px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg cursor-pointer transition-colors group">
+                                          <div className="w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-[10px] font-bold text-gray-500 relative overflow-hidden">
+                                            {user.avatar ? <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" /> : user.name[0]}
+                                            <div className="absolute -right-0.5 -bottom-0.5 w-2 h-2 bg-gray-300 rounded-full border border-white dark:border-[#1e1e1e]" />
+                                          </div>
+                                          <span className="text-sm font-medium text-gray-700 dark:text-gray-200 truncate flex-1">{user.email || user.name}</span>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                  <div className="p-2 border-t border-gray-100 dark:border-gray-800/50">
+                                    <div className="px-3 py-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Teams</div>
+                                    <div className="space-y-0.5">
+                                      {TEAMS.filter(t => t.name.toLowerCase().includes(watcherSearchQuery.toLowerCase())).map(team => (
+                                        <div key={team.id} className="flex items-center gap-3 px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg cursor-pointer transition-colors group">
+                                          <div className={`w-6 h-6 rounded-lg ${team.color} flex items-center justify-center text-[10px] font-bold text-white relative`}>
+                                            {team.name[0]}
+                                            <div className="absolute -right-1 -bottom-1 bg-white dark:bg-[#1e1e1e] rounded-full p-0.5 shadow-sm">
+                                              <Users size={10} className="text-gray-400" />
+                                            </div>
+                                          </div>
+                                          <span className="text-sm font-medium text-gray-700 dark:text-gray-200 flex-1">{team.name}</span>
+                                          <span className="text-[10px] font-bold text-gray-400">{team.membersCount} people</span>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center relative">
+                        <button
+                          type="submit"
+                          className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-black text-sm rounded-l-xl transition-colors shadow-lg shadow-purple-500/10"
+                        >
+                          Create Task
+                        </button>
+                        <div className="w-px h-10 bg-purple-500/50" />
+                        <div className="relative">
+                          <button
+                            type="button"
+                            onClick={() => setShowCreateOptions(!showCreateOptions)}
+                            className="px-2 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-r-xl transition-colors shadow-lg shadow-purple-500/10"
+                          >
+                            <ChevronDown size={14} />
+                          </button>
+                          {showCreateOptions && (
+                            <>
+                              <div className="fixed inset-0 z-40" onClick={() => setShowCreateOptions(false)} />
+                              <div className="absolute bottom-full right-0 mb-2 w-56 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100 py-1">
+                                <button onClick={() => { handleCreateTask(undefined, 'open'); setShowCreateOptions(false); }} className="w-full text-left px-4 py-2.5 text-xs font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors flex items-center justify-between">
+                                  Create and open <ChevronRight size={12} />
+                                </button>
+                                <button onClick={() => { handleCreateTask(undefined, 'start-another'); setShowCreateOptions(false); }} className="w-full text-left px-4 py-2.5 text-xs font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors flex items-center justify-between">
+                                  Create and start another <ChevronRight size={12} />
+                                </button>
+                                <button onClick={() => { handleCreateTask(undefined, 'duplicate'); setShowCreateOptions(false); }} className="w-full text-left px-4 py-2.5 text-xs font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors flex items-center justify-between">
+                                  Create and duplicate <ChevronRight size={12} />
+                                </button>
+                              </div>
+                            </>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
+                </form>
+              ) : modalActiveTab === 'Doc' ? (
+                <div className="flex flex-col h-full animate-in fade-in slide-in-from-right-4 duration-300">
+                  <div className="p-8 space-y-8 flex-1">
+                    {/* Doc Folder Selector */}
+                    <div className="flex items-center gap-2 px-2.5 py-1 text-xs font-bold text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 cursor-pointer w-fit rounded-lg border border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-white/5 transition-all">
+                      <FolderOpen size={14} />
+                      <span>My Docs</span>
+                      <ChevronDown size={14} />
+                    </div>
+
+                    {/* Doc Title */}
+                    <div className="space-y-4">
+                      <input
+                        type="text"
+                        autoFocus
+                        placeholder="Name this Doc..."
+                        className="w-full bg-transparent border-none text-2xl font-bold text-gray-900 dark:text-white placeholder:text-gray-300 dark:placeholder:text-gray-700 focus:outline-none"
+                        value={docNewTitle}
+                        onChange={e => setDocNewTitle(e.target.value)}
+                      />
+
+                      <div className="flex items-center gap-3 text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400 cursor-text transition-colors group">
+                        <FileText size={20} className="group-hover:scale-110 transition-transform" />
+                        <span className="text-lg font-medium">Start writing</span>
+                      </div>
+                    </div>
+
+                    {/* Add New Options */}
+                    <div className="space-y-4 pt-4">
+                      <h4 className="text-[10px] font-black text-gray-400 dark:text-gray-600 uppercase tracking-widest">Add new</h4>
+                      <div className="space-y-2">
+                        {[
+                          { label: 'Table', icon: TableIcon },
+                          { label: 'Column', icon: Layout },
+                          { label: 'ClickUp List', icon: List }
+                        ].map(item => (
+                          <div key={item.label} className="flex items-center gap-3 px-3 py-2 text-gray-400 dark:text-gray-600 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl cursor-pointer transition-all group">
+                            <item.icon size={18} className="group-hover:scale-110 transition-transform" />
+                            <span className="text-sm font-bold">{item.label}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Doc Footer */}
+                  <div className="p-6 border-t border-gray-100 dark:border-gray-800/50 flex items-center justify-between mt-auto">
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setIsDocPrivate(!isDocPrivate)}
+                        className={`w-10 h-5 rounded-full relative transition-colors duration-200 focus:outline-none ${isDocPrivate ? 'bg-purple-600' : 'bg-gray-200 dark:bg-gray-700'}`}
+                      >
+                        <div className={`absolute top-1 left-1 w-3 h-3 bg-white rounded-full transition-transform duration-200 ${isDocPrivate ? 'translate-x-5' : ''}`} />
+                      </button>
+                      <span className="text-xs font-bold text-gray-500 dark:text-gray-400">Private</span>
+                    </div>
+
+                    <button
+                      onClick={() => setIsModalOpen(false)}
+                      className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-black text-sm rounded-xl transition-all shadow-lg shadow-purple-500/20 active:scale-95"
+                    >
+                      Create Doc
+                    </button>
+                  </div>
                 </div>
-              </form>
+              ) : (
+                <div className="p-20 text-center space-y-4">
+                  <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-2xl flex items-center justify-center mx-auto text-gray-400">
+                    <Plus size={32} />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-700 dark:text-gray-300">{modalActiveTab} creation is coming soon!</h3>
+                </div>
+              )
+              }
             </div>
           </div>
-        )
-      }
-
+        )}
       {/* Settings Modal */}
-      {
-        isSettingsOpen && (
-          <div className="fixed inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200">
-            <div className="bg-white dark:bg-black w-full max-w-4xl max-h-[90vh] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl overflow-hidden flex flex-col animate-in zoom-in duration-300">
+      {isSettingsOpen && (
+        <div>
+          <div className="fixed inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200" onClick={() => setIsSettingsOpen(false)} />
+          <div className="fixed inset-0 z-[101] flex items-center justify-center p-4 pointer-events-none">
+            <div className="bg-white dark:bg-black w-full max-w-4xl max-h-[90vh] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl overflow-hidden flex flex-col animate-in zoom-in duration-300 pointer-events-auto">
               <div className="p-6 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between bg-gray-50 dark:bg-black">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white uppercase tracking-tighter">My Settings</h2>
                 <button onClick={() => setIsSettingsOpen(false)} className="p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-lg text-gray-400 transition-colors">
@@ -1842,14 +1924,15 @@ const App: React.FC = () => {
               </div>
             </div>
           </div>
-        )
-      }
+        </div>
+      )}
 
       {/* Create Space Modal */}
-      {
-        isSpaceModalOpen && (
-          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-white dark:bg-[#121213] w-full max-w-2xl rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl overflow-hidden animate-in zoom-in duration-300 flex flex-col">
+      {isSpaceModalOpen && (
+        <div>
+          <div className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setIsSpaceModalOpen(false)} />
+          <div className="fixed inset-0 z-[201] flex items-center justify-center p-4 pointer-events-none">
+            <div className="bg-white dark:bg-[#121213] w-full max-w-2xl rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl overflow-hidden animate-in zoom-in duration-300 flex flex-col pointer-events-auto">
               {/* Modal Header */}
               <div className="px-8 pt-6 pb-2 flex items-center justify-between">
                 <div className="space-y-1">
@@ -1923,8 +2006,8 @@ const App: React.FC = () => {
               </div>
             </div>
           </div>
-        )
-      }
+        </div>
+      )}
       {/* Task Detail Modal */}
       {
         selectedTask && (
@@ -2085,58 +2168,57 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-            </div>
 
-            {/* Right Activity Panel */}
-            <div className="w-[380px] border-l border-gray-200 dark:border-gray-800 flex flex-col bg-gray-50 dark:bg-[#0f0f13] overflow-hidden">
-              <div className="h-14 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-6 shrink-0">
-                <h3 className="text-lg font-black text-gray-900 dark:text-white uppercase tracking-tighter">Activity</h3>
-                <div className="flex items-center gap-3 text-gray-400 dark:text-gray-600">
-                  <Search size={16} className="hover:text-gray-700 dark:hover:text-white cursor-pointer" />
-                  <Filter size={16} className="hover:text-gray-700 dark:hover:text-white cursor-pointer" />
-                  <div className="flex items-center gap-1 hover:text-gray-700 dark:hover:text-white cursor-pointer">
-                    <MessageSquare size={16} />
-                    <span className="text-xs font-bold">1</span>
-                  </div>
-                  <p>Gustavo created this task</p>
-                </div>
-                <span className="text-gray-700">11:43 am</span>
-              </div>
-              <div className="flex items-start gap-4 text-[10px] font-bold text-gray-600">
-                <div className="w-2 h-2 rounded-full bg-purple-500 mt-1" />
-                <div className="flex-1">
-                  <p>Gustavo added tag client</p>
-                </div>
-                <span className="text-gray-700">11:43 am</span>
-              </div>
-            </div>
-
-            <div className="p-6 border-t border-gray-800 bg-[#16161e]/50">
-              <div className="bg-[#0f0f13] border border-gray-800 rounded-2xl p-4 flex flex-col gap-4">
-                <textarea
-                  className="w-full bg-transparent border-none focus:outline-none resize-none text-sm font-medium text-white placeholder:text-gray-700 min-h-[60px]"
-                  placeholder="Write a comment..."
-                />
-                <div className="flex items-center justify-between pt-2 border-t border-gray-900">
-                  <div className="flex items-center gap-1.5 px-2 py-1 bg-gray-900 rounded-lg text-[10px] font-black text-gray-500 uppercase tracking-widest cursor-pointer hover:bg-gray-800">
-                    Comment
-                    <ChevronDown size={12} />
-                  </div>
-                  <div className="flex items-center gap-3 text-gray-700">
-                    <MoreHorizontal size={16} className="hover:text-gray-400 cursor-pointer" />
-                    <div className="flex items-center gap-1 hover:text-gray-400 cursor-pointer">
+              {/* Right Activity Panel */}
+              <div className="w-[380px] border-l border-gray-200 dark:border-gray-800 flex flex-col bg-gray-50 dark:bg-[#0f0f13] overflow-hidden">
+                <div className="h-14 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-6 shrink-0">
+                  <h3 className="text-lg font-black text-gray-900 dark:text-white uppercase tracking-tighter">Activity</h3>
+                  <div className="flex items-center gap-3 text-gray-400 dark:text-gray-600">
+                    <Search size={16} className="hover:text-gray-700 dark:hover:text-white cursor-pointer" />
+                    <Filter size={16} className="hover:text-gray-700 dark:hover:text-white cursor-pointer" />
+                    <div className="flex items-center gap-1 hover:text-gray-700 dark:hover:text-white cursor-pointer">
                       <MessageSquare size={16} />
-                      <span className="text-xs">1</span>
+                      <span className="text-xs font-bold">1</span>
                     </div>
-                    <button className="p-1.5 bg-gray-800 rounded-lg hover:text-white transition-colors">
-                      <ChevronRight size={14} />
-                    </button>
+                    <p>Gustavo created this task</p>
+                  </div>
+                  <span className="text-gray-700">11:43 am</span>
+                </div>
+                <div className="flex items-start gap-4 text-[10px] font-bold text-gray-600">
+                  <div className="w-2 h-2 rounded-full bg-purple-500 mt-1" />
+                  <div className="flex-1">
+                    <p>Gustavo added tag client</p>
+                  </div>
+                  <span className="text-gray-700">11:43 am</span>
+                </div>
+              </div>
+
+              <div className="p-6 border-t border-gray-800 bg-[#16161e]/50">
+                <div className="bg-[#0f0f13] border border-gray-800 rounded-2xl p-4 flex flex-col gap-4">
+                  <textarea
+                    className="w-full bg-transparent border-none focus:outline-none resize-none text-sm font-medium text-white placeholder:text-gray-700 min-h-[60px]"
+                    placeholder="Write a comment..."
+                  />
+                  <div className="flex items-center justify-between pt-2 border-t border-gray-900">
+                    <div className="flex items-center gap-1.5 px-2 py-1 bg-gray-900 rounded-lg text-[10px] font-black text-gray-500 uppercase tracking-widest cursor-pointer hover:bg-gray-800">
+                      Comment
+                      <ChevronDown size={12} />
+                    </div>
+                    <div className="flex items-center gap-3 text-gray-700">
+                      <MoreHorizontal size={16} className="hover:text-gray-400 cursor-pointer" />
+                      <div className="flex items-center gap-1 hover:text-gray-400 cursor-pointer">
+                        <MessageSquare size={16} />
+                        <span className="text-xs">1</span>
+                      </div>
+                      <button className="p-1.5 bg-gray-800 rounded-lg hover:text-white transition-colors">
+                        <ChevronRight size={14} />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-
         )
       }
 
