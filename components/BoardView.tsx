@@ -11,9 +11,12 @@ interface BoardViewProps {
 }
 
 const BoardView: React.FC<BoardViewProps> = ({ tasks, isDarkMode, onTaskClick }) => {
-   const statuses: Status[] = ['To Do', 'In Progress', 'Review', 'Complete'];
+   const statuses = Array.from(new Set([
+      ...Object.keys(STATUS_COLORS),
+      ...tasks.map(t => t.status)
+   ]));
 
-   const getTasksByStatus = (status: Status) => tasks.filter(t => t.status === status);
+   const getTasksByStatus = (status: string) => tasks.filter(t => t.status === status);
 
    return (
       <div className="h-full bg-white dark:bg-black p-6 flex gap-6 overflow-x-auto">

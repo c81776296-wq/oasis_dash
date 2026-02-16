@@ -145,7 +145,7 @@ const Overview: React.FC<OverviewProps> = ({ tasks }) => {
                         <tbody className="divide-y divide-gray-100 dark:divide-white/5">
                             {Array.from(new Set(tasks.flatMap(t => t.tags))).map(listName => {
                                 const listTasks = tasks.filter(t => t.tags.includes(listName));
-                                const doneCount = listTasks.filter(t => t.status === 'Complete').length;
+                                const doneCount = listTasks.filter(t => t.status === 'COMPLETED').length;
                                 const totalCount = listTasks.length;
 
                                 return (

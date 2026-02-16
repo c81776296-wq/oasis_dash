@@ -64,11 +64,10 @@ interface ListViewProps {
 
 const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, onAddTaskInline, onTaskClick, isDarkMode }) => {
   const [expandedStatuses, setExpandedStatuses] = useState<Record<string, boolean>>({
-    'To Do': true,
-    'In Progress': true,
-    'Review': true,
-    'Complete': true,
-    'Blocked': true
+    'TO DO': true,
+    'COMPLETED': true,
+    'CANCELLED': true,
+    'BLOCKED': true
   });
   const [isCreatingStatus, setIsCreatingStatus] = useState(false);
   const [newStatusName, setNewStatusName] = useState('');
@@ -330,7 +329,7 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
 
         {groupKeys.map(status => {
           const statusTasks = groupedTasks[status] || [];
-          if (statusTasks.length === 0 && status !== 'To Do') return null;
+          if (statusTasks.length === 0 && status !== 'TO DO') return null;
           if (hiddenStatuses.includes(status)) return null; // Skip hidden statuses
 
           return (
@@ -342,7 +341,7 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                 {expandedStatuses[status] ? <ChevronDown size={14} className="text-gray-500 dark:text-gray-400" /> : <ChevronRight size={14} className="text-gray-500 dark:text-gray-400" />}
                 <div className="flex items-center gap-2 bg-gray-100 dark:bg-[#2a2a35] px-2 py-0.5 rounded-md border border-gray-200 dark:border-white/5">
                   <div className={`w-2 h-2 rounded-full ${currentGroupType === 'Status'
-                    ? (status === 'In Progress' ? 'bg-blue-500' : status === 'To Do' ? 'bg-gray-500' : STATUS_COLORS[status as Status] || 'bg-gray-400')
+                    ? (STATUS_COLORS[status] || 'bg-gray-400')
                     : currentGroupType === 'Priority'
                       ? (PRIORITY_COLORS[status as any] || 'bg-gray-400')
                       : 'bg-purple-500'
@@ -366,10 +365,7 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                     />
                   ) : (
                     <span className="text-[10px] font-bold text-gray-700 dark:text-gray-200 uppercase tracking-wide">
-                      {currentGroupType === 'Status'
-                        ? (status === 'In Progress' ? 'CLIENTS' : status === 'To Do' ? 'TO DO' : status)
-                        : status
-                      }
+                      {status}
                     </span>
                   )}
                 </div>
@@ -553,7 +549,7 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                                     }}
                                     className="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
                                   >
-                                    {task.status === 'Complete' ? (
+                                    {task.status === 'COMPLETED' ? (
                                       <CheckCircle2 size={14} className="text-green-500" />
                                     ) : (
                                       <Circle size={14} className="text-gray-400" />
@@ -568,7 +564,7 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                                 </div>
 
                                 <Activity size={14} className="text-gray-400" />
-                                <span className={`text-sm ${task.status === 'Complete' ? 'line-through text-gray-400' : 'text-gray-900 dark:text-gray-200'}`}>
+                                <span className={`text-sm ${task.status === 'COMPLETED' ? 'line-through text-gray-400' : 'text-gray-900 dark:text-gray-200'}`}>
                                   {task.title}
                                 </span>
                                 {task.tags.length > 0 && (

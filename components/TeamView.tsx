@@ -13,7 +13,7 @@ interface TeamViewProps {
 const TeamView: React.FC<TeamViewProps> = ({ tasks, isDarkMode }) => {
   const teamStats = USERS.map(user => {
     const userTasks = tasks.filter(t => t.assignee.id === user.id);
-    const completed = userTasks.filter(t => t.status === 'Complete').length;
+    const completed = userTasks.filter(t => t.status === 'COMPLETED').length;
     return {
       name: user.name,
       tasks: userTasks.length,

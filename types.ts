@@ -1,5 +1,5 @@
 
-export type Status = 'To Do' | 'In Progress' | 'Review' | 'Complete' | 'Blocked';
+export type Status = 'TO DO' | 'COMPLETED' | 'CANCELLED' | 'BLOCKED' | string;
 export type Priority = 'Urgent' | 'High' | 'Normal' | 'Low' | 'Clear';
 
 export interface User {
@@ -8,6 +8,13 @@ export interface User {
   avatar: string;
   role: string;
   email: string;
+}
+
+export interface Team {
+  id: string;
+  name: string;
+  color: string;
+  membersCount: number;
 }
 
 export interface Task {
@@ -20,6 +27,7 @@ export interface Task {
   dueDate: string;
   startDate: string;
   tags: string[];
+  taskType?: string;
 }
 
 export type ViewType = 'Overview' | 'List' | 'Board' | 'Calendar' | 'Gantt' | 'Team';
