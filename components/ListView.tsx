@@ -171,6 +171,7 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
 
     if (!acc[key]) acc[key] = [];
     acc[key].push(task);
+    return acc;
   }, {} as Record<string, Task[]>);
 
   const onDragEnd = (result: DropResult) => {
