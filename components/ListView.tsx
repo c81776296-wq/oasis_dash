@@ -89,6 +89,12 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
   const [activeAssigneePicker, setActiveAssigneePicker] = useState<string | null>(null);
   const [assigneeSearchQuery, setAssigneeSearchQuery] = useState('');
 
+  const [activeDatePicker, setActiveDatePicker] = useState<string | null>(null);
+  const [dateShowingMonth, setDateShowingMonth] = useState(new Date());
+  const [isRecurringMode, setIsRecurringMode] = useState(false);
+
+  const [activePriorityPicker, setActivePriorityPicker] = useState<string | null>(null);
+
   const [isGroupPopoverOpen, setIsGroupPopoverOpen] = useState(false);
   const [isGroupTypeDropdownOpen, setIsGroupTypeDropdownOpen] = useState(false);
   const [isSortDirDropdownOpen, setIsSortDirDropdownOpen] = useState(false);
@@ -237,7 +243,7 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
           <div className="relative">
             <button
               onClick={() => setIsGroupPopoverOpen(!isGroupPopoverOpen)}
-              className="flex items-center gap-1.5 px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 rounded-lg text-xs font-bold shadow-sm hover:brightness-110 transition-all"
+              className="flex items-center gap-1.5 px-3 py-1 bg-gray-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 rounded-lg text-xs font-bold shadow-sm hover:brightness-110 transition-all"
             >
               <LayoutList size={14} />
               Group: {currentGroupType}
@@ -257,7 +263,7 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                           setIsGroupTypeDropdownOpen(!isGroupTypeDropdownOpen);
                           setIsSortDirDropdownOpen(false);
                         }}
-                        className={`w-full flex items-center justify-between px-3 py-2 bg-[#121213] border border-gray-800 rounded-lg text-xs text-gray-200 hover:border-purple-500/50 transition-all ${isGroupTypeDropdownOpen ? 'ring-1 ring-purple-500/50 border-purple-500/50' : ''}`}
+                        className={`w-full flex items-center justify-between px-3 py-2 bg-[#121213] border border-gray-800 rounded-lg text-xs text-gray-200 hover:border-black/50 transition-all ${isGroupTypeDropdownOpen ? 'ring-1 ring-black/50 border-black/50' : ''}`}
                       >
                         <div className="flex items-center gap-2">
                           <CircleDot size={14} className="text-gray-500" />
@@ -275,7 +281,7 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                                 setCurrentGroupType(type);
                                 setIsGroupTypeDropdownOpen(false);
                               }}
-                              className="w-full flex items-center justify-between px-3 py-2 text-xs text-gray-300 hover:bg-purple-600 hover:text-white transition-colors text-left"
+                              className="w-full flex items-center justify-between px-3 py-2 text-xs text-gray-300 hover:bg-black hover:text-white transition-colors text-left"
                             >
                               <div className="flex items-center gap-2">
                                 {type === 'Status' && <CircleDot size={14} />}
@@ -300,7 +306,7 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                           setIsSortDirDropdownOpen(!isSortDirDropdownOpen);
                           setIsGroupTypeDropdownOpen(false);
                         }}
-                        className={`w-full flex items-center justify-between px-3 py-2 bg-[#121213] border border-gray-800 rounded-lg text-xs text-gray-200 hover:border-purple-500/50 transition-all ${isSortDirDropdownOpen ? 'ring-1 ring-purple-500/50 border-purple-500/50' : ''}`}
+                        className={`w-full flex items-center justify-between px-3 py-2 bg-[#121213] border border-gray-800 rounded-lg text-xs text-gray-200 hover:border-black/50 transition-all ${isSortDirDropdownOpen ? 'ring-1 ring-black/50 border-black/50' : ''}`}
                       >
                         <span>{currentSortDir}</span>
                         <ChevronDown size={14} className={`text-gray-500 transition-transform ${isSortDirDropdownOpen ? 'rotate-180' : ''}`} />
@@ -315,7 +321,7 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                                 setCurrentSortDir(dir as any);
                                 setIsSortDirDropdownOpen(false);
                               }}
-                              className="w-full flex items-center justify-between px-3 py-2 text-xs text-gray-300 hover:bg-purple-600 hover:text-white transition-colors text-left"
+                              className="w-full flex items-center justify-between px-3 py-2 text-xs text-gray-300 hover:bg-black hover:text-white transition-colors text-left"
                             >
                               <span>{dir}</span>
                               {currentSortDir === dir && <Check size={14} className="text-purple-400" />}
@@ -344,7 +350,7 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
           </div>
           <button
             onClick={() => setIsSubtasksOpen(!isSubtasksOpen)}
-            className={`flex items-center gap-1.5 px-3 py-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg text-xs font-medium transition-colors relative ${isSubtasksOpen ? 'bg-gray-100 dark:bg-gray-800 text-purple-600' : 'text-gray-500'}`}
+            className={`flex items-center gap-1.5 px-3 py-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg text-xs font-medium transition-colors relative ${isSubtasksOpen ? 'bg-gray-100 dark:bg-gray-800 text-black' : 'text-gray-500'}`}
           >
             <Activity size={14} />
             Subtasks
@@ -359,7 +365,7 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                       setSubtasksView(option);
                       setIsSubtasksOpen(false);
                     }}
-                    className="w-full flex items-center justify-between px-3 py-2 text-xs text-gray-200 hover:bg-purple-600 transition-colors"
+                    className="w-full flex items-center justify-between px-3 py-2 text-xs text-gray-200 hover:bg-black transition-colors"
                   >
                     <div className="flex items-center gap-2">
                       <span>{option}</span>
@@ -405,7 +411,7 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                                 ? (STATUS_COLORS[status] || 'bg-gray-400')
                                 : currentGroupType === 'Priority'
                                   ? (PRIORITY_COLORS[status as any] || 'bg-gray-400')
-                                  : 'bg-purple-500'
+                                  : 'bg-black'
                                 }`} />
                               {renamingGroup === status ? (
                                 <input
@@ -421,7 +427,7 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                                     }
                                   }}
                                   onClick={(e) => e.stopPropagation()}
-                                  className="text-[10px] font-bold text-gray-700 dark:text-gray-200 uppercase tracking-wide bg-transparent border-none outline-none focus:ring-1 focus:ring-purple-500 rounded px-1"
+                                  className="text-[10px] font-bold text-gray-700 dark:text-gray-200 uppercase tracking-wide bg-transparent border-none outline-none focus:ring-1 focus:ring-black rounded px-1"
                                   autoFocus
                                 />
                               ) : (
@@ -530,7 +536,7 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                           </div>
 
                           {expandedStatuses[status] && (
-                            <div className="overflow-hidden">
+                            <div className="overflow-visible">
                               <table className="w-full text-left border-collapse">
                                 <thead className="text-[10px] font-bold text-gray-500 uppercase tracking-tight border-b border-gray-200 dark:border-gray-900/50">
                                   <tr>
@@ -542,7 +548,7 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                                       className="px-4 py-2 w-10 flex justify-center items-center cursor-pointer hover:bg-gray-100 dark:hover:bg-white/5 transition-colors group"
                                       onClick={() => setIsCreateFieldOpen(true)}
                                     >
-                                      <Plus size={16} className="text-gray-400 dark:text-gray-500 group-hover:text-purple-500 transition-colors" />
+                                      <Plus size={16} className="text-gray-400 dark:text-gray-500 group-hover:text-black transition-colors" />
                                     </th>
                                   </tr>
                                 </thead>
@@ -591,7 +597,7 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                                               <div className="flex items-center gap-2">
                                                 <div className="w-4 h-0.5 bg-gray-300 dark:bg-gray-500/30 mx-1" />
                                                 {task.tags.map(tag => (
-                                                  <span key={tag} className="px-2 py-0.5 bg-purple-100 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 rounded text-[9px] font-bold uppercase border border-purple-200 dark:border-purple-500/20">{tag}</span>
+                                                  <span key={tag} className="px-2 py-0.5 bg-gray-100 dark:bg-black/10 text-black dark:text-purple-400 rounded text-[9px] font-bold uppercase border border-gray-200 dark:border-black/20">{tag}</span>
                                                 ))}
                                               </div>
                                             )}
@@ -624,13 +630,13 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                                                       setActiveAssigneePicker(activeAssigneePicker === task.id ? null : task.id);
                                                       setAssigneeSearchQuery('');
                                                     }}
-                                                    className="w-6 h-6 rounded-full border border-dashed border-gray-300 dark:border-gray-700 flex items-center justify-center hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/10 transition-all overflow-hidden"
+                                                    className="w-6 h-6 rounded-full border border-dashed border-gray-300 dark:border-gray-700 flex items-center justify-center hover:border-black hover:bg-gray-50 dark:hover:bg-purple-900/10 transition-all overflow-hidden"
                                                   >
                                                     {task.assignee ? (
                                                       task.assignee.avatar ? (
                                                         <img src={task.assignee.avatar} className="w-full h-full object-cover" />
                                                       ) : (
-                                                        <div className="w-full h-full flex items-center justify-center bg-purple-100 dark:bg-purple-900/30 text-[10px] font-bold text-purple-600 dark:text-purple-400">
+                                                        <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-purple-900/30 text-[10px] font-bold text-black dark:text-purple-400">
                                                           {task.assignee.name.split(' ').map(n => n[0]).join('')}
                                                         </div>
                                                       )
@@ -654,7 +660,7 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                                                               value={assigneeSearchQuery}
                                                               onChange={(e) => setAssigneeSearchQuery(e.target.value)}
                                                               onClick={(e) => e.stopPropagation()}
-                                                              className="w-full bg-gray-50 dark:bg-[#121213] border border-gray-200 dark:border-gray-800 rounded-lg py-1.5 pl-9 pr-3 text-xs focus:outline-none focus:border-purple-500 dark:text-white transition-all"
+                                                              className="w-full bg-gray-50 dark:bg-[#121213] border border-gray-200 dark:border-gray-800 rounded-lg py-1.5 pl-9 pr-3 text-xs focus:outline-none focus:border-black dark:text-white transition-all"
                                                             />
                                                           </div>
                                                         </div>
@@ -674,14 +680,14 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                                                                 }}
                                                                 className="w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors group text-left"
                                                               >
-                                                                <div className="w-7 h-7 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-[10px] font-bold text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-800">
+                                                                <div className="w-7 h-7 rounded-full bg-gray-100 dark:bg-purple-900/30 flex items-center justify-center text-[10px] font-bold text-black dark:text-purple-400 border border-gray-200 dark:border-purple-800">
                                                                   {user.name.split(' ').map(n => n[0]).join('')}
                                                                 </div>
                                                                 <div className="flex flex-col truncate">
-                                                                  <span className="text-xs font-semibold text-gray-700 dark:text-gray-200 group-hover:text-purple-600 dark:group-hover:text-purple-400">{user.id === '1' ? 'Me' : user.name}</span>
+                                                                  <span className="text-xs font-semibold text-gray-700 dark:text-gray-200 group-hover:text-black dark:group-hover:text-purple-400">{user.id === '1' ? 'Me' : user.name}</span>
                                                                   {user.email && <span className="text-[10px] text-gray-400 truncate tracking-normal font-medium">{user.email}</span>}
                                                                 </div>
-                                                                {task.assignee?.id === user.id && <Check size={14} className="ml-auto text-purple-600" />}
+                                                                {task.assignee?.id === user.id && <Check size={14} className="ml-auto text-black" />}
                                                               </button>
                                                             ))}
                                                           </div>
@@ -702,7 +708,7 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                                                                   <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-white border border-black/10" style={{ backgroundColor: team.color }}>
                                                                     {team.name.split(' ').map(n => n[0]).join('')}
                                                                   </div>
-                                                                  <span className="text-xs font-semibold text-gray-700 dark:text-gray-200 group-hover:text-purple-600 dark:group-hover:text-purple-400">{team.name}</span>
+                                                                  <span className="text-xs font-semibold text-gray-700 dark:text-gray-200 group-hover:text-black dark:group-hover:text-purple-400">{team.name}</span>
                                                                 </div>
                                                                 <span className="text-[10px] text-gray-400 font-medium">{team.membersCount} people</span>
                                                               </button>
@@ -714,12 +720,12 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                                                         <div className="p-2 border-t border-gray-100 dark:border-gray-800">
                                                           <button
                                                             onClick={(e) => e.stopPropagation()}
-                                                            className="w-full flex items-center gap-3 px-2 py-2 hover:bg-purple-50 dark:hover:bg-purple-900/10 rounded-lg group transition-colors"
+                                                            className="w-full flex items-center gap-3 px-2 py-2 hover:bg-gray-50 dark:hover:bg-purple-900/10 rounded-lg group transition-colors"
                                                           >
-                                                            <div className="w-7 h-7 rounded-full bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center text-purple-600">
+                                                            <div className="w-7 h-7 rounded-full bg-gray-50 dark:bg-purple-900/20 flex items-center justify-center text-black">
                                                               <UserPlus size={14} />
                                                             </div>
-                                                            <span className="text-xs font-bold text-gray-600 dark:text-gray-300 group-hover:text-purple-600 dark:group-hover:text-purple-400">Invite people via email</span>
+                                                            <span className="text-xs font-bold text-gray-600 dark:text-gray-300 group-hover:text-black dark:group-hover:text-purple-400">Invite people via email</span>
                                                           </button>
                                                         </div>
                                                       </div>
@@ -727,8 +733,257 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                                                   )}
                                                 </div>
                                               )}
-                                              {col === 'Due date' && <Calendar size={14} className="text-gray-400 dark:text-gray-700" />}
-                                              {col === 'Priority' && <Flag size={14} className="text-gray-400 dark:text-gray-700" />}
+                                              {col === 'Due date' && (
+                                                <div className="relative">
+                                                  <button
+                                                    onClick={(e) => {
+                                                      e.stopPropagation();
+                                                      setActiveDatePicker(activeDatePicker === task.id ? null : task.id);
+                                                      setDateShowingMonth(task.dueDate ? new Date(task.dueDate) : new Date());
+                                                      setIsRecurringMode(false);
+                                                    }}
+                                                    className={`flex items-center gap-1.5 px-2 py-1 rounded transition-all hover:bg-gray-100 dark:hover:bg-white/5 border border-transparent hover:border-gray-200 dark:hover:border-white/10 ${task.dueDate ? 'text-black dark:text-purple-400 font-bold' : 'text-gray-400 dark:text-gray-700'}`}
+                                                  >
+                                                    <Calendar size={14} className={task.dueDate ? 'text-black' : ''} />
+                                                    {task.dueDate && <span className="text-[10px] whitespace-nowrap">{new Date(task.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>}
+                                                  </button>
+
+                                                  {activeDatePicker === task.id && (
+                                                    <>
+                                                      <div className="fixed inset-0 z-[150]" onClick={(e) => { e.stopPropagation(); setActiveDatePicker(null); }} />
+                                                      <div className="absolute top-full right-0 mt-2 w-[600px] bg-white dark:bg-[#1e1e1f] border border-gray-200 dark:border-gray-800 rounded-xl shadow-2xl z-[160] overflow-hidden flex animate-in fade-in zoom-in duration-200">
+                                                        {/* Left Sidebar */}
+                                                        <div className="w-[240px] border-r border-gray-100 dark:border-gray-800 flex flex-col bg-gray-50/50 dark:bg-[#1a1a1b]/50">
+                                                          {/* Date Inputs */}
+                                                          <div className="p-4 grid grid-cols-2 gap-2">
+                                                            <div className="flex flex-col gap-1">
+                                                              <div className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-[#121213] rounded-lg border border-gray-200 dark:border-gray-800">
+                                                                <Calendar size={12} className="text-gray-400" />
+                                                                <span className="text-[10px] text-gray-500 font-medium whitespace-nowrap">Start date</span>
+                                                              </div>
+                                                            </div>
+                                                            <div className="flex flex-col gap-1">
+                                                              <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-purple-900/10 rounded-lg border border-gray-200 dark:border-purple-900/30">
+                                                                <Calendar size={12} className="text-black" />
+                                                                <span className="text-[10px] text-black font-bold whitespace-nowrap">Due date</span>
+                                                              </div>
+                                                            </div>
+                                                          </div>
+
+                                                          {!isRecurringMode ? (
+                                                            /* Standard View */
+                                                            <div className="flex-1 overflow-y-auto px-2 pb-2">
+                                                              {[
+                                                                { label: 'Today', sub: 'Wed', date: new Date() },
+                                                                { label: 'Later', sub: '7:47 pm', date: new Date() },
+                                                                { label: 'Tomorrow', sub: 'Thu', date: new Date(new Date().setDate(new Date().getDate() + 1)) },
+                                                                { label: 'This weekend', sub: 'Sat', date: new Date(new Date().setDate(new Date().getDate() + (6 - new Date().getDay()))) },
+                                                                { label: 'Next week', sub: 'Mon', date: new Date(new Date().setDate(new Date().getDate() + 7)) },
+                                                                { label: 'Next weekend', sub: '28 Feb', date: new Date(2026, 1, 28) },
+                                                                { label: '2 weeks', sub: '4 Mar', date: new Date(new Date().setDate(new Date().getDate() + 14)) },
+                                                                { label: '4 weeks', sub: '18 Mar', date: new Date(new Date().setDate(new Date().getDate() + 28)) },
+                                                              ].map(shortcut => (
+                                                                <button
+                                                                  key={shortcut.label}
+                                                                  onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    onUpdateTask(task.id, { dueDate: shortcut.date.toISOString() });
+                                                                    setActiveDatePicker(null);
+                                                                  }}
+                                                                  className="w-full flex items-center justify-between px-3 py-2 hover:bg-white dark:hover:bg-white/5 hover:shadow-sm rounded-lg transition-all group"
+                                                                >
+                                                                  <span className="text-xs font-medium text-gray-600 dark:text-gray-300 group-hover:text-black">{shortcut.label}</span>
+                                                                  <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">{shortcut.sub}</span>
+                                                                </button>
+                                                              ))}
+                                                            </div>
+                                                          ) : (
+                                                            /* Recurring View */
+                                                            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                                                              <div className="flex items-center justify-between">
+                                                                <span className="text-xs font-bold text-gray-700 dark:text-gray-200">Recurring</span>
+                                                                <div className="flex gap-2">
+                                                                  <History size={14} className="text-gray-400 cursor-pointer hover:text-black transition-colors" />
+                                                                  <MoreHorizontal size={14} className="text-gray-400 cursor-pointer hover:text-black transition-colors" />
+                                                                </div>
+                                                              </div>
+
+                                                              <div className="space-y-3">
+                                                                <div className="relative group">
+                                                                  <select className="w-full bg-white dark:bg-[#121213] border border-gray-200 dark:border-gray-800 rounded-lg py-2 px-3 text-xs font-medium focus:ring-1 focus:ring-black appearance-none cursor-pointer pr-8">
+                                                                    <option>Weekly</option>
+                                                                    <option>Monthly</option>
+                                                                    <option>Daily</option>
+                                                                    <option>Yearly</option>
+                                                                  </select>
+                                                                  <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-black pointer-events-none" />
+                                                                </div>
+
+                                                                <div className="relative group">
+                                                                  <select className="w-full bg-white dark:bg-[#121213] border border-gray-200 dark:border-gray-800 rounded-lg py-2 px-3 text-xs font-medium focus:ring-1 focus:ring-black appearance-none cursor-pointer pr-8">
+                                                                    <option>On status change: Cancelled</option>
+                                                                    <option>On completion</option>
+                                                                    <option>On schedule</option>
+                                                                  </select>
+                                                                  <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-black pointer-events-none" />
+                                                                </div>
+                                                              </div>
+
+                                                              <div className="space-y-2">
+                                                                <label className="flex items-center gap-2 cursor-pointer group">
+                                                                  <input type="checkbox" className="w-3.5 h-3.5 rounded border-gray-300 dark:border-gray-700 text-black focus:ring-black" />
+                                                                  <span className="text-xs text-gray-600 dark:text-gray-300 group-hover:text-gray-900 transition-colors">Create new task</span>
+                                                                </label>
+                                                                <label className="flex items-center gap-2 cursor-pointer group">
+                                                                  <input type="checkbox" defaultChecked className="w-3.5 h-3.5 rounded border-gray-300 dark:border-gray-700 text-black focus:ring-black" />
+                                                                  <span className="text-xs text-gray-600 dark:text-gray-300 group-hover:text-gray-900 transition-colors">Recur forever</span>
+                                                                </label>
+                                                                <label className="flex items-center gap-2 cursor-pointer group">
+                                                                  <input type="checkbox" className="w-3.5 h-3.5 rounded border-gray-300 dark:border-gray-700 text-black focus:ring-black" />
+                                                                  <span className="text-xs text-gray-600 dark:text-gray-300 group-hover:text-gray-900 transition-colors">Update status to:</span>
+                                                                </label>
+                                                              </div>
+
+                                                              <div className="relative group">
+                                                                <div className="w-full bg-gray-50 dark:bg-[#121213] border border-gray-100 dark:border-gray-800 rounded-lg py-2 px-3 flex items-center justify-between cursor-pointer group-hover:border-black/30 transition-all">
+                                                                  <div className="flex items-center gap-2">
+                                                                    <div className="w-2 h-2 rounded-[2px] bg-gray-400" />
+                                                                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">TO DO</span>
+                                                                  </div>
+                                                                  <ChevronDown size={14} className="text-gray-400" />
+                                                                </div>
+                                                              </div>
+
+                                                              <div className="flex items-center justify-end gap-3 pt-2">
+                                                                <button onClick={() => setIsRecurringMode(false)} className="text-xs font-bold text-gray-500 hover:text-gray-700">Cancel</button>
+                                                                <button onClick={() => setIsRecurringMode(false)} className="px-5 py-1.5 bg-primary hover:bg-primary-hover active:bg-primary-hover rounded-lg text-xs font-bold text-white shadow-lg shadow-black/20 active:scale-95 transition-all">Save</button>
+                                                              </div>
+                                                            </div>
+                                                          )}
+
+                                                          {/* Set Recurring Button */}
+                                                          {!isRecurringMode && (
+                                                            <div className="p-2 border-t border-gray-100 dark:border-gray-800 mt-auto">
+                                                              <button
+                                                                onClick={(e) => { e.stopPropagation(); setIsRecurringMode(true); }}
+                                                                className="w-full flex items-center justify-between px-3 py-2.5 hover:bg-gray-50 dark:hover:bg-purple-900/10 rounded-xl group transition-all"
+                                                              >
+                                                                <span className="text-xs font-bold text-gray-600 dark:text-gray-300 group-hover:text-black">Set Recurring</span>
+                                                                <ChevronRight size={14} className="text-gray-400 group-hover:text-black" />
+                                                              </button>
+                                                            </div>
+                                                          )}
+                                                        </div>
+
+                                                        {/* Right Calendar */}
+                                                        <div className="flex-1 p-6 flex flex-col items-center">
+                                                          {/* Calendar Header */}
+                                                          <div className="w-full flex items-center justify-between mb-8">
+                                                            <span className="text-sm font-bold text-gray-800 dark:text-gray-100 uppercase tracking-widest">
+                                                              {dateShowingMonth.toLocaleString('en-US', { month: 'long', year: 'numeric' })}
+                                                            </span>
+                                                            <div className="flex items-center gap-1">
+                                                              <span className="text-xs font-bold text-gray-400 hover:text-black cursor-pointer mr-2 uppercase tracking-wide" onClick={(e) => { e.stopPropagation(); setDateShowingMonth(new Date()); }}>Today</span>
+                                                              <button
+                                                                onClick={(e) => {
+                                                                  e.stopPropagation();
+                                                                  const newDate = new Date(dateShowingMonth);
+                                                                  newDate.setMonth(newDate.getMonth() - 1);
+                                                                  setDateShowingMonth(newDate);
+                                                                }}
+                                                                className="p-1 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg text-gray-400 hover:text-black"
+                                                              >
+                                                                <ChevronUp size={14} />
+                                                              </button>
+                                                              <button
+                                                                onClick={(e) => {
+                                                                  e.stopPropagation();
+                                                                  const newDate = new Date(dateShowingMonth);
+                                                                  newDate.setMonth(newDate.getMonth() + 1);
+                                                                  setDateShowingMonth(newDate);
+                                                                }}
+                                                                className="p-1 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg text-gray-400 hover:text-black"
+                                                              >
+                                                                <ChevronDown size={14} />
+                                                              </button>
+                                                            </div>
+                                                          </div>
+
+                                                          {/* Calendar Grid */}
+                                                          <div className="w-full grid grid-cols-7 gap-y-2 text-center">
+                                                            {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
+                                                              <div key={day} className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">{day}</div>
+                                                            ))}
+                                                            {Array.from({ length: 42 }).map((_, i) => {
+                                                              const firstDay = new Date(dateShowingMonth.getFullYear(), dateShowingMonth.getMonth(), 1).getDay();
+                                                              const d = new Date(dateShowingMonth.getFullYear(), dateShowingMonth.getMonth(), i - firstDay + 1);
+                                                              const isCurrentMonth = d.getMonth() === dateShowingMonth.getMonth();
+                                                              const isToday = d.toDateString() === new Date().toDateString();
+                                                              const isSelected = task.dueDate && new Date(task.dueDate).toDateString() === d.toDateString();
+
+                                                              return (
+                                                                <button
+                                                                  key={i}
+                                                                  disabled={!isCurrentMonth}
+                                                                  onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    onUpdateTask(task.id, { dueDate: d.toISOString() });
+                                                                    setActiveDatePicker(null);
+                                                                  }}
+                                                                  className={`
+                                                                     relative h-8 w-8 mx-auto flex items-center justify-center rounded-lg text-xs transition-all font-medium
+                                                                     ${!isCurrentMonth ? 'text-gray-200 dark:text-gray-800' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-purple-900/40 hover:text-black'}
+                                                                     ${isToday ? 'after:content-[""] after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:bg-black after:rounded-full' : ''}
+                                                                     ${isSelected ? 'bg-red-500 !text-white shadow-lg shadow-red-500/30 font-bold scale-110' : ''}
+                                                                   `}
+                                                                >
+                                                                  {d.getDate()}
+                                                                </button>
+                                                              );
+                                                            })}
+                                                          </div>
+                                                        </div>
+                                                      </div>
+                                                    </>
+                                                  )}
+                                                </div>
+                                              )}
+                                              {col === 'Priority' && (
+                                                <div className="relative">
+                                                  <button
+                                                    onClick={(e) => {
+                                                      e.stopPropagation();
+                                                      setActivePriorityPicker(activePriorityPicker === task.id ? null : task.id);
+                                                    }}
+                                                    className={`flex items-center justify-center w-6 h-6 rounded hover:bg-gray-100 dark:hover:bg-white/5 transition-colors ${task.priority ? PRIORITY_COLORS[task.priority].split(' ')[1] : 'text-gray-300'}`}
+                                                  >
+                                                    <Flag size={14} fill={task.priority && task.priority !== 'Clear' ? 'currentColor' : 'none'} />
+                                                  </button>
+
+                                                  {activePriorityPicker === task.id && (
+                                                    <>
+                                                      <div className="fixed inset-0 z-[150]" onClick={(e) => { e.stopPropagation(); setActivePriorityPicker(null); }} />
+                                                      <div className="absolute top-full right-0 mt-1 w-40 bg-white dark:bg-[#1e1e1f] border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl z-[160] overflow-hidden animate-in fade-in zoom-in duration-200 p-1">
+                                                        {['Urgent', 'High', 'Normal', 'Low', 'Clear'].map((prio) => (
+                                                          <button
+                                                            key={prio}
+                                                            onClick={(e) => {
+                                                              e.stopPropagation();
+                                                              onUpdateTask(task.id, { priority: prio as any });
+                                                              setActivePriorityPicker(null);
+                                                            }}
+                                                            className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-gray-100 dark:hover:bg-white/5 rounded-md transition-colors group text-left"
+                                                          >
+                                                            <Flag size={12} className={PRIORITY_COLORS[prio].split(' ')[1]} fill={prio !== 'Clear' ? 'currentColor' : 'none'} />
+                                                            <span className={`text-xs font-medium ${prio === 'Clear' ? 'text-gray-400' : 'text-gray-700 dark:text-gray-300'}`}>{prio}</span>
+                                                            {task.priority === prio && <Check size={12} className="ml-auto text-black" />}
+                                                          </button>
+                                                        ))}
+                                                      </div>
+                                                    </>
+                                                  )}
+                                                </div>
+                                              )}
                                               {!['Assignee', 'Due date', 'Priority'].includes(col) && <span className="text-[10px] text-gray-400 dark:text-gray-700 font-bold uppercase tracking-widest">-</span>}
                                             </div>
                                           </td>
@@ -742,7 +997,7 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                                   ))}
                                   {/* IMAGEM 4: Inline task creation row */}
                                   {inlineAddTaskGroup === status && (
-                                    <tr className="bg-white dark:bg-black border-2 border-purple-500 dark:border-purple-600/50 z-50 shadow-lg">
+                                    <tr className="bg-white dark:bg-black border-2 border-black dark:border-black/50 z-50 shadow-lg">
                                       <td colSpan={5} className="px-4 py-1.5 focus-within:ring-0">
                                         <div className="flex items-center gap-3">
                                           <Activity size={14} className="text-gray-400" />
@@ -784,7 +1039,7 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                                                   setInlineAddTaskGroup(null);
                                                   setNewTaskTitle('');
                                                 }}
-                                                className="px-4 py-1 bg-purple-600 hover:bg-purple-700 text-white text-[10px] font-bold rounded shadow-sm shadow-purple-500/20 flex items-center gap-1"
+                                                className="px-4 py-1 bg-primary hover:bg-primary-hover active:bg-primary-hover text-white text-[10px] font-bold rounded shadow-sm shadow-black/20 flex items-center gap-1"
                                               >
                                                 Save <span className="opacity-70">↵</span>
                                               </button>
@@ -820,7 +1075,7 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
         <div className="mt-8 group/newstatus max-w-7xl" >
           {
             isCreatingStatus ? (
-              <div className="flex items-center gap-3 p-3 bg-white dark:bg-[#1c1c1e] border-2 border-purple-500/50 rounded-xl shadow-lg w-full max-w-xl animate-in fade-in slide-in-from-bottom-2 duration-200" >
+              <div className="flex items-center gap-3 p-3 bg-white dark:bg-[#1c1c1e] border-2 border-black/50 rounded-xl shadow-lg w-full max-w-xl animate-in fade-in slide-in-from-bottom-2 duration-200" >
                 <div className="w-4 h-4 rounded-md bg-[#2fb380] shadow-sm shadow-[#2fb380]/20" />
                 <input
                   autoFocus
@@ -900,7 +1155,7 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
               <input
                 type="text"
                 placeholder="Search for new or existing fields"
-                className="w-full bg-gray-50 dark:bg-[#1a1a1b] border border-gray-200 dark:border-[#2a2a2b] rounded-lg py-2 pl-10 pr-4 text-xs text-gray-900 dark:text-white focus:outline-none focus:border-purple-500 transition-all placeholder:text-gray-500 dark:placeholder:text-gray-600"
+                className="w-full bg-gray-50 dark:bg-[#1a1a1b] border border-gray-200 dark:border-[#2a2a2b] rounded-lg py-2 pl-10 pr-4 text-xs text-gray-900 dark:text-white focus:outline-none focus:border-black transition-all placeholder:text-gray-500 dark:placeholder:text-gray-600"
               />
             </div>
           </div >
@@ -918,9 +1173,9 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
               <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">AI fields</h3>
               {
                 [
-                  { label: 'Summary', icon: <Zap size={14} className="text-purple-500" /> },
-                  { label: 'Custom Text', icon: <Type size={14} className="text-purple-500" /> },
-                  { label: 'Custom Dropdown', icon: <LayoutList size={14} className="text-purple-500" /> },
+                  { label: 'Summary', icon: <Zap size={14} className="text-black" /> },
+                  { label: 'Custom Text', icon: <Type size={14} className="text-black" /> },
+                  { label: 'Custom Dropdown', icon: <LayoutList size={14} className="text-black" /> },
                 ].map(field => (
                   <button
                     key={field.label}
@@ -949,7 +1204,7 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                   { label: 'Money', icon: <DollarSign size={14} className="text-emerald-500" /> },
                   { label: 'Website', icon: <Globe size={14} className="text-rose-500" /> },
                   { label: 'Formula', icon: <FunctionSquare size={14} className="text-emerald-600" /> },
-                  { label: 'Files', icon: <Files size={14} className="text-purple-500" /> },
+                  { label: 'Files', icon: <Files size={14} className="text-black" /> },
                   { label: 'Relationship', icon: <ArrowRightLeft size={14} className="text-blue-500" /> },
                   { label: 'People', icon: <People size={14} className="text-rose-500" /> },
                   { label: 'Progress (Auto)', icon: <BarChart3 size={14} className="text-orange-500" /> },
@@ -1003,7 +1258,7 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                 value={fieldsSearchQuery}
                 onChange={(e) => setFieldsSearchQuery(e.target.value)}
                 placeholder="Search for new or existing fields"
-                className="w-full bg-gray-50 dark:bg-[#1a1a1b] border border-gray-200 dark:border-[#2a2a2b] rounded-lg py-2 pl-10 pr-4 text-xs text-gray-900 dark:text-white focus:outline-none focus:border-purple-500 transition-all placeholder:text-gray-500 dark:placeholder:text-gray-600"
+                className="w-full bg-gray-50 dark:bg-[#1a1a1b] border border-gray-200 dark:border-[#2a2a2b] rounded-lg py-2 pl-10 pr-4 text-xs text-gray-900 dark:text-white focus:outline-none focus:border-black transition-all placeholder:text-gray-500 dark:placeholder:text-gray-600"
               />
             </div>
           </div >
@@ -1044,13 +1299,13 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                             setActiveColumns(prev => [...prev, field.label]);
                           }
                         }}
-                        className={`w-7 h-4 rounded-full p-0.5 transition-colors ${activeColumns.includes(field.label) ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-700'}`}
+                        className={`w-7 h-4 rounded-full p-0.5 transition-colors ${activeColumns.includes(field.label) ? 'bg-black' : 'bg-gray-300 dark:bg-gray-700'}`}
                       >
                         <div className={`w-3 h-3 bg-white rounded-full transition-transform ${activeColumns.includes(field.label) ? 'translate-x-3' : 'translate-x-0'}`} />
                       </button>
                     )}
                     {field.fixed && (
-                      <button className="w-7 h-4 rounded-full p-0.5 bg-gray-200 dark:bg-purple-600/50 cursor-not-allowed">
+                      <button className="w-7 h-4 rounded-full p-0.5 bg-gray-200 dark:bg-black/50 cursor-not-allowed">
                         <div className="w-3 h-3 bg-white/50 rounded-full translate-x-3" />
                       </button>
                     )}
@@ -1083,7 +1338,7 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                           setActiveColumns(prev => [...prev, field.label]);
                         }
                       }}
-                      className={`w-7 h-4 rounded-full p-0.5 transition-colors ${activeColumns.includes(field.label) ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-700'}`}
+                      className={`w-7 h-4 rounded-full p-0.5 transition-colors ${activeColumns.includes(field.label) ? 'bg-black' : 'bg-gray-300 dark:bg-gray-700'}`}
                     >
                       <div className={`w-3 h-3 bg-white rounded-full transition-transform ${activeColumns.includes(field.label) ? 'translate-x-3' : 'translate-x-0'}`} />
                     </button>
@@ -1122,7 +1377,7 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                           setActiveColumns(prev => [...prev, field.label]);
                         }
                       }}
-                      className={`w-7 h-4 rounded-full p-0.5 transition-colors ${activeColumns.includes(field.label) ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-700'}`}
+                      className={`w-7 h-4 rounded-full p-0.5 transition-colors ${activeColumns.includes(field.label) ? 'bg-black' : 'bg-gray-300 dark:bg-gray-700'}`}
                     >
                       <div className={`w-3 h-3 bg-white rounded-full transition-transform ${activeColumns.includes(field.label) ? 'translate-x-3' : 'translate-x-0'}`} />
                     </button>
@@ -1139,7 +1394,7 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                 setIsFieldsDrawerOpen(false);
                 setIsCreateFieldOpen(true);
               }}
-              className="w-full py-2.5 bg-purple-600 hover:bg-purple-700 rounded-lg text-sm font-bold text-white transition-all flex items-center justify-center shadow-lg shadow-purple-500/20 active:scale-95"
+              className="w-full py-2.5 bg-primary hover:bg-primary-hover active:bg-primary-hover rounded-lg text-sm font-bold text-white transition-all flex items-center justify-center shadow-lg shadow-black/20 active:scale-95"
             >
               Create field
             </button>

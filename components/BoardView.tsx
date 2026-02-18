@@ -52,7 +52,7 @@ const BoardView: React.FC<BoardViewProps> = ({ tasks, isDarkMode, onTaskClick })
                            </button>
                         </div>
 
-                        <h4 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">{task.title}</h4>
+                        <h4 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2 group-hover:text-black dark:group-hover:text-purple-400 transition-colors">{task.title}</h4>
                         <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mb-4 leading-relaxed">{task.description}</p>
                         <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-800">
                            <div className="flex items-center -space-x-2">
@@ -67,7 +67,7 @@ const BoardView: React.FC<BoardViewProps> = ({ tasks, isDarkMode, onTaskClick })
                         </div>
                      </div>
                   ))}
-                  <button className="w-full py-3 border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-xl text-gray-400 dark:text-gray-600 hover:border-purple-300 dark:hover:border-purple-800 hover:text-purple-500 dark:hover:text-purple-400 hover:bg-purple-50/30 dark:hover:bg-purple-900/10 transition-all flex items-center justify-center gap-2 text-xs font-medium">
+                  <button className="w-full py-3 border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-xl text-gray-400 dark:text-gray-600 hover:border-purple-300 dark:hover:border-purple-800 hover:text-black dark:hover:text-purple-400 hover:bg-gray-50/30 dark:hover:bg-purple-900/10 transition-all flex items-center justify-center gap-2 text-xs font-medium">
                      <Plus size={16} />
                      Add Task
                   </button>

@@ -23,7 +23,7 @@ const GanttView: React.FC<GanttViewProps> = ({ tasks, isDarkMode }) => {
             <div key={task.id} className="h-14 border-b border-gray-50 dark:border-gray-800 px-6 flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors cursor-pointer group">
               <div className={`w-2 h-2 rounded-full ${STATUS_COLORS[task.status]}`} />
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 truncate group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">{task.title}</p>
+                <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 truncate group-hover:text-black dark:group-hover:text-purple-400 transition-colors">{task.title}</p>
                 <p className="text-[10px] text-gray-400 dark:text-gray-500">{task.assignee.name}</p>
               </div>
             </div>

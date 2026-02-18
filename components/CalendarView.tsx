@@ -45,7 +45,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ tasks, isDarkMode }) => {
           return (
             <div key={i} className={`min-h-[140px] p-2 border-r border-b border-gray-100 dark:border-gray-800 transition-colors hover:bg-gray-50/30 dark:hover:bg-gray-900/30 group relative flex flex-col ${!isCurrentMonth ? 'bg-gray-50/50 dark:bg-gray-900/50 opacity-40' : ''}`}>
               <div className="flex justify-between items-start mb-2">
-                <span className={`text-xs font-semibold ${day === 24 ? 'w-6 h-6 bg-purple-600 text-white flex items-center justify-center rounded-full' : 'text-gray-500 dark:text-gray-400'}`}>
+                <span className={`text-xs font-semibold ${day === 24 ? 'w-6 h-6 bg-black text-white flex items-center justify-center rounded-full' : 'text-gray-500 dark:text-gray-400'}`}>
                   {displayDay}
                 </span>
                 <button className="opacity-0 group-hover:opacity-100 p-1 hover:bg-white dark:hover:bg-gray-800 rounded shadow-sm transition-opacity">

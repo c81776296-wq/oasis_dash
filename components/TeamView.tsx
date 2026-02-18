@@ -32,7 +32,7 @@ const TeamView: React.FC<TeamViewProps> = ({ tasks, isDarkMode }) => {
         {/* Stats Cards */}
         <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-2 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-xl"><Zap size={24} /></div>
+            <div className="p-2 bg-gray-100 dark:bg-purple-900/30 text-black dark:text-purple-400 rounded-xl"><Zap size={24} /></div>
             <span className="text-xs font-bold text-green-500 flex items-center gap-1"><TrendingUp size={12} /> +12%</span>
           </div>
           <h4 className="text-2xl font-bold text-gray-800 dark:text-gray-100">42</h4>
@@ -104,7 +104,7 @@ const TeamView: React.FC<TeamViewProps> = ({ tasks, isDarkMode }) => {
                   <div className="text-xs font-bold text-gray-700 dark:text-gray-400">{stat.completed}/{stat.tasks} Tasks</div>
                   <div className="w-24 h-1.5 bg-gray-100 dark:bg-gray-800 rounded-full mt-1 overflow-hidden">
                     <div
-                      className={`h-full rounded-full transition-all duration-1000 ${stat.workload > 80 ? 'bg-red-500' : 'bg-purple-600'}`}
+                      className={`h-full rounded-full transition-all duration-1000 ${stat.workload > 80 ? 'bg-red-500' : 'bg-black'}`}
                       style={{ width: `${stat.workload}%` }}
                     />
                   </div>

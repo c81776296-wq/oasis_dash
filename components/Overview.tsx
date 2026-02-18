@@ -46,10 +46,10 @@ const Overview: React.FC<OverviewProps> = ({ tasks }) => {
                         <Clock size={14} /> Refreshed: 1 hour ago
                     </div>
                     <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 dark:bg-[#1c1c1e] border border-gray-200 dark:border-[#2c2c2e] rounded-lg">
-                        <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" /> Auto refresh: On
+                        <div className="w-2 h-2 rounded-full bg-black animate-pulse" /> Auto refresh: On
                     </div>
                     <button className="px-3 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">Customize</button>
-                    <button className="px-3 py-1.5 bg-purple-600 text-white rounded-lg font-bold">Add card</button>
+                    <button className="px-3 py-1.5 bg-black text-white rounded-lg font-bold">Add card</button>
                 </div>
             </div>
 
@@ -84,7 +84,7 @@ const Overview: React.FC<OverviewProps> = ({ tasks }) => {
                             <FileText size={24} className="text-gray-400" />
                         </div>
                         <p className="text-xs text-gray-500 font-medium whitespace-pre">There are no Docs in this location yet.</p>
-                        <button className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-[10px] font-bold rounded-lg transition-colors shadow-sm">Add a Doc</button>
+                        <button className="px-4 py-2 bg-primary hover:bg-primary-hover active:bg-primary-hover text-white text-[10px] font-bold rounded-lg transition-colors shadow-sm">Add a Doc</button>
                     </div>
                 </div>
 
@@ -102,7 +102,7 @@ const Overview: React.FC<OverviewProps> = ({ tasks }) => {
                             </div>
                         </div>
                         <p className="text-xs text-gray-500 font-medium max-w-[200px]">Bookmarks make it easy to save Oasis items or any URL from around the web.</p>
-                        <button className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-[10px] font-bold rounded-lg transition-colors shadow-sm">Add Bookmark</button>
+                        <button className="px-4 py-2 bg-primary hover:bg-primary-hover active:bg-primary-hover text-white text-[10px] font-bold rounded-lg transition-colors shadow-sm">Add Bookmark</button>
                     </div>
                 </div>
             </div>
@@ -118,7 +118,7 @@ const Overview: React.FC<OverviewProps> = ({ tasks }) => {
                         <Folder size={32} className="text-gray-400" />
                     </div>
                     <p className="text-xs text-gray-500 font-medium">Add new Folder to your Space</p>
-                    <button className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white text-[10px] font-bold rounded-lg transition-colors shadow-sm">Add Folder</button>
+                    <button className="px-6 py-2 bg-primary hover:bg-primary-hover active:bg-primary-hover text-white text-[10px] font-bold rounded-lg transition-colors shadow-sm">Add Folder</button>
                 </div>
             </div>
 
@@ -152,14 +152,14 @@ const Overview: React.FC<OverviewProps> = ({ tasks }) => {
                                     <tr key={listName} className="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors cursor-pointer group">
                                         <td className="px-6 py-4 flex items-center gap-3">
                                             <Activity size={14} className="text-gray-400" />
-                                            <span className="text-xs font-bold text-gray-900 dark:text-gray-100 group-hover:text-purple-600 transition-colors">{listName}</span>
+                                            <span className="text-xs font-bold text-gray-900 dark:text-gray-100 group-hover:text-black transition-colors">{listName}</span>
                                         </td>
                                         <td className="px-6 py-4 text-xs text-gray-400">-</td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-32 h-1.5 bg-gray-100 dark:bg-white/5 rounded-full overflow-hidden">
                                                     <div
-                                                        className="h-full bg-purple-500 rounded-full"
+                                                        className="h-full bg-black rounded-full"
                                                         style={{ width: `${(doneCount / (totalCount || 1)) * 100}%` }}
                                                     />
                                                 </div>
@@ -198,7 +198,7 @@ const Overview: React.FC<OverviewProps> = ({ tasks }) => {
                     <div className="p-8 flex-1 flex flex-col items-center justify-center text-center space-y-4">
                         <div className="w-full h-48 border-2 border-dashed border-gray-100 dark:border-white/5 rounded-2xl flex flex-col items-center justify-center text-gray-400 space-y-2">
                             <ArrowUpRight size={32} strokeWidth={1.5} />
-                            <p className="text-xs font-medium">Drop files here or <span className="text-purple-600 underline cursor-pointer">attach</span></p>
+                            <p className="text-xs font-medium">Drop files here or <span className="text-black underline cursor-pointer">attach</span></p>
                         </div>
                     </div>
                 </div>

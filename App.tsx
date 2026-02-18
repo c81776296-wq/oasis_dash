@@ -155,7 +155,7 @@ const DOC_MENU_GROUPS = [
       { label: 'Orange', icon: Type, color: 'text-orange-500' },
       { label: 'Yellow', icon: Type, color: 'text-yellow-500' },
       { label: 'Blue', icon: Type, color: 'text-blue-500' },
-      { label: 'Purple', icon: Type, color: 'text-purple-500' },
+      { label: 'Purple', icon: Type, color: 'text-black' },
       { label: 'Pink', icon: Type, color: 'text-pink-500' },
       { label: 'Green', icon: Type, color: 'text-green-500' },
       { label: 'Grey', icon: Type, color: 'text-gray-500' },
@@ -169,7 +169,7 @@ const DOC_MENU_GROUPS = [
       { label: 'Orange highlight', icon: Square, color: 'text-orange-500' },
       { label: 'Yellow highlight', icon: Square, color: 'text-yellow-500' },
       { label: 'Blue highlight', icon: Square, color: 'text-blue-500' },
-      { label: 'Purple highlight', icon: Square, color: 'text-purple-500' },
+      { label: 'Purple highlight', icon: Square, color: 'text-black' },
       { label: 'Pink highlight', icon: Square, color: 'text-pink-500' },
       { label: 'Green highlight', icon: Square, color: 'text-green-500' },
       { label: 'Grey highlight', icon: Square, color: 'text-gray-500' },
@@ -187,7 +187,7 @@ const DOC_MENU_GROUPS = [
       { label: 'Strong yellow badge', icon: Tag, color: 'text-yellow-700' },
       { label: 'Blue badge', icon: Tag, color: 'text-blue-500' },
       { label: 'Strong blue badge', icon: Tag, color: 'text-blue-700' },
-      { label: 'Purple badge', icon: Tag, color: 'text-purple-500' },
+      { label: 'Purple badge', icon: Tag, color: 'text-black' },
       { label: 'Strong purple badge', icon: Tag, color: 'text-purple-700' },
       { label: 'Pink badge', icon: Tag, color: 'text-pink-500' },
       { label: 'Strong pink badge', icon: Tag, color: 'text-pink-700' },
@@ -729,7 +729,7 @@ const App: React.FC = () => {
                   type="text"
                   value={tempWorkspaceName}
                   onChange={(e) => setTempWorkspaceName(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm bg-white dark:bg-[#16161e] text-gray-900 dark:text-gray-100"
+                  className="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-black text-sm bg-white dark:bg-[#16161e] text-gray-900 dark:text-gray-100"
                 />
               </div>
             </div>
@@ -777,7 +777,7 @@ const App: React.FC = () => {
           </button>
 
           {[
-            { id: 'Home', icon: <div className={`p-1.5 rounded-lg ${activeTab === 'Home' ? 'bg-purple-600 text-white' : 'text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white'}`}><Home size={22} fill={activeTab === 'Home' ? "currentColor" : "none"} /></div> },
+            { id: 'Home', icon: <div className={`p-1.5 rounded-lg ${activeTab === 'Home' ? 'bg-black text-white' : 'text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white'}`}><Home size={22} fill={activeTab === 'Home' ? "currentColor" : "none"} /></div> },
             { id: 'Planner', icon: <Calendar size={24} /> },
             { id: 'Teams', icon: <Users size={24} /> }
           ].map((item) => (
@@ -787,12 +787,12 @@ const App: React.FC = () => {
                 setActiveTab(item.id as any);
                 if (!sidebarOpen) setSidebarOpen(true);
               }}
-              className={`flex flex-col items-center gap-1 w-full transition-colors relative group ${activeTab === item.id ? 'text-purple-600 dark:text-white' : 'text-gray-400 hover:text-gray-900 dark:hover:text-white'
+              className={`flex flex-col items-center gap-1 w-full transition-colors relative group ${activeTab === item.id ? 'text-black dark:text-white' : 'text-gray-400 hover:text-gray-900 dark:hover:text-white'
                 }`}
             >
               {item.icon}
               <span className="text-[10px] font-bold transition-opacity tracking-tighter">{item.id}</span>
-              {activeTab === item.id && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-purple-600 dark:bg-white rounded-r-full" />}
+              {activeTab === item.id && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-black dark:bg-white rounded-r-full" />}
             </button>
           ))}
         </div>
@@ -804,7 +804,7 @@ const App: React.FC = () => {
           </button>
           <div
             onClick={() => setIsSettingsOpen(true)}
-            className="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 flex items-center justify-center text-white text-xs font-bold border-2 border-white dark:border-[#16161e] shadow-lg cursor-pointer hover:scale-105 transition-transform"
+            className="w-10 h-10 rounded-full bg-gradient-to-tr from-black to-pink-500 flex items-center justify-center text-white text-xs font-bold border-2 border-white dark:border-[#16161e] shadow-lg cursor-pointer hover:scale-105 transition-transform"
           >AS</div>
         </div>
       </aside>
@@ -821,7 +821,7 @@ const App: React.FC = () => {
                   <h2 className="text-xl font-bold text-gray-900 dark:text-white">Home</h2>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors">
+                  <button className="bg-primary hover:bg-primary-hover active:bg-primary-hover text-white px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors">
                     <Plus size={16} /> Create
                   </button>
                 </div>
@@ -947,7 +947,7 @@ const App: React.FC = () => {
 
                     {spaces.map(space => (
                       <div key={space.id} className="flex items-center gap-2 p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-white dark:hover:bg-white/5 cursor-pointer group">
-                        <div className="w-5 h-5 bg-purple-600/20 text-purple-600 rounded flex items-center justify-center text-[10px] font-bold">
+                        <div className="w-5 h-5 bg-black/20 text-black rounded flex items-center justify-center text-[10px] font-bold">
                           {space.name[0].toUpperCase()}
                         </div>
                         <span className="text-sm flex-1 truncate">{space.name}</span>
@@ -982,7 +982,7 @@ const App: React.FC = () => {
                   { id: 'All People', count: 1, icon: <UserIcon size={18} /> },
                   { id: 'Analytics', icon: <Activity size={18} /> },
                 ].map(item => (
-                  <div key={item.id} className={`flex items-center justify-between p-3 rounded-xl transition-all ${item.active ? 'bg-purple-100 dark:bg-white/10 text-purple-600 dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white'} cursor-pointer`}>
+                  <div key={item.id} className={`flex items-center justify-between p-3 rounded-xl transition-all ${item.active ? 'bg-gray-100 dark:bg-white/10 text-black dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white'} cursor-pointer`}>
                     <div className="flex items-center gap-3">
                       {item.icon}
                       <span className="text-sm font-bold">{item.id}</span>
@@ -1036,7 +1036,7 @@ const App: React.FC = () => {
                   >
                     {tab}
                     {assignedCommentsActiveTab === tab && (
-                      <div className="absolute bottom-0 left-0 w-full h-0.5 bg-purple-500 animate-in fade-in slide-in-from-bottom-1 duration-200" />
+                      <div className="absolute bottom-0 left-0 w-full h-0.5 bg-black animate-in fade-in slide-in-from-bottom-1 duration-200" />
                     )}
                   </button>
                 ))}
@@ -1071,7 +1071,7 @@ const App: React.FC = () => {
                             >
                               <filter.icon size={14} className="text-gray-400" />
                               <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{filter.label}</span>
-                              {filter.state && <Check size={14} className="text-purple-600 ml-auto" />}
+                              {filter.state && <Check size={14} className="text-black ml-auto" />}
                             </button>
                           ))}
                         </div>
@@ -1084,7 +1084,7 @@ const App: React.FC = () => {
                 <button
                   onClick={() => setAssignedCommentsResolved(!assignedCommentsResolved)}
                   className={`flex items-center gap-2 px-3 py-1.5 border rounded-lg text-xs font-medium transition-colors ${assignedCommentsResolved
-                    ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-600'
+                    ? 'border-black bg-gray-50 dark:bg-purple-900/20 text-black'
                     : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5'
                     }`}
                 >
@@ -1127,7 +1127,7 @@ const App: React.FC = () => {
                               className="w-full flex items-center justify-between px-3 py-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors text-left"
                             >
                               <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{period}</span>
-                              {assignedCommentsDatePeriod === period && <Check size={14} className="text-purple-600" />}
+                              {assignedCommentsDatePeriod === period && <Check size={14} className="text-black" />}
                             </button>
                           ))}
                         </div>
@@ -1144,7 +1144,7 @@ const App: React.FC = () => {
                     placeholder="Search"
                     value={assignedCommentsSearch}
                     onChange={(e) => setAssignedCommentsSearch(e.target.value)}
-                    className="pl-9 pr-3 py-1.5 border border-gray-200 dark:border-gray-700 rounded-lg text-xs bg-white dark:bg-[#121213] text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 w-48"
+                    className="pl-9 pr-3 py-1.5 border border-gray-200 dark:border-gray-700 rounded-lg text-xs bg-white dark:bg-[#121213] text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-black w-48"
                   />
                 </div>
               </div>
@@ -1178,7 +1178,7 @@ const App: React.FC = () => {
                 <input
                   type="text"
                   placeholder="Search messages"
-                  className="w-full pl-9 pr-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-xs bg-white dark:bg-[#121213] text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full pl-9 pr-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-xs bg-white dark:bg-[#121213] text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-black"
                 />
               </div>
             </div>
@@ -1197,10 +1197,10 @@ const App: React.FC = () => {
               onMouseLeave={() => setHoveredBreadcrumb(null)}
             >
               <span
-                className="flex items-center gap-1 cursor-pointer hover:text-purple-600 transition-colors py-1 group/space"
+                className="flex items-center gap-1 cursor-pointer hover:text-black transition-colors py-1 group/space"
                 onClick={() => setActiveView('Overview')}
               >
-                <div className="w-4 h-4 bg-purple-600 rounded flex items-center justify-center text-[10px] text-white">
+                <div className="w-4 h-4 bg-black rounded flex items-center justify-center text-[10px] text-white">
                   {(workspaceName ? workspaceName[0] : '?').toUpperCase()}
                 </div>
                 {workspaceName || 'Workspace (?)'}
@@ -1315,7 +1315,7 @@ const App: React.FC = () => {
                                     </button>
                                   </div>
                                   <div className="p-2 mt-1">
-                                    <button className="w-full py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-lg transition-colors shadow-lg">
+                                    <button className="w-full py-2 bg-primary hover:bg-primary-hover active:bg-primary-hover text-white text-xs font-bold rounded-lg transition-colors shadow-lg">
                                       Sharing & Permissions
                                     </button>
                                   </div>
@@ -1329,7 +1329,7 @@ const App: React.FC = () => {
                         {spaces.map(space => (
                           <div key={space.id} className="mb-2 last:mb-0">
                             <div className="px-4 py-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                              <div className="w-4 h-4 bg-purple-600 rounded flex items-center justify-center text-[8px] text-white">
+                              <div className="w-4 h-4 bg-black rounded flex items-center justify-center text-[8px] text-white">
                                 {space.name[0].toUpperCase()}
                               </div>
                               {space.name}
@@ -1338,7 +1338,7 @@ const App: React.FC = () => {
                               {space.lists.map((listName) => (
                                 <div
                                   key={listName}
-                                  className={`px-3 py-1.5 flex items-center gap-3 text-sm transition-colors rounded-lg cursor-pointer ${activeContext === listName ? 'bg-purple-600/10 text-purple-600 dark:text-purple-400 border border-purple-500/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5'}`}
+                                  className={`px-3 py-1.5 flex items-center gap-3 text-sm transition-colors rounded-lg cursor-pointer ${activeContext === listName ? 'bg-black/10 text-black dark:text-purple-400 border border-black/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5'}`}
                                   onClick={() => {
                                     setActiveContext(listName as any);
                                     setIsListSelectorOpen(false);
@@ -1383,7 +1383,7 @@ const App: React.FC = () => {
                 placeholder="Search Ctrl K"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-10 py-1.5 bg-gray-100 dark:bg-[#16161e] border border-transparent dark:border-gray-800 rounded-lg text-xs text-gray-900 dark:text-gray-100 focus:outline-none focus:bg-white dark:focus:bg-[#1c1c24] focus:border-purple-500 dark:focus:border-purple-500 transition-all placeholder:text-gray-400 dark:placeholder:text-gray-600"
+                className="w-full pl-10 pr-10 py-1.5 bg-gray-100 dark:bg-[#16161e] border border-transparent dark:border-gray-800 rounded-lg text-xs text-gray-900 dark:text-gray-100 focus:outline-none focus:bg-white dark:focus:bg-[#1c1c24] focus:border-black dark:focus:border-black transition-all placeholder:text-gray-400 dark:placeholder:text-gray-600"
               />
             </div>
           </div>
@@ -1400,7 +1400,7 @@ const App: React.FC = () => {
               >
                 {currentTheme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
               </button>
-              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 flex items-center justify-center text-white text-[10px] font-bold border border-white dark:border-gray-800 shadow-sm cursor-pointer uppercase">AS</div>
+              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-black to-pink-500 flex items-center justify-center text-white text-[10px] font-bold border border-white dark:border-gray-800 shadow-sm cursor-pointer uppercase">AS</div>
             </div>
           </div>
         </header>
@@ -1439,12 +1439,12 @@ const App: React.FC = () => {
                 <div className="absolute inset-0 flex items-center justify-center p-8 bg-gray-50/50 dark:bg-black/20">
                   <div className="text-center space-y-4 max-w-md animate-in slide-in-from-bottom-5 duration-300">
                     <div className="w-16 h-16 bg-white dark:bg-gray-800 rounded-2xl shadow-sm flex items-center justify-center mx-auto border border-gray-100 dark:border-gray-700">
-                      <Check size={32} className="text-purple-500" />
+                      <Check size={32} className="text-black" />
                     </div>
                     <h3 className="text-lg font-bold text-gray-900 dark:text-white">
                       Tasks assigned to you will appear here
                     </h3>
-                    <button className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors shadow-lg shadow-purple-500/20">
+                    <button className="px-4 py-2 bg-primary hover:bg-primary-hover active:bg-primary-hover text-white text-sm font-medium rounded-lg transition-colors shadow-lg shadow-black/20">
                       Browse tasks
                     </button>
                   </div>
@@ -1466,7 +1466,7 @@ const App: React.FC = () => {
                         <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
                           Tasks and Reminders assigned to you will show here
                         </p>
-                        <button className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors inline-flex items-center gap-2 shadow-lg shadow-purple-500/20">
+                        <button className="px-4 py-2 bg-primary hover:bg-primary-hover active:bg-primary-hover text-white text-sm font-medium rounded-lg transition-colors inline-flex items-center gap-2 shadow-lg shadow-black/20">
                           <Plus size={16} />
                           Add task or reminder
                         </button>
@@ -1501,13 +1501,13 @@ const App: React.FC = () => {
                           <input
                             type="text"
                             placeholder="Search"
-                            className="pl-8 pr-3 py-1.5 bg-gray-100 dark:bg-gray-800 border-none rounded-md text-xs w-48 focus:ring-2 focus:ring-purple-500"
+                            className="pl-8 pr-3 py-1.5 bg-gray-100 dark:bg-gray-800 border-none rounded-md text-xs w-48 focus:ring-2 focus:ring-black"
                           />
                         </div>
                         <button className="p-1.5 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
                           <Settings size={16} />
                         </button>
-                        <button className="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-medium rounded-md transition-colors shadow-sm">
+                        <button className="px-3 py-1.5 bg-primary hover:bg-primary-hover active:bg-primary-hover text-white text-xs font-medium rounded-md transition-colors shadow-sm">
                           Add view
                         </button>
                       </div>
@@ -1527,7 +1527,7 @@ const App: React.FC = () => {
                   {/* Add Task Row */}
                   <div className="px-6 py-2 border-b border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group">
                     <div className="flex items-center gap-4 pl-2">
-                      <button className="w-5 h-5 rounded border-2 border-gray-300 dark:border-gray-600 hover:border-purple-500 flex items-center justify-center text-transparent hover:text-purple-500 transition-all">
+                      <button className="w-5 h-5 rounded border-2 border-gray-300 dark:border-gray-600 hover:border-black flex items-center justify-center text-transparent hover:text-black transition-all">
                         <Check size={12} />
                       </button>
                       <input
@@ -1564,7 +1564,7 @@ const App: React.FC = () => {
                   key={view}
                   onClick={() => setActiveView(view)}
                   className={`h-full flex items-center gap-1.5 text-xs font-bold border-b-2 transition-all relative ${activeView === view
-                    ? 'border-purple-600 text-purple-600'
+                    ? 'border-black text-black'
                     : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-300'
                     }`}
                 >
@@ -1580,7 +1580,7 @@ const App: React.FC = () => {
               <div className="relative h-full flex items-center">
                 <button
                   onClick={() => setIsViewSelectorOpen(!isViewSelectorOpen)}
-                  className={`h-full flex items-center gap-1 text-xs font-bold transition-all relative px-2 ${isViewSelectorOpen ? 'text-purple-600' : 'text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-300'}`}
+                  className={`h-full flex items-center gap-1 text-xs font-bold transition-all relative px-2 ${isViewSelectorOpen ? 'text-black' : 'text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-300'}`}
                 >
                   <Plus size={14} /> View
                 </button>
@@ -1596,7 +1596,7 @@ const App: React.FC = () => {
                           placeholder="Search views..."
                           value={viewSearchQuery}
                           onChange={(e) => setViewSearchQuery(e.target.value)}
-                          className="w-full pl-9 pr-4 py-2 bg-gray-50 dark:bg-[#121213] border border-gray-200 dark:border-purple-500/30 rounded-lg text-sm text-gray-900 dark:text-gray-200 focus:outline-none focus:border-purple-500 transition-all font-normal placeholder:text-gray-400"
+                          className="w-full pl-9 pr-4 py-2 bg-gray-50 dark:bg-[#121213] border border-gray-200 dark:border-black/30 rounded-lg text-sm text-gray-900 dark:text-gray-200 focus:outline-none focus:border-black transition-all font-normal placeholder:text-gray-400"
                           autoFocus
                         />
                       </div>
@@ -1612,7 +1612,7 @@ const App: React.FC = () => {
                               { id: 'Calendar', desc: 'Plan, schedule, & delegate', icon: <CalendarIcon size={18} />, color: 'bg-orange-500 text-white' },
                               { id: 'Doc', desc: 'Collaborate & document anything', icon: <FileText size={18} />, color: 'bg-blue-400 text-white' },
                               { id: 'Board', label: 'Board – Kanban', desc: 'Move tasks between columns', icon: <LayoutGrid size={18} />, color: 'bg-blue-600 text-white' },
-                              { id: 'Form', desc: 'Collect, track, & report data', icon: <FormIcon size={18} />, color: 'bg-purple-600 text-white' },
+                              { id: 'Form', desc: 'Collect, track, & report data', icon: <FormIcon size={18} />, color: 'bg-black text-white' },
                             ].map(view => (
                               <button
                                 key={view.id}
@@ -1626,7 +1626,7 @@ const App: React.FC = () => {
                                   {view.icon}
                                 </div>
                                 <div>
-                                  <div className="text-xs font-bold text-gray-700 dark:text-gray-200 group-hover:text-purple-600 dark:group-hover:text-white">{view.label || view.id}</div>
+                                  <div className="text-xs font-bold text-gray-700 dark:text-gray-200 group-hover:text-black dark:group-hover:text-white">{view.label || view.id}</div>
                                   <div className="text-[10px] text-gray-400 dark:text-gray-500 leading-tight mt-0.5">{view.desc}</div>
                                 </div>
                               </button>
@@ -1640,12 +1640,12 @@ const App: React.FC = () => {
                           <div className="grid grid-cols-2 gap-x-2 gap-y-1">
                             {[
                               { id: 'Table', desc: 'Structured table format', icon: <TableIcon size={18} />, color: 'bg-green-600' },
-                              { id: 'Dashboard', desc: 'Track metrics & insights', icon: <BarChart3 size={18} />, color: 'bg-purple-500' },
+                              { id: 'Dashboard', desc: 'Track metrics & insights', icon: <BarChart3 size={18} />, color: 'bg-black' },
                               { id: 'Timeline', desc: 'See tasks by start & due date', icon: <GanttChart size={18} />, color: 'bg-orange-800/60' },
                               { id: 'Activity', desc: 'Real-time activity feed', icon: <Activity size={18} />, color: 'bg-blue-400/80' },
                               { id: 'Workload', desc: 'Visualize team capacity', icon: <Users size={18} />, color: 'bg-cyan-600' },
                               { id: 'Whiteboard', desc: 'Visualize & brainstorm ideas', icon: <WhiteboardIcon size={18} />, color: 'bg-yellow-500' },
-                              { id: 'Team', desc: 'Monitor work being done', icon: <Users size={18} />, color: 'bg-purple-600' },
+                              { id: 'Team', desc: 'Monitor work being done', icon: <Users size={18} />, color: 'bg-black' },
                               { id: 'Mind Map', desc: 'Visual brainstorming of ideas', icon: <MindMapIcon size={18} />, color: 'bg-pink-500' },
                               { id: 'Map', desc: 'Tasks visualized by address', icon: <MapPin size={18} />, color: 'bg-orange-600' },
                             ].map(view => (
@@ -1663,7 +1663,7 @@ const App: React.FC = () => {
                                   {view.icon}
                                 </div>
                                 <div>
-                                  <div className="text-xs font-bold text-gray-700 dark:text-gray-200 group-hover:text-purple-600 dark:group-hover:text-white">{view.id}</div>
+                                  <div className="text-xs font-bold text-gray-700 dark:text-gray-200 group-hover:text-black dark:group-hover:text-white">{view.id}</div>
                                   <div className="text-[10px] text-gray-400 dark:text-gray-500 leading-tight mt-0.5">{view.desc}</div>
                                 </div>
                               </button>
@@ -1701,7 +1701,7 @@ const App: React.FC = () => {
             </button>
             <button
               onClick={() => setIsModalOpen(true)}
-              className="flex items-center gap-1 px-4 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-[10px] font-bold shadow-lg shadow-purple-500/20 transition-all active:scale-95"
+              className="flex items-center gap-1 px-4 py-1.5 bg-primary hover:bg-primary-hover active:bg-primary-hover text-white rounded-lg text-[10px] font-bold shadow-lg shadow-black/20 transition-all active:scale-95"
             >
               Add Task
             </button>
@@ -1720,7 +1720,7 @@ const App: React.FC = () => {
                 <p className="text-sm max-w-xs font-medium mb-6">Try adjusting your search or filters to find what you're looking for.</p>
                 <button
                   onClick={() => setIsModalOpen(true)}
-                  className="mt-2 flex items-center gap-2 px-6 py-2.5 bg-purple-600 text-white rounded-xl text-sm font-bold hover:bg-purple-700 transition-all shadow-lg shadow-purple-500/20 active:scale-95"
+                  className="mt-2 flex items-center gap-2 px-6 py-2.5 bg-black text-white rounded-xl text-sm font-bold hover:bg-primary-hover active:bg-primary-hover transition-all shadow-lg shadow-black/20 active:scale-95"
                 >
                   <Plus size={16} />
                   Create New Task
@@ -1747,7 +1747,7 @@ const App: React.FC = () => {
                       className={`pb-3 text-sm font-bold relative transition-colors ${modalActiveTab === tab ? 'text-gray-900 dark:text-white' : 'text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}
                     >
                       {tab}
-                      {modalActiveTab === tab && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-purple-500 animate-in fade-in slide-in-from-bottom-1 duration-200" />}
+                      {modalActiveTab === tab && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-black animate-in fade-in slide-in-from-bottom-1 duration-200" />}
                     </button>
                   ))}
                 </div>
@@ -1781,7 +1781,7 @@ const App: React.FC = () => {
                                 type="text"
                                 autoFocus
                                 placeholder="Search..."
-                                className="w-full bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-gray-700/50 rounded-lg py-1.5 pl-9 pr-3 text-xs text-gray-700 dark:text-gray-200 focus:outline-none focus:border-purple-500/50 transition-colors placeholder:text-gray-400"
+                                className="w-full bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-gray-700/50 rounded-lg py-1.5 pl-9 pr-3 text-xs text-gray-700 dark:text-gray-200 focus:outline-none focus:border-black/50 transition-colors placeholder:text-gray-400"
                                 value={locationSearchQuery}
                                 onChange={e => setLocationSearchQuery(e.target.value)}
                               />
@@ -1799,7 +1799,7 @@ const App: React.FC = () => {
                                 <UserIcon size={14} />
                               </div>
                               <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Personal List</span>
-                              {activeContext === 'My Tasks' && <Check size={14} className="ml-auto text-purple-500" />}
+                              {activeContext === 'My Tasks' && <Check size={14} className="ml-auto text-black" />}
                             </div>
 
                             {/* Recents */}
@@ -1816,7 +1816,7 @@ const App: React.FC = () => {
                                       <LayoutList size={14} />
                                     </div>
                                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{recent}</span>
-                                    {activeContext === recent && <Check size={14} className="ml-auto text-purple-500" />}
+                                    {activeContext === recent && <Check size={14} className="ml-auto text-black" />}
                                   </div>
                                 ))}
                               </div>
@@ -1831,11 +1831,11 @@ const App: React.FC = () => {
                                   onClick={() => handleContextSelect(space.name as any)}
                                   className="flex items-center gap-3 px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg cursor-pointer transition-colors group"
                                 >
-                                  <div className="flex items-center justify-center w-6 h-6 rounded bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 font-bold text-xs group-hover:scale-110 transition-transform">
+                                  <div className="flex items-center justify-center w-6 h-6 rounded bg-gray-100 dark:bg-purple-900/30 text-black dark:text-purple-400 font-bold text-xs group-hover:scale-110 transition-transform">
                                     {space.name[0]}
                                   </div>
                                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{space.name}</span>
-                                  {activeContext === space.name && <Check size={14} className="ml-auto text-purple-500" />}
+                                  {activeContext === space.name && <Check size={14} className="ml-auto text-black" />}
                                 </div>
                               ))}
                               {spaces.length === 0 && (
@@ -1891,11 +1891,11 @@ const App: React.FC = () => {
                                 }}
                                 className="flex items-center gap-3 px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/5 cursor-pointer transition-colors group"
                               >
-                                <type.icon size={14} className={`${(newTask.taskType || 'Task') === type.label ? 'text-purple-500' : 'text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300'}`} />
-                                <span className={`text-xs font-medium flex-1 ${(newTask.taskType || 'Task') === type.label ? 'text-purple-600 dark:text-purple-400' : 'text-gray-700 dark:text-gray-200'}`}>
+                                <type.icon size={14} className={`${(newTask.taskType || 'Task') === type.label ? 'text-black' : 'text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300'}`} />
+                                <span className={`text-xs font-medium flex-1 ${(newTask.taskType || 'Task') === type.label ? 'text-black dark:text-purple-400' : 'text-gray-700 dark:text-gray-200'}`}>
                                   {type.label} {type.default && <span className="text-gray-400 font-normal ml-1">(default)</span>}
                                 </span>
-                                {(newTask.taskType || 'Task') === type.label && <Check size={14} className="ml-auto text-purple-500" />}
+                                {(newTask.taskType || 'Task') === type.label && <Check size={14} className="ml-auto text-black" />}
                               </div>
                             ))}
                           </div>
@@ -1919,7 +1919,7 @@ const App: React.FC = () => {
                     <div className="flex flex-col gap-3">
                       {isDescriptionInputOpen || newTask.description ? (
                         <textarea
-                          className="w-full bg-transparent border border-gray-200 dark:border-gray-700 rounded-lg p-3 text-sm min-h-[100px] focus:outline-none focus:ring-1 focus:ring-purple-500 resize-none text-gray-700 dark:text-gray-300 placeholder:text-gray-400"
+                          className="w-full bg-transparent border border-gray-200 dark:border-gray-700 rounded-lg p-3 text-sm min-h-[100px] focus:outline-none focus:ring-1 focus:ring-black resize-none text-gray-700 dark:text-gray-300 placeholder:text-gray-400"
                           placeholder="Add a description..."
                           value={newTask.description}
                           onChange={e => setNewTask({ ...newTask, description: e.target.value })}
@@ -1965,7 +1965,7 @@ const App: React.FC = () => {
                                 >
                                   <div className={`w-2 h-2 rounded-full ${STATUS_COLORS[status]?.split(' ')[0] || 'bg-gray-400'}`} />
                                   <span className="text-xs font-bold text-gray-700 dark:text-gray-200 uppercase">{status}</span>
-                                  {newTask.status === status && <Check size={12} className="ml-auto text-purple-500" />}
+                                  {newTask.status === status && <Check size={12} className="ml-auto text-black" />}
                                 </div>
                               ))}
 
@@ -1974,7 +1974,7 @@ const App: React.FC = () => {
                                 <input
                                   type="text"
                                   placeholder="+ Create new status"
-                                  className="w-full bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-gray-700 rounded-md py-1 px-2 text-[10px] text-gray-700 dark:text-gray-200 focus:outline-none focus:border-purple-500/50"
+                                  className="w-full bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-gray-700 rounded-md py-1 px-2 text-[10px] text-gray-700 dark:text-gray-200 focus:outline-none focus:border-black/50"
                                   onKeyDown={(e) => {
                                     if (e.key === 'Enter') {
                                       const val = (e.target as HTMLInputElement).value.toUpperCase();
@@ -2023,7 +2023,7 @@ const App: React.FC = () => {
                                     {user.avatar ? <img src={user.avatar} alt={user.name} /> : user.name[0]}
                                   </div>
                                   <span className="text-sm text-gray-700 dark:text-gray-200">{user.name}</span>
-                                  {newTask.assignee?.id === user.id && <Check size={14} className="ml-auto text-purple-500" />}
+                                  {newTask.assignee?.id === user.id && <Check size={14} className="ml-auto text-black" />}
                                 </div>
                               ))}
                             </div>
@@ -2037,7 +2037,7 @@ const App: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setShowDatePicker(!showDatePicker)}
-                        className={`flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 dark:bg-gray-800/30 hover:bg-gray-200 dark:hover:bg-gray-800/50 border border-gray-200 dark:border-gray-800 rounded-lg text-xs font-bold transition-colors ${newTask.dueDate ? 'text-purple-600 dark:text-purple-400' : 'text-gray-500 dark:text-gray-400'}`}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 dark:bg-gray-800/30 hover:bg-gray-200 dark:hover:bg-gray-800/50 border border-gray-200 dark:border-gray-800 rounded-lg text-xs font-bold transition-colors ${newTask.dueDate ? 'text-black dark:text-purple-400' : 'text-gray-500 dark:text-gray-400'}`}
                       >
                         <Calendar size={14} />
                         {newTask.dueDate ? new Date(newTask.dueDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : 'Due date'}
@@ -2079,8 +2079,8 @@ const App: React.FC = () => {
                                     }}
                                     className={`
                                         w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium transition-all
-                                        ${isSelected ? 'bg-purple-600 text-white' : 'hover:bg-gray-100 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300'}
-                                        ${isToday && !isSelected ? 'text-purple-600 font-bold border border-purple-200 dark:border-purple-900' : ''}
+                                        ${isSelected ? 'bg-black text-white' : 'hover:bg-gray-100 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300'}
+                                        ${isToday && !isSelected ? 'text-black font-bold border border-gray-200 dark:border-purple-900' : ''}
                                       `}
                                   >
                                     {day}
@@ -2136,7 +2136,7 @@ const App: React.FC = () => {
                                     fill="currentColor"
                                   />
                                   <span className="text-xs font-bold text-gray-700 dark:text-gray-200">{p}</span>
-                                  {newTask.priority === p && <Check size={12} className="ml-auto text-purple-500" />}
+                                  {newTask.priority === p && <Check size={12} className="ml-auto text-black" />}
                                 </div>
                               ))}
                             </div>
@@ -2181,7 +2181,7 @@ const App: React.FC = () => {
                             <div className="p-2 space-y-1 max-h-48 overflow-y-auto custom-scrollbar">
                               {MOCK_TAGS.filter(t => t.toLowerCase().includes(tagSearchQuery.toLowerCase())).map(tag => (
                                 <div key={tag} className="flex items-center px-3 py-1.5 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg cursor-pointer transition-colors">
-                                  <span className="px-2 py-0.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded text-xs font-bold">{tag}</span>
+                                  <span className="px-2 py-0.5 bg-gray-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded text-xs font-bold">{tag}</span>
                                 </div>
                               ))}
                               {MOCK_TAGS.length === 0 && <div className="p-2 text-xs text-center text-gray-400">No tags found</div>}
@@ -2242,7 +2242,7 @@ const App: React.FC = () => {
                                 <input
                                   placeholder="Search..."
                                   autoFocus
-                                  className="w-full bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-gray-700/50 rounded-lg py-1.5 pl-9 pr-3 text-xs text-gray-700 dark:text-gray-200 focus:outline-none focus:border-purple-500/50 transition-colors placeholder:text-gray-400"
+                                  className="w-full bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-gray-700/50 rounded-lg py-1.5 pl-9 pr-3 text-xs text-gray-700 dark:text-gray-200 focus:outline-none focus:border-black/50 transition-colors placeholder:text-gray-400"
                                   value={customFieldSearchQuery}
                                   onChange={e => setCustomFieldSearchQuery(e.target.value)}
                                 />
@@ -2252,9 +2252,9 @@ const App: React.FC = () => {
                               {[
                                 {
                                   category: 'AI Fields', items: [
-                                    { label: 'Summary', icon: Type, color: 'text-purple-500' },
-                                    { label: 'Custom Text', icon: TextCursorInput, color: 'text-purple-500' },
-                                    { label: 'Custom Dropdown', icon: ListOrdered, color: 'text-purple-500' }
+                                    { label: 'Summary', icon: Type, color: 'text-black' },
+                                    { label: 'Custom Text', icon: TextCursorInput, color: 'text-black' },
+                                    { label: 'Custom Dropdown', icon: ListOrdered, color: 'text-black' }
                                   ]
                                 },
                                 {
@@ -2331,7 +2331,7 @@ const App: React.FC = () => {
                                     <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                                     <input
                                       placeholder="Search or enter email..."
-                                      className="w-full bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-gray-700/50 rounded-lg py-1.5 pl-9 pr-3 text-xs text-gray-700 dark:text-gray-200 focus:outline-none focus:border-purple-500/50 transition-colors placeholder:text-gray-400"
+                                      className="w-full bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-gray-700/50 rounded-lg py-1.5 pl-9 pr-3 text-xs text-gray-700 dark:text-gray-200 focus:outline-none focus:border-black/50 transition-colors placeholder:text-gray-400"
                                       autoFocus
                                       value={watcherSearchQuery}
                                       onChange={e => setWatcherSearchQuery(e.target.value)}
@@ -2343,7 +2343,7 @@ const App: React.FC = () => {
                                     <div className="px-3 py-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-wider">People</div>
                                     <div className="space-y-0.5">
                                       {/* Current User "Me" */}
-                                      <div className="flex items-center gap-3 px-3 py-2 bg-gray-50 dark:bg-white/5 rounded-lg border border-purple-500/30 cursor-pointer group">
+                                      <div className="flex items-center gap-3 px-3 py-2 bg-gray-50 dark:bg-white/5 rounded-lg border border-black/30 cursor-pointer group">
                                         <div className="w-6 h-6 rounded-full bg-[#3d2b27] flex items-center justify-center text-[10px] font-bold text-white border border-green-500 relative">
                                           A
                                           <div className="absolute -right-0.5 -bottom-0.5 w-2 h-2 bg-green-500 rounded-full border border-white dark:border-[#1e1e1e]" />
@@ -2388,16 +2388,16 @@ const App: React.FC = () => {
                       <div className="flex items-center relative">
                         <button
                           type="submit"
-                          className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-black text-sm rounded-l-xl transition-colors shadow-lg shadow-purple-500/10"
+                          className="px-6 py-2.5 bg-primary hover:bg-primary-hover active:bg-primary-hover text-white font-black text-sm rounded-l-xl transition-colors shadow-lg shadow-black/10"
                         >
                           Create Task
                         </button>
-                        <div className="w-px h-10 bg-purple-500/50" />
+                        <div className="w-px h-10 bg-black/50" />
                         <div className="relative">
                           <button
                             type="button"
                             onClick={() => setShowCreateOptions(!showCreateOptions)}
-                            className="px-2 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-r-xl transition-colors shadow-lg shadow-purple-500/10"
+                            className="px-2 py-2.5 bg-primary hover:bg-primary-hover active:bg-primary-hover text-white rounded-r-xl transition-colors shadow-lg shadow-black/10"
                           >
                             <ChevronDown size={14} />
                           </button>
@@ -2477,21 +2477,21 @@ const App: React.FC = () => {
                                     <td className="border-r border-gray-200 dark:border-gray-700 p-2 min-w-[200px]">
                                       <input
                                         type="text"
-                                        className="w-full bg-transparent border-none outline-none text-sm text-gray-900 dark:text-white focus:ring-1 focus:ring-purple-500 rounded px-1"
+                                        className="w-full bg-transparent border-none outline-none text-sm text-gray-900 dark:text-white focus:ring-1 focus:ring-black rounded px-1"
                                         placeholder=""
                                       />
                                     </td>
                                     <td className="border-r border-gray-200 dark:border-gray-700 p-2 min-w-[200px]">
                                       <input
                                         type="text"
-                                        className="w-full bg-transparent border-none outline-none text-sm text-gray-900 dark:text-white focus:ring-1 focus:ring-purple-500 rounded px-1"
+                                        className="w-full bg-transparent border-none outline-none text-sm text-gray-900 dark:text-white focus:ring-1 focus:ring-black rounded px-1"
                                         placeholder=""
                                       />
                                     </td>
                                     <td className="p-2 min-w-[200px]">
                                       <input
                                         type="text"
-                                        className="w-full bg-transparent border-none outline-none text-sm text-gray-900 dark:text-white focus:ring-1 focus:ring-purple-500 rounded px-1"
+                                        className="w-full bg-transparent border-none outline-none text-sm text-gray-900 dark:text-white focus:ring-1 focus:ring-black rounded px-1"
                                         placeholder=""
                                       />
                                     </td>
@@ -2505,21 +2505,21 @@ const App: React.FC = () => {
                                     <td className="border-r border-gray-200 dark:border-gray-700 p-2">
                                       <input
                                         type="text"
-                                        className="w-full bg-transparent border-none outline-none text-sm text-gray-900 dark:text-white focus:ring-1 focus:ring-purple-500 rounded px-1"
+                                        className="w-full bg-transparent border-none outline-none text-sm text-gray-900 dark:text-white focus:ring-1 focus:ring-black rounded px-1"
                                         placeholder=""
                                       />
                                     </td>
                                     <td className="border-r border-gray-200 dark:border-gray-700 p-2">
                                       <input
                                         type="text"
-                                        className="w-full bg-transparent border-none outline-none text-sm text-gray-900 dark:text-white focus:ring-1 focus:ring-purple-500 rounded px-1"
+                                        className="w-full bg-transparent border-none outline-none text-sm text-gray-900 dark:text-white focus:ring-1 focus:ring-black rounded px-1"
                                         placeholder=""
                                       />
                                     </td>
                                     <td className="p-2">
                                       <input
                                         type="text"
-                                        className="w-full bg-transparent border-none outline-none text-sm text-gray-900 dark:text-white focus:ring-1 focus:ring-purple-500 rounded px-1"
+                                        className="w-full bg-transparent border-none outline-none text-sm text-gray-900 dark:text-white focus:ring-1 focus:ring-black rounded px-1"
                                         placeholder=""
                                       />
                                     </td>
@@ -2593,7 +2593,7 @@ const App: React.FC = () => {
 
                                 {/* Tabs */}
                                 <div className="flex gap-4 mb-4 border-b border-gray-200 dark:border-gray-700">
-                                  <button className="pb-2 text-sm font-medium text-purple-600 border-b-2 border-purple-600">
+                                  <button className="pb-2 text-sm font-medium text-black border-b-2 border-black">
                                     Search
                                   </button>
                                   <button className="pb-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
@@ -2603,13 +2603,13 @@ const App: React.FC = () => {
 
                                 {/* Search Input */}
                                 <div className="relative mb-4">
-                                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-purple-500" size={16} />
+                                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-black" size={16} />
                                   <input
                                     type="text"
                                     placeholder="Filter by name..."
                                     value={oasisListSearch}
                                     onChange={(e) => setOasisListSearch(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-[#121213] text-sm text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                    className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-[#121213] text-sm text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-black"
                                   />
                                 </div>
 
@@ -2668,7 +2668,7 @@ const App: React.FC = () => {
                                 ${selectedTextColor === 'Orange' ? 'text-orange-500' : ''}
                                 ${selectedTextColor === 'Yellow' ? 'text-yellow-500' : ''}
                                 ${selectedTextColor === 'Blue' ? 'text-blue-500' : ''}
-                                ${selectedTextColor === 'Purple' ? 'text-purple-500' : ''}
+                                ${selectedTextColor === 'Purple' ? 'text-black' : ''}
                                 ${selectedTextColor === 'Pink' ? 'text-pink-500' : ''}
                                 ${selectedTextColor === 'Green' ? 'text-green-500' : ''}
                                 ${selectedTextColor === 'Grey' ? 'text-gray-500' : ''}
@@ -2677,7 +2677,7 @@ const App: React.FC = () => {
                                 ${selectedHighlight?.includes('Orange') ? 'bg-orange-100 dark:bg-orange-900/30' : ''}
                                 ${selectedHighlight?.includes('Yellow') ? 'bg-yellow-100 dark:bg-yellow-900/30' : ''}
                                 ${selectedHighlight?.includes('Blue') ? 'bg-blue-100 dark:bg-blue-900/30' : ''}
-                                ${selectedHighlight?.includes('Purple') ? 'bg-purple-100 dark:bg-purple-900/30' : ''}
+                                ${selectedHighlight?.includes('Purple') ? 'bg-gray-100 dark:bg-purple-900/30' : ''}
                                 ${selectedHighlight?.includes('Pink') ? 'bg-pink-100 dark:bg-pink-900/30' : ''}
                                 ${selectedHighlight?.includes('Green') ? 'bg-green-100 dark:bg-green-900/30' : ''}
                                 ${selectedHighlight?.includes('Grey') ? 'bg-gray-100 dark:bg-gray-900/30' : ''}
@@ -2700,7 +2700,7 @@ const App: React.FC = () => {
                                       selectedTextColor === 'Orange' ? 'text-orange-500' :
                                         selectedTextColor === 'Yellow' ? 'text-yellow-500' :
                                           selectedTextColor === 'Blue' ? 'text-blue-500' :
-                                            selectedTextColor === 'Purple' ? 'text-purple-500' :
+                                            selectedTextColor === 'Purple' ? 'text-black' :
                                               selectedTextColor === 'Pink' ? 'text-pink-500' :
                                                 selectedTextColor === 'Green' ? 'text-green-500' :
                                                   'text-gray-500'
@@ -2724,7 +2724,7 @@ const App: React.FC = () => {
                                     selectedBadge.includes('Orange') ? 'bg-orange-500 text-white' :
                                       selectedBadge.includes('Yellow') ? 'bg-yellow-500 text-white' :
                                         selectedBadge.includes('Blue') ? 'bg-blue-500 text-white' :
-                                          selectedBadge.includes('Purple') ? 'bg-purple-500 text-white' :
+                                          selectedBadge.includes('Purple') ? 'bg-black text-white' :
                                             selectedBadge.includes('Pink') ? 'bg-pink-500 text-white' :
                                               selectedBadge.includes('Green') ? 'bg-green-500 text-white' :
                                                 'bg-gray-500 text-white'
@@ -2827,7 +2827,7 @@ const App: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setIsDocPrivate(!isDocPrivate)}
-                        className={`w-10 h-5 rounded-full relative transition-colors duration-200 focus:outline-none ${isDocPrivate ? 'bg-purple-600' : 'bg-gray-200 dark:bg-gray-700'}`}
+                        className={`w-10 h-5 rounded-full relative transition-colors duration-200 focus:outline-none ${isDocPrivate ? 'bg-black' : 'bg-gray-200 dark:bg-gray-700'}`}
                       >
                         <div className={`absolute top-1 left-1 w-3 h-3 bg-white rounded-full transition-transform duration-200 ${isDocPrivate ? 'translate-x-5' : ''}`} />
                       </button>
@@ -2836,7 +2836,7 @@ const App: React.FC = () => {
 
                     <button
                       onClick={() => setIsModalOpen(false)}
-                      className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-black text-sm rounded-xl transition-all shadow-lg shadow-purple-500/20 active:scale-95"
+                      className="px-6 py-2.5 bg-primary hover:bg-primary-hover active:bg-primary-hover text-white font-black text-sm rounded-xl transition-all shadow-lg shadow-black/20 active:scale-95"
                     >
                       Create Doc
                     </button>
@@ -2887,7 +2887,7 @@ const App: React.FC = () => {
                               ${selectedTextColor === 'Orange' ? 'text-orange-500' : ''}
                               ${selectedTextColor === 'Yellow' ? 'text-yellow-500' : ''}
                               ${selectedTextColor === 'Blue' ? 'text-blue-500' : ''}
-                              ${selectedTextColor === 'Purple' ? 'text-purple-500' : ''}
+                              ${selectedTextColor === 'Purple' ? 'text-black' : ''}
                               ${selectedTextColor === 'Pink' ? 'text-pink-500' : ''}
                               ${selectedTextColor === 'Green' ? 'text-green-500' : ''}
                               ${selectedTextColor === 'Grey' ? 'text-gray-500' : ''}
@@ -2896,7 +2896,7 @@ const App: React.FC = () => {
                               ${selectedHighlight?.includes('Orange') ? 'bg-orange-100 dark:bg-orange-900/30' : ''}
                               ${selectedHighlight?.includes('Yellow') ? 'bg-yellow-100 dark:bg-yellow-900/30' : ''}
                               ${selectedHighlight?.includes('Blue') ? 'bg-blue-100 dark:bg-blue-900/30' : ''}
-                              ${selectedHighlight?.includes('Purple') ? 'bg-purple-100 dark:bg-purple-900/30' : ''}
+                              ${selectedHighlight?.includes('Purple') ? 'bg-gray-100 dark:bg-purple-900/30' : ''}
                               ${selectedHighlight?.includes('Pink') ? 'bg-pink-100 dark:bg-pink-900/30' : ''}
                               ${selectedHighlight?.includes('Green') ? 'bg-green-100 dark:bg-green-900/30' : ''}
                               ${selectedHighlight?.includes('Grey') ? 'bg-gray-100 dark:bg-gray-900/30' : ''}
@@ -2963,7 +2963,7 @@ const App: React.FC = () => {
                                 <input
                                   type="text"
                                   placeholder="Try 'Tomorrow at 2 PM'..."
-                                  className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-xs bg-white dark:bg-[#121213] text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                  className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-xs bg-white dark:bg-[#121213] text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-black"
                                 />
                               </div>
 
@@ -2992,8 +2992,8 @@ const App: React.FC = () => {
                                 ))}
                                 <div className="flex items-center justify-between px-3 py-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg cursor-pointer transition-colors group">
                                   <div className="flex items-center gap-2">
-                                    <Zap size={14} className="text-purple-500" />
-                                    <span className="text-xs font-medium text-purple-600 dark:text-purple-400">Set Recurring</span>
+                                    <Zap size={14} className="text-black" />
+                                    <span className="text-xs font-medium text-black dark:text-purple-400">Set Recurring</span>
                                   </div>
                                   <ChevronRight size={14} className="text-gray-400" />
                                 </div>
@@ -3023,7 +3023,7 @@ const App: React.FC = () => {
                                       <button
                                         key={i}
                                         className={`text-xs py-1 rounded-lg transition-colors ${isToday
-                                          ? 'bg-purple-600 text-white font-bold'
+                                          ? 'bg-black text-white font-bold'
                                           : isCurrentMonth
                                             ? 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5'
                                             : 'text-gray-300 dark:text-gray-700'
@@ -3081,7 +3081,7 @@ const App: React.FC = () => {
                                   >
                                     <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{option.label}</span>
                                     {selectedNotification === option.label && option.icon && (
-                                      <Check size={14} className="text-purple-600" />
+                                      <Check size={14} className="text-black" />
                                     )}
                                   </div>
                                 ))}
@@ -3115,7 +3115,7 @@ const App: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setIsModalOpen(false)}
-                      className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-black text-sm rounded-xl transition-all shadow-lg shadow-purple-500/20 active:scale-95"
+                      className="px-6 py-2.5 bg-primary hover:bg-primary-hover active:bg-primary-hover text-white font-black text-sm rounded-xl transition-all shadow-lg shadow-black/20 active:scale-95"
                     >
                       Create Reminder
                     </button>
@@ -3146,7 +3146,7 @@ const App: React.FC = () => {
                                 <input
                                   type="text"
                                   placeholder="Search..."
-                                  className="w-full pl-9 pr-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-xs bg-white dark:bg-[#121213] text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                  className="w-full pl-9 pr-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-xs bg-white dark:bg-[#121213] text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-black"
                                 />
                               </div>
                             </div>
@@ -3199,7 +3199,7 @@ const App: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setIsWhiteboardPrivate(!isWhiteboardPrivate)}
-                        className={`w-10 h-5 rounded-full relative transition-colors duration-200 focus:outline-none ${isWhiteboardPrivate ? 'bg-purple-600' : 'bg-gray-200 dark:bg-gray-700'}`}
+                        className={`w-10 h-5 rounded-full relative transition-colors duration-200 focus:outline-none ${isWhiteboardPrivate ? 'bg-black' : 'bg-gray-200 dark:bg-gray-700'}`}
                       >
                         <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow-md transition-transform duration-200 ${isWhiteboardPrivate ? 'translate-x-5' : 'translate-x-0'}`} />
                       </button>
@@ -3208,7 +3208,7 @@ const App: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setIsModalOpen(false)}
-                      className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-black text-sm rounded-xl transition-all shadow-lg shadow-purple-500/20 active:scale-95"
+                      className="px-6 py-2.5 bg-primary hover:bg-primary-hover active:bg-primary-hover text-white font-black text-sm rounded-xl transition-all shadow-lg shadow-black/20 active:scale-95"
                     >
                       Create Whiteboard
                     </button>
@@ -3239,7 +3239,7 @@ const App: React.FC = () => {
                                 <input
                                   type="text"
                                   placeholder="Search..."
-                                  className="w-full pl-9 pr-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-xs bg-white dark:bg-[#121213] text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                  className="w-full pl-9 pr-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-xs bg-white dark:bg-[#121213] text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-black"
                                 />
                               </div>
                             </div>
@@ -3284,7 +3284,7 @@ const App: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setIsDashboardPrivate(!isDashboardPrivate)}
-                        className={`w-10 h-5 rounded-full relative transition-colors duration-200 focus:outline-none ${isDashboardPrivate ? 'bg-purple-600' : 'bg-gray-200 dark:bg-gray-700'}`}
+                        className={`w-10 h-5 rounded-full relative transition-colors duration-200 focus:outline-none ${isDashboardPrivate ? 'bg-black' : 'bg-gray-200 dark:bg-gray-700'}`}
                       >
                         <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow-md transition-transform duration-200 ${isDashboardPrivate ? 'translate-x-5' : 'translate-x-0'}`} />
                       </button>
@@ -3293,7 +3293,7 @@ const App: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setIsModalOpen(false)}
-                      className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-black text-sm rounded-xl transition-all shadow-lg shadow-purple-500/20 active:scale-95"
+                      className="px-6 py-2.5 bg-primary hover:bg-primary-hover active:bg-primary-hover text-white font-black text-sm rounded-xl transition-all shadow-lg shadow-black/20 active:scale-95"
                     >
                       Create Dashboard
                     </button>
@@ -3346,7 +3346,7 @@ const App: React.FC = () => {
                           <input
                             type="text"
                             defaultValue="AlBot"
-                            className="w-full bg-gray-50 dark:bg-[#16161e] border border-gray-200 dark:border-gray-800 rounded-xl py-3 pl-10 pr-4 text-gray-900 dark:text-white focus:outline-none focus:border-purple-500 transition-colors font-bold"
+                            className="w-full bg-gray-50 dark:bg-[#16161e] border border-gray-200 dark:border-gray-800 rounded-xl py-3 pl-10 pr-4 text-gray-900 dark:text-white focus:outline-none focus:border-black transition-colors font-bold"
                           />
                         </div>
                       </div>
@@ -3358,7 +3358,7 @@ const App: React.FC = () => {
                           <input
                             type="email"
                             defaultValue="c81776296@gmail.com"
-                            className="w-full bg-gray-50 dark:bg-[#16161e] border border-gray-200 dark:border-gray-800 rounded-xl py-3 pl-10 pr-4 text-gray-900 dark:text-white focus:outline-none focus:border-purple-500 transition-colors font-bold"
+                            className="w-full bg-gray-50 dark:bg-[#16161e] border border-gray-200 dark:border-gray-800 rounded-xl py-3 pl-10 pr-4 text-gray-900 dark:text-white focus:outline-none focus:border-black transition-colors font-bold"
                           />
                         </div>
                       </div>
@@ -3370,7 +3370,7 @@ const App: React.FC = () => {
                           <input
                             type="password"
                             placeholder="Enter New Password"
-                            className="w-full bg-gray-50 dark:bg-[#16161e] border border-gray-200 dark:border-gray-800 rounded-xl py-3 pl-10 pr-4 text-gray-900 dark:text-white focus:outline-none focus:border-purple-500 transition-colors font-bold"
+                            className="w-full bg-gray-50 dark:bg-[#16161e] border border-gray-200 dark:border-gray-800 rounded-xl py-3 pl-10 pr-4 text-gray-900 dark:text-white focus:outline-none focus:border-black transition-colors font-bold"
                           />
                         </div>
                       </div>
@@ -3398,7 +3398,7 @@ const App: React.FC = () => {
               <div className="p-6 border-t border-gray-100 dark:border-gray-800 flex justify-end bg-gray-50 dark:bg-black">
                 <button
                   onClick={() => setIsSettingsOpen(false)}
-                  className="bg-purple-600 hover:bg-purple-700 text-white px-10 py-3 rounded-xl font-bold shadow-lg shadow-purple-500/20 transition-all hover:scale-105 active:scale-95 uppercase"
+                  className="bg-primary hover:bg-primary-hover active:bg-primary-hover text-white px-10 py-3 rounded-xl font-bold shadow-lg shadow-black/20 transition-all hover:scale-105 active:scale-95 uppercase"
                 >
                   Save changes
                 </button>
@@ -3480,7 +3480,7 @@ const App: React.FC = () => {
                 </button>
                 <button
                   onClick={() => setIsSpaceModalOpen(false)}
-                  className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-2.5 rounded-xl font-black text-sm transition-all hover:scale-105 active:scale-95 shadow-lg shadow-purple-500/10"
+                  className="bg-primary hover:bg-primary-hover active:bg-primary-hover text-white px-8 py-2.5 rounded-xl font-black text-sm transition-all hover:scale-105 active:scale-95 shadow-lg shadow-black/10"
                 >
                   Continue
                 </button>
@@ -3601,7 +3601,7 @@ const App: React.FC = () => {
                         Tags
                       </div>
                       <div className="flex flex-wrap gap-2">
-                        <span className="px-2 py-0.5 bg-purple-100 dark:bg-purple-600/20 text-purple-600 dark:text-purple-400 rounded text-[10px] font-black uppercase tracking-widest border border-purple-200 dark:border-purple-500/20">client</span>
+                        <span className="px-2 py-0.5 bg-gray-100 dark:bg-black/20 text-black dark:text-purple-400 rounded text-[10px] font-black uppercase tracking-widest border border-gray-200 dark:border-black/20">client</span>
                       </div>
                     </div>
 
@@ -3642,7 +3642,7 @@ const App: React.FC = () => {
                   {/* Attachments Section */}
                   <div className="space-y-6 max-w-4xl pt-8">
                     <h3 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-tighter">Attachments</h3>
-                    <div className="border-2 border-dashed border-gray-200 dark:border-gray-800/50 rounded-3xl p-10 flex flex-col items-center justify-center text-center group hover:border-purple-500/30 transition-colors cursor-pointer">
+                    <div className="border-2 border-dashed border-gray-200 dark:border-gray-800/50 rounded-3xl p-10 flex flex-col items-center justify-center text-center group hover:border-black/30 transition-colors cursor-pointer">
                       <p className="text-sm font-black text-gray-400 dark:text-gray-600 group-hover:text-gray-600 dark:group-hover:text-gray-400 transition-colors">Drop your files here to <span className="underline">upload</span></p>
                     </div>
                   </div>
@@ -3666,7 +3666,7 @@ const App: React.FC = () => {
                   <span className="text-gray-700">11:43 am</span>
                 </div>
                 <div className="flex items-start gap-4 text-[10px] font-bold text-gray-600">
-                  <div className="w-2 h-2 rounded-full bg-purple-500 mt-1" />
+                  <div className="w-2 h-2 rounded-full bg-black mt-1" />
                   <div className="flex-1">
                     <p>Gustavo added tag client</p>
                   </div>
@@ -3752,7 +3752,7 @@ const App: React.FC = () => {
                 <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Show empty statuses</span>
                 <button
                   onClick={() => setShowEmptyStatuses(!showEmptyStatuses)}
-                  className={`w-8 h-4 rounded-full transition-colors relative ${showEmptyStatuses ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                  className={`w-8 h-4 rounded-full transition-colors relative ${showEmptyStatuses ? 'bg-black' : 'bg-gray-300 dark:bg-gray-600'}`}
                 >
                   <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${showEmptyStatuses ? 'translate-x-4' : 'translate-x-0'}`} />
                 </button>
@@ -3761,7 +3761,7 @@ const App: React.FC = () => {
                 <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Wrap text</span>
                 <button
                   onClick={() => setWrapText(!wrapText)}
-                  className={`w-8 h-4 rounded-full transition-colors relative ${wrapText ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                  className={`w-8 h-4 rounded-full transition-colors relative ${wrapText ? 'bg-black' : 'bg-gray-300 dark:bg-gray-600'}`}
                 >
                   <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${wrapText ? 'translate-x-4' : 'translate-x-0'}`} />
                 </button>
@@ -3770,7 +3770,7 @@ const App: React.FC = () => {
                 <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Show task locations</span>
                 <button
                   onClick={() => setShowTaskLocations(!showTaskLocations)}
-                  className={`w-8 h-4 rounded-full transition-colors relative ${showTaskLocations ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                  className={`w-8 h-4 rounded-full transition-colors relative ${showTaskLocations ? 'bg-black' : 'bg-gray-300 dark:bg-gray-600'}`}
                 >
                   <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${showTaskLocations ? 'translate-x-4' : 'translate-x-0'}`} />
                 </button>
@@ -3779,7 +3779,7 @@ const App: React.FC = () => {
                 <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Show subtask parent names</span>
                 <button
                   onClick={() => setShowSubtaskParentNames(!showSubtaskParentNames)}
-                  className={`w-8 h-4 rounded-full transition-colors relative ${showSubtaskParentNames ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                  className={`w-8 h-4 rounded-full transition-colors relative ${showSubtaskParentNames ? 'bg-black' : 'bg-gray-300 dark:bg-gray-600'}`}
                 >
                   <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${showSubtaskParentNames ? 'translate-x-4' : 'translate-x-0'}`} />
                 </button>
@@ -3788,7 +3788,7 @@ const App: React.FC = () => {
                 <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Show closed tasks</span>
                 <button
                   onClick={() => setShowClosedTasks(!showClosedTasks)}
-                  className={`w-8 h-4 rounded-full transition-colors relative ${showClosedTasks ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                  className={`w-8 h-4 rounded-full transition-colors relative ${showClosedTasks ? 'bg-black' : 'bg-gray-300 dark:bg-gray-600'}`}
                 >
                   <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${showClosedTasks ? 'translate-x-4' : 'translate-x-0'}`} />
                 </button>
@@ -3815,7 +3815,7 @@ const App: React.FC = () => {
                 <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Show task locations</span>
                 <button
                   onClick={() => setBoardShowTaskLocations(!boardShowTaskLocations)}
-                  className={`w-8 h-4 rounded-full transition-colors relative ${boardShowTaskLocations ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                  className={`w-8 h-4 rounded-full transition-colors relative ${boardShowTaskLocations ? 'bg-black' : 'bg-gray-300 dark:bg-gray-600'}`}
                 >
                   <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${boardShowTaskLocations ? 'translate-x-4' : 'translate-x-0'}`} />
                 </button>
@@ -3824,7 +3824,7 @@ const App: React.FC = () => {
                 <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Show subtask parent names</span>
                 <button
                   onClick={() => setBoardShowSubtaskParentNames(!boardShowSubtaskParentNames)}
-                  className={`w-8 h-4 rounded-full transition-colors relative ${boardShowSubtaskParentNames ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                  className={`w-8 h-4 rounded-full transition-colors relative ${boardShowSubtaskParentNames ? 'bg-black' : 'bg-gray-300 dark:bg-gray-600'}`}
                 >
                   <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${boardShowSubtaskParentNames ? 'translate-x-4' : 'translate-x-0'}`} />
                 </button>
@@ -3865,7 +3865,7 @@ const App: React.FC = () => {
                 <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Show weekends</span>
                 <button
                   onClick={() => setCalendarShowWeekends(!calendarShowWeekends)}
-                  className={`w-8 h-4 rounded-full transition-colors relative ${calendarShowWeekends ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                  className={`w-8 h-4 rounded-full transition-colors relative ${calendarShowWeekends ? 'bg-black' : 'bg-gray-300 dark:bg-gray-600'}`}
                 >
                   <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${calendarShowWeekends ? 'translate-x-4' : 'translate-x-0'}`} />
                 </button>
@@ -3874,7 +3874,7 @@ const App: React.FC = () => {
                 <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Show week numbers</span>
                 <button
                   onClick={() => setCalendarShowWeekNumbers(!calendarShowWeekNumbers)}
-                  className={`w-8 h-4 rounded-full transition-colors relative ${calendarShowWeekNumbers ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                  className={`w-8 h-4 rounded-full transition-colors relative ${calendarShowWeekNumbers ? 'bg-black' : 'bg-gray-300 dark:bg-gray-600'}`}
                 >
                   <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${calendarShowWeekNumbers ? 'translate-x-4' : 'translate-x-0'}`} />
                 </button>
@@ -3893,7 +3893,7 @@ const App: React.FC = () => {
                 <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Show weekends</span>
                 <button
                   onClick={() => setGanttShowWeekends(!ganttShowWeekends)}
-                  className={`w-8 h-4 rounded-full transition-colors relative ${ganttShowWeekends ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                  className={`w-8 h-4 rounded-full transition-colors relative ${ganttShowWeekends ? 'bg-black' : 'bg-gray-300 dark:bg-gray-600'}`}
                 >
                   <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${ganttShowWeekends ? 'translate-x-4' : 'translate-x-0'}`} />
                 </button>
@@ -3902,7 +3902,7 @@ const App: React.FC = () => {
                 <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Show critical path</span>
                 <button
                   onClick={() => setGanttShowCriticalPath(!ganttShowCriticalPath)}
-                  className={`w-8 h-4 rounded-full transition-colors relative ${ganttShowCriticalPath ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                  className={`w-8 h-4 rounded-full transition-colors relative ${ganttShowCriticalPath ? 'bg-black' : 'bg-gray-300 dark:bg-gray-600'}`}
                 >
                   <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${ganttShowCriticalPath ? 'translate-x-4' : 'translate-x-0'}`} />
                 </button>
@@ -3911,7 +3911,7 @@ const App: React.FC = () => {
                 <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Show slack time</span>
                 <button
                   onClick={() => setGanttShowSlackTime(!ganttShowSlackTime)}
-                  className={`w-8 h-4 rounded-full transition-colors relative ${ganttShowSlackTime ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                  className={`w-8 h-4 rounded-full transition-colors relative ${ganttShowSlackTime ? 'bg-black' : 'bg-gray-300 dark:bg-gray-600'}`}
                 >
                   <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${ganttShowSlackTime ? 'translate-x-4' : 'translate-x-0'}`} />
                 </button>
@@ -3920,7 +3920,7 @@ const App: React.FC = () => {
                 <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Full screen mode</span>
                 <button
                   onClick={() => setGanttFullScreen(!ganttFullScreen)}
-                  className={`w-8 h-4 rounded-full transition-colors relative ${ganttFullScreen ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                  className={`w-8 h-4 rounded-full transition-colors relative ${ganttFullScreen ? 'bg-black' : 'bg-gray-300 dark:bg-gray-600'}`}
                 >
                   <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${ganttFullScreen ? 'translate-x-4' : 'translate-x-0'}`} />
                 </button>
@@ -3929,7 +3929,7 @@ const App: React.FC = () => {
                 <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Reschedule dependencies</span>
                 <button
                   onClick={() => setGanttRescheduleDependencies(!ganttRescheduleDependencies)}
-                  className={`w-8 h-4 rounded-full transition-colors relative ${ganttRescheduleDependencies ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                  className={`w-8 h-4 rounded-full transition-colors relative ${ganttRescheduleDependencies ? 'bg-black' : 'bg-gray-300 dark:bg-gray-600'}`}
                 >
                   <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${ganttRescheduleDependencies ? 'translate-x-4' : 'translate-x-0'}`} />
                 </button>
@@ -4043,7 +4043,7 @@ const App: React.FC = () => {
               </div>
               <button
                 onClick={() => setAutosaveView(!autosaveView)}
-                className={`w-8 h-4 rounded-full transition-colors relative ${autosaveView ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                className={`w-8 h-4 rounded-full transition-colors relative ${autosaveView ? 'bg-black' : 'bg-gray-300 dark:bg-gray-600'}`}
               >
                 <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${autosaveView ? 'translate-x-4' : 'translate-x-0'}`} />
               </button>
@@ -4055,7 +4055,7 @@ const App: React.FC = () => {
               </div>
               <button
                 onClick={() => setPinView(!pinView)}
-                className={`w-8 h-4 rounded-full transition-colors relative ${pinView ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                className={`w-8 h-4 rounded-full transition-colors relative ${pinView ? 'bg-black' : 'bg-gray-300 dark:bg-gray-600'}`}
               >
                 <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${pinView ? 'translate-x-4' : 'translate-x-0'}`} />
               </button>
@@ -4067,7 +4067,7 @@ const App: React.FC = () => {
               </div>
               <button
                 onClick={() => setPrivateView(!privateView)}
-                className={`w-8 h-4 rounded-full transition-colors relative ${privateView ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                className={`w-8 h-4 rounded-full transition-colors relative ${privateView ? 'bg-black' : 'bg-gray-300 dark:bg-gray-600'}`}
               >
                 <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${privateView ? 'translate-x-4' : 'translate-x-0'}`} />
               </button>
@@ -4079,7 +4079,7 @@ const App: React.FC = () => {
               </div>
               <button
                 onClick={() => setProtectView(!protectView)}
-                className={`w-8 h-4 rounded-full transition-colors relative ${protectView ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                className={`w-8 h-4 rounded-full transition-colors relative ${protectView ? 'bg-black' : 'bg-gray-300 dark:bg-gray-600'}`}
               >
                 <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${protectView ? 'translate-x-4' : 'translate-x-0'}`} />
               </button>
@@ -4091,7 +4091,7 @@ const App: React.FC = () => {
               </div>
               <button
                 onClick={() => setDefaultView(!defaultView)}
-                className={`w-8 h-4 rounded-full transition-colors relative ${defaultView ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                className={`w-8 h-4 rounded-full transition-colors relative ${defaultView ? 'bg-black' : 'bg-gray-300 dark:bg-gray-600'}`}
               >
                 <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${defaultView ? 'translate-x-4' : 'translate-x-0'}`} />
               </button>
@@ -4161,7 +4161,7 @@ const App: React.FC = () => {
                   >
                     {tab}
                     {repliesActiveTab === tab && (
-                      <div className="absolute bottom-0 left-0 w-full h-0.5 bg-purple-500 animate-in fade-in slide-in-from-bottom-1 duration-200" />
+                      <div className="absolute bottom-0 left-0 w-full h-0.5 bg-black animate-in fade-in slide-in-from-bottom-1 duration-200" />
                     )}
                   </button>
                 ))}
@@ -4221,7 +4221,7 @@ const App: React.FC = () => {
                     >
                       {tab}
                       {inboxActiveTab === tab && (
-                        <div className="absolute bottom-0 left-0 w-full h-0.5 bg-purple-500 animate-in fade-in slide-in-from-bottom-1 duration-200" />
+                        <div className="absolute bottom-0 left-0 w-full h-0.5 bg-black animate-in fade-in slide-in-from-bottom-1 duration-200" />
                       )}
                     </button>
                   ))}
@@ -4268,7 +4268,7 @@ const App: React.FC = () => {
                               </div>
                               <div className="flex items-center gap-2">
                                 <span className="text-xs text-gray-400">{filter.count}</span>
-                                {filter.state && <Check size={14} className="text-purple-600" />}
+                                {filter.state && <Check size={14} className="text-black" />}
                               </div>
                             </button>
                           ))}
@@ -4296,7 +4296,7 @@ const App: React.FC = () => {
             {/* Inbox Content */}
             <div className="flex-1 overflow-auto p-8">
               <div className="flex flex-col items-center justify-center h-full text-center">
-                <div className="w-24 h-24 bg-purple-100 dark:bg-purple-900/20 rounded-full flex items-center justify-center mb-4">
+                <div className="w-24 h-24 bg-gray-100 dark:bg-purple-900/20 rounded-full flex items-center justify-center mb-4">
                   <Inbox size={48} className="text-purple-400" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Inbox Zero</h3>
@@ -4349,7 +4349,7 @@ const App: React.FC = () => {
                     </div>
                     <button
                       onClick={() => option.setState(!option.state)}
-                      className={`w-11 h-6 rounded-full relative transition-colors duration-200 ${option.state ? 'bg-purple-600' : 'bg-gray-200 dark:bg-gray-700'
+                      className={`w-11 h-6 rounded-full relative transition-colors duration-200 ${option.state ? 'bg-black' : 'bg-gray-200 dark:bg-gray-700'
                         }`}
                     >
                       <div className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-200 ${option.state ? 'translate-x-5' : 'translate-x-0'
@@ -4381,16 +4381,16 @@ const App: React.FC = () => {
                   <button
                     onClick={() => setInboxDisplayMode('fullscreen')}
                     className={`relative p-4 border-2 rounded-xl transition-all ${inboxDisplayMode === 'fullscreen'
-                      ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
+                      ? 'border-black bg-gray-50 dark:bg-purple-900/20'
                       : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
                       }`}
                   >
                     {inboxDisplayMode === 'fullscreen' && (
-                      <div className="absolute top-2 right-2 w-4 h-4 bg-purple-600 rounded-full flex items-center justify-center">
+                      <div className="absolute top-2 right-2 w-4 h-4 bg-black rounded-full flex items-center justify-center">
                         <div className="w-2 h-2 bg-white rounded-full" />
                       </div>
                     )}
-                    <div className="bg-purple-100 dark:bg-purple-900/30 rounded-lg p-3 mb-2">
+                    <div className="bg-gray-100 dark:bg-purple-900/30 rounded-lg p-3 mb-2">
                       <div className="space-y-1.5">
                         <div className="h-1 bg-purple-300 dark:bg-purple-700 rounded w-3/4" />
                         <div className="h-1 bg-purple-200 dark:bg-purple-800 rounded w-full" />
@@ -4403,12 +4403,12 @@ const App: React.FC = () => {
                   <button
                     onClick={() => setInboxDisplayMode('inline')}
                     className={`relative p-4 border-2 rounded-xl transition-all ${inboxDisplayMode === 'inline'
-                      ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
+                      ? 'border-black bg-gray-50 dark:bg-purple-900/20'
                       : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
                       }`}
                   >
                     {inboxDisplayMode === 'inline' && (
-                      <div className="absolute top-2 right-2 w-4 h-4 bg-purple-600 rounded-full flex items-center justify-center">
+                      <div className="absolute top-2 right-2 w-4 h-4 bg-black rounded-full flex items-center justify-center">
                         <div className="w-2 h-2 bg-white rounded-full" />
                       </div>
                     )}
@@ -4490,7 +4490,7 @@ const App: React.FC = () => {
                     { label: 'All Tasks', icon: <Check size={16} />, state: navAllTasks, setState: setNavAllTasks },
                   ].map((item) => (
                     <label key={item.label} className="flex items-center gap-3 p-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg cursor-pointer group transition-colors">
-                      <div className={`w-5 h-5 rounded flex items-center justify-center transition-colors ${item.state ? 'bg-purple-600 text-white' : 'border border-gray-300 dark:border-gray-600 group-hover:border-gray-400'
+                      <div className={`w-5 h-5 rounded flex items-center justify-center transition-colors ${item.state ? 'bg-black text-white' : 'border border-gray-300 dark:border-gray-600 group-hover:border-gray-400'
                         }`}>
                         {item.state && <Check size={14} />}
                       </div>
@@ -4530,7 +4530,7 @@ const App: React.FC = () => {
                       { label: 'Timesheets', icon: <Clock size={16} />, state: homeTimesheets, setState: setHomeTimesheets },
                     ].map((item) => (
                       <label key={item.label} className="flex items-center gap-3 p-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg cursor-pointer group transition-colors">
-                        <div className={`w-5 h-5 rounded flex items-center justify-center transition-colors ${item.state ? 'bg-purple-600 text-white' : 'border border-gray-300 dark:border-gray-600 group-hover:border-gray-400'
+                        <div className={`w-5 h-5 rounded flex items-center justify-center transition-colors ${item.state ? 'bg-black text-white' : 'border border-gray-300 dark:border-gray-600 group-hover:border-gray-400'
                           }`}>
                           {item.state && <Check size={14} />}
                         </div>
@@ -4563,7 +4563,7 @@ const App: React.FC = () => {
                           className="hidden"
                         />
                         <div className={`p-4 border-2 rounded-xl transition-all ${homeAppearance === 'icons-only'
-                          ? 'border-purple-600 bg-purple-50 dark:bg-purple-900/20'
+                          ? 'border-black bg-gray-50 dark:bg-purple-900/20'
                           : 'border-gray-200 dark:border-gray-700 group-hover:border-purple-300'
                           }`}>
                           <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-3 aspect-video mb-2 flex items-center gap-2">
@@ -4582,7 +4582,7 @@ const App: React.FC = () => {
                           className="hidden"
                         />
                         <div className={`p-4 border-2 rounded-xl transition-all ${homeAppearance === 'icons-labels'
-                          ? 'border-purple-600 bg-purple-50 dark:bg-purple-900/20'
+                          ? 'border-black bg-gray-50 dark:bg-purple-900/20'
                           : 'border-gray-200 dark:border-gray-700 group-hover:border-purple-300'
                           }`}>
                           <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-3 aspect-video mb-2 flex flex-col gap-2">
