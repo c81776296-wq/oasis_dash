@@ -3,9 +3,16 @@ import { Task, User, Team } from './types';
 
 export const USERS: User[] = [
   { id: '1', name: 'Augusto Silva', avatar: '', role: 'Owner', email: 'augusto@example.com' },
+  { id: '2', name: 'Bruno Santos', avatar: '', role: 'Member', email: 'bruno@oasisinternationalsolutions.com' },
+  { id: '3', name: 'Djavan Silva', avatar: '', role: 'Member', email: 'djavan@nuvera.global' },
+  { id: '4', name: 'Gustavo', avatar: '', role: 'Member', email: 'gustavo@example.com' },
+  { id: '5', name: 'Ramiro Kolesnik', avatar: '', role: 'Member', email: 'ramiro@example.com' },
 ];
 
-export const TEAMS: Team[] = [];
+export const TEAMS: Team[] = [
+  { id: 'team-1', name: 'Team Dubai', color: '#ff7043', membersCount: 3 },
+  { id: 'team-2', name: 'Team Oman', color: '#ba68c8', membersCount: 3 },
+];
 
 export const MOCK_TASKS: Task[] = [];
 

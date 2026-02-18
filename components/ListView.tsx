@@ -17,6 +17,7 @@ import {
   Activity,
   LayoutGrid,
   User as UserIcon,
+  UserPlus,
   GripVertical,
   Pencil,
   EyeOff,
@@ -53,7 +54,7 @@ import {
   Box
 } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
-import { STATUS_COLORS, PRIORITY_COLORS } from '../constants';
+import { STATUS_COLORS, PRIORITY_COLORS, USERS, TEAMS } from '../constants';
 
 interface ListViewProps {
   tasks: Task[];
@@ -61,10 +62,11 @@ interface ListViewProps {
   onAddTask: () => void;
   onAddTaskInline: (title: string, status: Status) => void;
   onTaskClick: (task: Task) => void;
+  onUpdateTask: (taskId: string, updates: Partial<Task>) => void;
   isDarkMode?: boolean;
 }
 
-const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, onAddTaskInline, onTaskClick, isDarkMode }) => {
+const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, onAddTaskInline, onTaskClick, onUpdateTask, isDarkMode }) => {
   const [expandedStatuses, setExpandedStatuses] = useState<Record<string, boolean>>({
     'TO DO': true,
     'COMPLETED': true,
@@ -83,6 +85,9 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
   const [isSubtasksOpen, setIsSubtasksOpen] = useState(false);
   const [isFieldsDrawerOpen, setIsFieldsDrawerOpen] = useState(false);
   const [fieldsSearchQuery, setFieldsSearchQuery] = useState('');
+
+  const [activeAssigneePicker, setActiveAssigneePicker] = useState<string | null>(null);
+  const [assigneeSearchQuery, setAssigneeSearchQuery] = useState('');
 
   const [isGroupPopoverOpen, setIsGroupPopoverOpen] = useState(false);
   const [isGroupTypeDropdownOpen, setIsGroupTypeDropdownOpen] = useState(false);
@@ -612,8 +617,114 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                                           <td key={col} className="px-4 py-2.5">
                                             <div className="flex justify-end pr-8">
                                               {col === 'Assignee' && (
-                                                <div className="w-6 h-6 rounded-full border border-dashed border-gray-300 dark:border-gray-700 flex items-center justify-center">
-                                                  <UserIcon size={12} className="text-gray-400 dark:text-gray-600" />
+                                                <div className="relative">
+                                                  <button
+                                                    onClick={(e) => {
+                                                      e.stopPropagation();
+                                                      setActiveAssigneePicker(activeAssigneePicker === task.id ? null : task.id);
+                                                      setAssigneeSearchQuery('');
+                                                    }}
+                                                    className="w-6 h-6 rounded-full border border-dashed border-gray-300 dark:border-gray-700 flex items-center justify-center hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/10 transition-all overflow-hidden"
+                                                  >
+                                                    {task.assignee ? (
+                                                      task.assignee.avatar ? (
+                                                        <img src={task.assignee.avatar} className="w-full h-full object-cover" />
+                                                      ) : (
+                                                        <div className="w-full h-full flex items-center justify-center bg-purple-100 dark:bg-purple-900/30 text-[10px] font-bold text-purple-600 dark:text-purple-400">
+                                                          {task.assignee.name.split(' ').map(n => n[0]).join('')}
+                                                        </div>
+                                                      )
+                                                    ) : (
+                                                      <UserIcon size={12} className="text-gray-400 dark:text-gray-600" />
+                                                    )}
+                                                  </button>
+
+                                                  {activeAssigneePicker === task.id && (
+                                                    <>
+                                                      <div className="fixed inset-0 z-[150]" onClick={(e) => { e.stopPropagation(); setActiveAssigneePicker(null); }} />
+                                                      <div className="absolute top-full right-0 mt-1 w-72 bg-white dark:bg-[#1e1e1f] border border-gray-200 dark:border-gray-800 rounded-xl shadow-2xl z-[160] overflow-hidden animate-in fade-in zoom-in duration-200">
+                                                        {/* Search */}
+                                                        <div className="p-3 border-b border-gray-100 dark:border-gray-800">
+                                                          <div className="relative">
+                                                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
+                                                            <input
+                                                              autoFocus
+                                                              type="text"
+                                                              placeholder="Search or enter email..."
+                                                              value={assigneeSearchQuery}
+                                                              onChange={(e) => setAssigneeSearchQuery(e.target.value)}
+                                                              onClick={(e) => e.stopPropagation()}
+                                                              className="w-full bg-gray-50 dark:bg-[#121213] border border-gray-200 dark:border-gray-800 rounded-lg py-1.5 pl-9 pr-3 text-xs focus:outline-none focus:border-purple-500 dark:text-white transition-all"
+                                                            />
+                                                          </div>
+                                                        </div>
+
+                                                        {/* List */}
+                                                        <div className="max-h-80 overflow-y-auto custom-scrollbar">
+                                                          {/* People */}
+                                                          <div className="px-1 py-2">
+                                                            <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 px-3">People</div>
+                                                            {USERS.filter(u => u.name.toLowerCase().includes(assigneeSearchQuery.toLowerCase()) || u.email.toLowerCase().includes(assigneeSearchQuery.toLowerCase())).map(user => (
+                                                              <button
+                                                                key={user.id}
+                                                                onClick={(e) => {
+                                                                  e.stopPropagation();
+                                                                  onUpdateTask(task.id, { assignee: user });
+                                                                  setActiveAssigneePicker(null);
+                                                                }}
+                                                                className="w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors group text-left"
+                                                              >
+                                                                <div className="w-7 h-7 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-[10px] font-bold text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-800">
+                                                                  {user.name.split(' ').map(n => n[0]).join('')}
+                                                                </div>
+                                                                <div className="flex flex-col truncate">
+                                                                  <span className="text-xs font-semibold text-gray-700 dark:text-gray-200 group-hover:text-purple-600 dark:group-hover:text-purple-400">{user.id === '1' ? 'Me' : user.name}</span>
+                                                                  {user.email && <span className="text-[10px] text-gray-400 truncate tracking-normal font-medium">{user.email}</span>}
+                                                                </div>
+                                                                {task.assignee?.id === user.id && <Check size={14} className="ml-auto text-purple-600" />}
+                                                              </button>
+                                                            ))}
+                                                          </div>
+
+                                                          {/* Teams */}
+                                                          <div className="px-1 py-2 border-t border-gray-100 dark:border-gray-800">
+                                                            <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 px-3">Teams</div>
+                                                            {TEAMS.filter(t => t.name.toLowerCase().includes(assigneeSearchQuery.toLowerCase())).map(team => (
+                                                              <button
+                                                                key={team.id}
+                                                                onClick={(e) => {
+                                                                  e.stopPropagation();
+                                                                  setActiveAssigneePicker(null);
+                                                                }}
+                                                                className="w-full flex items-center justify-between px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors text-left group"
+                                                              >
+                                                                <div className="flex items-center gap-3">
+                                                                  <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-white border border-black/10" style={{ backgroundColor: team.color }}>
+                                                                    {team.name.split(' ').map(n => n[0]).join('')}
+                                                                  </div>
+                                                                  <span className="text-xs font-semibold text-gray-700 dark:text-gray-200 group-hover:text-purple-600 dark:group-hover:text-purple-400">{team.name}</span>
+                                                                </div>
+                                                                <span className="text-[10px] text-gray-400 font-medium">{team.membersCount} people</span>
+                                                              </button>
+                                                            ))}
+                                                          </div>
+                                                        </div>
+
+                                                        {/* Invite */}
+                                                        <div className="p-2 border-t border-gray-100 dark:border-gray-800">
+                                                          <button
+                                                            onClick={(e) => e.stopPropagation()}
+                                                            className="w-full flex items-center gap-3 px-2 py-2 hover:bg-purple-50 dark:hover:bg-purple-900/10 rounded-lg group transition-colors"
+                                                          >
+                                                            <div className="w-7 h-7 rounded-full bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center text-purple-600">
+                                                              <UserPlus size={14} />
+                                                            </div>
+                                                            <span className="text-xs font-bold text-gray-600 dark:text-gray-300 group-hover:text-purple-600 dark:group-hover:text-purple-400">Invite people via email</span>
+                                                          </button>
+                                                        </div>
+                                                      </div>
+                                                    </>
+                                                  )}
                                                 </div>
                                               )}
                                               {col === 'Due date' && <Calendar size={14} className="text-gray-400 dark:text-gray-700" />}

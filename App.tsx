@@ -628,6 +628,10 @@ const App: React.FC = () => {
     setTasks(prev => [taskToAdd, ...prev]);
   };
 
+  const handleUpdateTask = (taskId: string, updates: Partial<Task>) => {
+    setTasks(prev => prev.map(t => t.id === taskId ? { ...t, ...updates } : t));
+  };
+
   const handleCreateTask = (e?: React.FormEvent, mode: 'default' | 'open' | 'start-another' | 'duplicate' = 'default') => {
     if (e) e.preventDefault();
     if (!newTask.title) return;
@@ -693,12 +697,12 @@ const App: React.FC = () => {
       onTaskClick: openTaskDetail
     };
     switch (activeView) {
-      case 'List': return <ListView {...commonProps} onToggleStatus={toggleTaskStatus} onAddTask={() => setIsModalOpen(true)} onAddTaskInline={handleAddTaskInline} />;
+      case 'List': return <ListView {...commonProps} onToggleStatus={toggleTaskStatus} onAddTask={() => setIsModalOpen(true)} onAddTaskInline={handleAddTaskInline} onUpdateTask={handleUpdateTask} />;
       case 'Board': return <BoardView {...commonProps} />;
       case 'Calendar': return <CalendarView {...commonProps} />;
       case 'Gantt': return <GanttView {...commonProps} />;
       case 'Team': return <TeamView {...commonProps} />;
-      default: return <ListView {...commonProps} onToggleStatus={toggleTaskStatus} onAddTask={() => setIsModalOpen(true)} onAddTaskInline={handleAddTaskInline} />;
+      default: return <ListView {...commonProps} onToggleStatus={toggleTaskStatus} onAddTask={() => setIsModalOpen(true)} onAddTaskInline={handleAddTaskInline} onUpdateTask={handleUpdateTask} />;
     }
   };
 
@@ -847,13 +851,12 @@ const App: React.FC = () => {
                           if (item.id === 'My Tasks') setShowMyTasksSubmenu(!showMyTasksSubmenu);
                           if (item.id === 'More') setShowMoreSubmenu(!showMoreSubmenu);
                         }}
-                        className={`flex items-center gap-3 p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/5 cursor-pointer transition-all ${
-                          (item.id === 'Inbox' && isInboxOpen) || 
-                          (item.id === 'Replies' && isRepliesOpen) || 
-                          (item.id === 'Assigned Comments' && isAssignedCommentsOpen) 
-                            ? 'bg-white dark:bg-white/5 text-gray-900 dark:text-white' 
-                            : ''
-                        }`}
+                        className={`flex items-center gap-3 p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/5 cursor-pointer transition-all ${(item.id === 'Inbox' && isInboxOpen) ||
+                          (item.id === 'Replies' && isRepliesOpen) ||
+                          (item.id === 'Assigned Comments' && isAssignedCommentsOpen)
+                          ? 'bg-white dark:bg-white/5 text-gray-900 dark:text-white'
+                          : ''
+                          }`}
                       >
                         {item.icon}
                         <span className="text-sm font-medium">{item.id}</span>
@@ -901,9 +904,9 @@ const App: React.FC = () => {
                               <span className="text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">{subItem.shortcut}</span>
                             </div>
                           ))}
-                          
+
                           <div className="border-t border-gray-200 dark:border-gray-700 my-2" />
-                          
+
                           <div
                             onClick={() => {
                               setIsCustomizeModalOpen(true);
@@ -1401,153 +1404,153 @@ const App: React.FC = () => {
             </div>
           </div>
         </header>
-      {/* My Tasks Full-Screen Views */}
-      {myTasksActiveView && (
-        <div className="absolute top-14 inset-x-0 bottom-0 bg-white dark:bg-[#1e1e1e] z-30 flex flex-col animate-in fade-in zoom-in-95 duration-200">
-          {/* Header */}
-          <div className="border-b border-gray-200 dark:border-gray-800 p-4 flex items-center justify-between">
-            <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-              <div 
+        {/* My Tasks Full-Screen Views */}
+        {myTasksActiveView && (
+          <div className="absolute top-14 inset-x-0 bottom-0 bg-white dark:bg-[#1e1e1e] z-30 flex flex-col animate-in fade-in zoom-in-95 duration-200">
+            {/* Header */}
+            <div className="border-b border-gray-200 dark:border-gray-800 p-4 flex items-center justify-between">
+              <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                <div
+                  onClick={() => setMyTasksActiveView(null)}
+                  className="flex items-center gap-2 hover:text-gray-900 dark:hover:text-white cursor-pointer transition-colors"
+                >
+                  <UserIcon size={16} />
+                  <span>My Tasks</span>
+                </div>
+                <span>/</span>
+                <span className="text-gray-900 dark:text-white font-medium flex items-center gap-2">
+                  {myTasksActiveView === 'Assigned to me' && <UserIcon size={16} />}
+                  {myTasksActiveView === 'Today & Overdue' && <Calendar size={16} />}
+                  {myTasksActiveView === 'Personal List' && <UserIcon size={16} />}
+                  {myTasksActiveView}
+                </span>
+              </div>
+              <button
                 onClick={() => setMyTasksActiveView(null)}
-                className="flex items-center gap-2 hover:text-gray-900 dark:hover:text-white cursor-pointer transition-colors"
+                className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
               >
-                <UserIcon size={16} />
-                <span>My Tasks</span>
-              </div>
-              <span>/</span>
-              <span className="text-gray-900 dark:text-white font-medium flex items-center gap-2">
-                {myTasksActiveView === 'Assigned to me' && <UserIcon size={16} />}
-                {myTasksActiveView === 'Today & Overdue' && <Calendar size={16} />}
-                {myTasksActiveView === 'Personal List' && <UserIcon size={16} />}
-                {myTasksActiveView}
-              </span>
+                <X size={20} />
+              </button>
             </div>
-            <button 
-              onClick={() => setMyTasksActiveView(null)}
-              className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-            >
-              <X size={20} />
-            </button>
-          </div>
 
-          {/* Content */}
-          <div className="flex-1 overflow-hidden relative">
-            {myTasksActiveView === 'Assigned to me' && (
-              <div className="absolute inset-0 flex items-center justify-center p-8 bg-gray-50/50 dark:bg-black/20">
-                <div className="text-center space-y-4 max-w-md animate-in slide-in-from-bottom-5 duration-300">
-                  <div className="w-16 h-16 bg-white dark:bg-gray-800 rounded-2xl shadow-sm flex items-center justify-center mx-auto border border-gray-100 dark:border-gray-700">
-                    <Check size={32} className="text-purple-500" />
-                  </div>
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                    Tasks assigned to you will appear here
-                  </h3>
-                  <button className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors shadow-lg shadow-purple-500/20">
-                    Browse tasks
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {myTasksActiveView === 'Today & Overdue' && (
-              <div className="absolute inset-0 overflow-auto bg-gray-50/50 dark:bg-black/20 p-8">
-                <div className="max-w-5xl mx-auto animate-in slide-in-from-bottom-5 duration-300">
-                  <div className="bg-white dark:bg-[#121213] border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm overflow-hidden">
-                    <div className="p-6 border-b border-gray-200 dark:border-gray-800">
-                      <h2 className="text-lg font-bold text-gray-900 dark:text-white">My Work</h2>
+            {/* Content */}
+            <div className="flex-1 overflow-hidden relative">
+              {myTasksActiveView === 'Assigned to me' && (
+                <div className="absolute inset-0 flex items-center justify-center p-8 bg-gray-50/50 dark:bg-black/20">
+                  <div className="text-center space-y-4 max-w-md animate-in slide-in-from-bottom-5 duration-300">
+                    <div className="w-16 h-16 bg-white dark:bg-gray-800 rounded-2xl shadow-sm flex items-center justify-center mx-auto border border-gray-100 dark:border-gray-700">
+                      <Check size={32} className="text-purple-500" />
                     </div>
-                    
-                    <div className="flex flex-col items-center justify-center py-32">
-                      <div className="w-16 h-16 bg-gray-50 dark:bg-gray-800 rounded-2xl flex items-center justify-center mb-4">
-                        <Layers size={32} className="text-gray-300 dark:text-gray-600" />
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                      Tasks assigned to you will appear here
+                    </h3>
+                    <button className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors shadow-lg shadow-purple-500/20">
+                      Browse tasks
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {myTasksActiveView === 'Today & Overdue' && (
+                <div className="absolute inset-0 overflow-auto bg-gray-50/50 dark:bg-black/20 p-8">
+                  <div className="max-w-5xl mx-auto animate-in slide-in-from-bottom-5 duration-300">
+                    <div className="bg-white dark:bg-[#121213] border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm overflow-hidden">
+                      <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+                        <h2 className="text-lg font-bold text-gray-900 dark:text-white">My Work</h2>
                       </div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
-                        Tasks and Reminders assigned to you will show here
-                      </p>
-                      <button className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors inline-flex items-center gap-2 shadow-lg shadow-purple-500/20">
-                        <Plus size={16} />
-                        Add task or reminder
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
 
-            {myTasksActiveView === 'Personal List' && (
-              <div className="absolute inset-0 flex flex-col bg-white dark:bg-[#1e1e1e]">
-                {/* Toolbar */}
-                <div className="border-b border-gray-200 dark:border-gray-800 px-6 py-3">
-                  <div className="flex items-center gap-4">
-                    <button className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md transition-colors">
-                      <Filter size={14} />
-                      Filter
-                    </button>
-                    <div className="h-4 w-px bg-gray-200 dark:bg-gray-700" />
-                    <button className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors">
-                      <LayoutList size={14} />
-                      Me
-                    </button>
-                    <button className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors">
-                      <Hash size={14} />
-                      Tags
-                    </button>
-                    
-                    <div className="ml-auto flex items-center gap-2">
-                      <div className="relative">
-                        <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
-                        <input 
-                          type="text" 
-                          placeholder="Search" 
-                          className="pl-8 pr-3 py-1.5 bg-gray-100 dark:bg-gray-800 border-none rounded-md text-xs w-48 focus:ring-2 focus:ring-purple-500"
-                        />
+                      <div className="flex flex-col items-center justify-center py-32">
+                        <div className="w-16 h-16 bg-gray-50 dark:bg-gray-800 rounded-2xl flex items-center justify-center mb-4">
+                          <Layers size={32} className="text-gray-300 dark:text-gray-600" />
+                        </div>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                          Tasks and Reminders assigned to you will show here
+                        </p>
+                        <button className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors inline-flex items-center gap-2 shadow-lg shadow-purple-500/20">
+                          <Plus size={16} />
+                          Add task or reminder
+                        </button>
                       </div>
-                      <button className="p-1.5 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
-                        <Settings size={16} />
-                      </button>
-                      <button className="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-medium rounded-md transition-colors shadow-sm">
-                        Add view
-                      </button>
                     </div>
                   </div>
                 </div>
+              )}
 
-                {/* Table Header */}
-                <div className="border-b border-gray-200 dark:border-gray-800 px-8 py-2 bg-gray-50/50 dark:bg-gray-800/30">
-                  <div className="grid grid-cols-12 gap-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    <div className="col-span-6 pl-2">Task Name</div>
-                    <div className="col-span-2">Assignee</div>
-                    <div className="col-span-2">Due Date</div>
-                    <div className="col-span-2">Priority</div>
+              {myTasksActiveView === 'Personal List' && (
+                <div className="absolute inset-0 flex flex-col bg-white dark:bg-[#1e1e1e]">
+                  {/* Toolbar */}
+                  <div className="border-b border-gray-200 dark:border-gray-800 px-6 py-3">
+                    <div className="flex items-center gap-4">
+                      <button className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md transition-colors">
+                        <Filter size={14} />
+                        Filter
+                      </button>
+                      <div className="h-4 w-px bg-gray-200 dark:bg-gray-700" />
+                      <button className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors">
+                        <LayoutList size={14} />
+                        Me
+                      </button>
+                      <button className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors">
+                        <Hash size={14} />
+                        Tags
+                      </button>
+
+                      <div className="ml-auto flex items-center gap-2">
+                        <div className="relative">
+                          <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                          <input
+                            type="text"
+                            placeholder="Search"
+                            className="pl-8 pr-3 py-1.5 bg-gray-100 dark:bg-gray-800 border-none rounded-md text-xs w-48 focus:ring-2 focus:ring-purple-500"
+                          />
+                        </div>
+                        <button className="p-1.5 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
+                          <Settings size={16} />
+                        </button>
+                        <button className="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-medium rounded-md transition-colors shadow-sm">
+                          Add view
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Table Header */}
+                  <div className="border-b border-gray-200 dark:border-gray-800 px-8 py-2 bg-gray-50/50 dark:bg-gray-800/30">
+                    <div className="grid grid-cols-12 gap-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      <div className="col-span-6 pl-2">Task Name</div>
+                      <div className="col-span-2">Assignee</div>
+                      <div className="col-span-2">Due Date</div>
+                      <div className="col-span-2">Priority</div>
+                    </div>
+                  </div>
+
+                  {/* Add Task Row */}
+                  <div className="px-6 py-2 border-b border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group">
+                    <div className="flex items-center gap-4 pl-2">
+                      <button className="w-5 h-5 rounded border-2 border-gray-300 dark:border-gray-600 hover:border-purple-500 flex items-center justify-center text-transparent hover:text-purple-500 transition-all">
+                        <Check size={12} />
+                      </button>
+                      <input
+                        type="text"
+                        placeholder="+ New Task"
+                        className="flex-1 bg-transparent border-none text-sm text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none py-2"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Empty State */}
+                  <div className="flex-1 flex flex-col items-center justify-center text-center p-8 opacity-50">
+                    <div className="w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
+                      <LayoutList size={40} className="text-gray-300 dark:text-gray-600" />
+                    </div>
+                    <h3 className="text-sm font-medium text-gray-900 dark:text-white">No tasks found</h3>
+                    <p className="text-xs text-gray-500">Create a task to get started</p>
                   </div>
                 </div>
-
-                {/* Add Task Row */}
-                <div className="px-6 py-2 border-b border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group">
-                  <div className="flex items-center gap-4 pl-2">
-                    <button className="w-5 h-5 rounded border-2 border-gray-300 dark:border-gray-600 hover:border-purple-500 flex items-center justify-center text-transparent hover:text-purple-500 transition-all">
-                      <Check size={12} />
-                    </button>
-                    <input
-                      type="text"
-                      placeholder="+ New Task"
-                      className="flex-1 bg-transparent border-none text-sm text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none py-2"
-                    />
-                  </div>
-                </div>
-
-                {/* Empty State */}
-                <div className="flex-1 flex flex-col items-center justify-center text-center p-8 opacity-50">
-                  <div className="w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
-                    <LayoutList size={40} className="text-gray-300 dark:text-gray-600" />
-                  </div>
-                  <h3 className="text-sm font-medium text-gray-900 dark:text-white">No tasks found</h3>
-                  <p className="text-xs text-gray-500">Create a task to get started</p>
-                </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
         <div className="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-black px-6 shrink-0 h-12 flex items-center justify-between">
           <div className="flex items-center gap-6 h-full">
@@ -4446,7 +4449,7 @@ const App: React.FC = () => {
                 <h2 className="text-lg font-bold text-gray-900 dark:text-white">Customize</h2>
                 <p className="text-sm text-gray-500 dark:text-gray-400">Personalize and organize your ClickUp interface</p>
               </div>
-              <button 
+              <button
                 onClick={() => setIsCustomizeModalOpen(false)}
                 className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
               >
@@ -4460,11 +4463,10 @@ const App: React.FC = () => {
                 <button
                   key={tab}
                   onClick={() => setCustomizeActiveTab(tab as any)}
-                  className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-colors ${
-                    customizeActiveTab === tab
-                      ? 'bg-white dark:bg-[#2a2a2a] text-gray-900 dark:text-white shadow-sm'
-                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/5'
-                  }`}
+                  className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-colors ${customizeActiveTab === tab
+                    ? 'bg-white dark:bg-[#2a2a2a] text-gray-900 dark:text-white shadow-sm'
+                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/5'
+                    }`}
                 >
                   {tab}
                 </button>
@@ -4488,14 +4490,13 @@ const App: React.FC = () => {
                     { label: 'All Tasks', icon: <Check size={16} />, state: navAllTasks, setState: setNavAllTasks },
                   ].map((item) => (
                     <label key={item.label} className="flex items-center gap-3 p-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg cursor-pointer group transition-colors">
-                      <div className={`w-5 h-5 rounded flex items-center justify-center transition-colors ${
-                        item.state ? 'bg-purple-600 text-white' : 'border border-gray-300 dark:border-gray-600 group-hover:border-gray-400'
-                      }`}>
+                      <div className={`w-5 h-5 rounded flex items-center justify-center transition-colors ${item.state ? 'bg-purple-600 text-white' : 'border border-gray-300 dark:border-gray-600 group-hover:border-gray-400'
+                        }`}>
                         {item.state && <Check size={14} />}
                       </div>
-                      <input 
-                        type="checkbox" 
-                        checked={item.state} 
+                      <input
+                        type="checkbox"
+                        checked={item.state}
                         onChange={() => item.setState(!item.state)}
                         className="hidden"
                       />
@@ -4529,14 +4530,13 @@ const App: React.FC = () => {
                       { label: 'Timesheets', icon: <Clock size={16} />, state: homeTimesheets, setState: setHomeTimesheets },
                     ].map((item) => (
                       <label key={item.label} className="flex items-center gap-3 p-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg cursor-pointer group transition-colors">
-                        <div className={`w-5 h-5 rounded flex items-center justify-center transition-colors ${
-                          item.state ? 'bg-purple-600 text-white' : 'border border-gray-300 dark:border-gray-600 group-hover:border-gray-400'
-                        }`}>
+                        <div className={`w-5 h-5 rounded flex items-center justify-center transition-colors ${item.state ? 'bg-purple-600 text-white' : 'border border-gray-300 dark:border-gray-600 group-hover:border-gray-400'
+                          }`}>
                           {item.state && <Check size={14} />}
                         </div>
-                        <input 
-                          type="checkbox" 
-                          checked={item.state} 
+                        <input
+                          type="checkbox"
+                          checked={item.state}
                           onChange={() => item.setState(!item.state)}
                           className="hidden"
                         />
@@ -4555,47 +4555,45 @@ const App: React.FC = () => {
                     <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-3">Appearance</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <label className="cursor-pointer group">
-                        <input 
-                          type="radio" 
-                          name="appearance" 
-                          checked={homeAppearance === 'icons-only'} 
+                        <input
+                          type="radio"
+                          name="appearance"
+                          checked={homeAppearance === 'icons-only'}
                           onChange={() => setHomeAppearance('icons-only')}
-                          className="hidden" 
+                          className="hidden"
                         />
-                        <div className={`p-4 border-2 rounded-xl transition-all ${
-                          homeAppearance === 'icons-only' 
-                            ? 'border-purple-600 bg-purple-50 dark:bg-purple-900/20' 
-                            : 'border-gray-200 dark:border-gray-700 group-hover:border-purple-300'
-                        }`}>
+                        <div className={`p-4 border-2 rounded-xl transition-all ${homeAppearance === 'icons-only'
+                          ? 'border-purple-600 bg-purple-50 dark:bg-purple-900/20'
+                          : 'border-gray-200 dark:border-gray-700 group-hover:border-purple-300'
+                          }`}>
                           <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-3 aspect-video mb-2 flex items-center gap-2">
-                             <div className="w-6 h-6 bg-gray-300 dark:bg-gray-600 rounded" />
-                             <div className="w-16 h-2 bg-gray-200 dark:bg-gray-700 rounded" />
+                            <div className="w-6 h-6 bg-gray-300 dark:bg-gray-600 rounded" />
+                            <div className="w-16 h-2 bg-gray-200 dark:bg-gray-700 rounded" />
                           </div>
                           <span className="text-sm font-medium text-gray-900 dark:text-white">Icons only</span>
                         </div>
                       </label>
                       <label className="cursor-pointer group">
-                        <input 
-                          type="radio" 
-                          name="appearance" 
-                          checked={homeAppearance === 'icons-labels'} 
+                        <input
+                          type="radio"
+                          name="appearance"
+                          checked={homeAppearance === 'icons-labels'}
                           onChange={() => setHomeAppearance('icons-labels')}
-                          className="hidden" 
+                          className="hidden"
                         />
-                         <div className={`p-4 border-2 rounded-xl transition-all ${
-                          homeAppearance === 'icons-labels' 
-                            ? 'border-purple-600 bg-purple-50 dark:bg-purple-900/20' 
-                            : 'border-gray-200 dark:border-gray-700 group-hover:border-purple-300'
-                        }`}>
+                        <div className={`p-4 border-2 rounded-xl transition-all ${homeAppearance === 'icons-labels'
+                          ? 'border-purple-600 bg-purple-50 dark:bg-purple-900/20'
+                          : 'border-gray-200 dark:border-gray-700 group-hover:border-purple-300'
+                          }`}>
                           <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-3 aspect-video mb-2 flex flex-col gap-2">
-                             <div className="flex items-center gap-2">
-                               <div className="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded" />
-                               <div className="w-12 h-2 bg-gray-200 dark:bg-gray-700 rounded" />
-                             </div>
-                             <div className="flex items-center gap-2">
-                               <div className="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded" />
-                               <div className="w-10 h-2 bg-gray-200 dark:bg-gray-700 rounded" />
-                             </div>
+                            <div className="flex items-center gap-2">
+                              <div className="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded" />
+                              <div className="w-12 h-2 bg-gray-200 dark:bg-gray-700 rounded" />
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <div className="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded" />
+                              <div className="w-10 h-2 bg-gray-200 dark:bg-gray-700 rounded" />
+                            </div>
                           </div>
                           <span className="text-sm font-medium text-gray-900 dark:text-white">Icons & Labels</span>
                         </div>
@@ -4613,14 +4611,14 @@ const App: React.FC = () => {
                     'Channels',
                     'Direct Messages'
                   ].map((section) => (
-                     <div key={section} className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-800 rounded-lg bg-white dark:bg-[#1e1e1e] hover:border-gray-300 dark:hover:border-gray-700 transition-colors group cursor-grab active:cursor-grabbing">
-                        <div className="flex items-center gap-3">
-                           <MoreVertical size={16} className="text-gray-300 cursor-grab" />
-                           <span className="text-sm font-medium text-gray-900 dark:text-white">{section}</span>
-                        </div>
-                     </div>
+                    <div key={section} className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-800 rounded-lg bg-white dark:bg-[#1e1e1e] hover:border-gray-300 dark:hover:border-gray-700 transition-colors group cursor-grab active:cursor-grabbing">
+                      <div className="flex items-center gap-3">
+                        <MoreVertical size={16} className="text-gray-300 cursor-grab" />
+                        <span className="text-sm font-medium text-gray-900 dark:text-white">{section}</span>
+                      </div>
+                    </div>
                   ))}
-                  
+
                   <button className="w-full flex items-center justify-center gap-2 p-3 mt-4 border border-dashed border-gray-300 dark:border-gray-700 rounded-lg text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
                     <Plus size={16} />
                     <span className="text-sm font-medium">Create section</span>
