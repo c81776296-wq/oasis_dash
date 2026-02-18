@@ -171,6 +171,18 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
   }, {} as Record<string, Task[]>);
 
   const groupKeys = Object.keys(groupedTasks).sort((a, b) => {
+    if (currentGroupType === 'Status') {
+      const statusOrder = ['TO DO', 'IN PROGRESS', 'COMPLETED', 'CANCELLED', 'BLOCKED'];
+      const indexA = statusOrder.indexOf(a);
+      const indexB = statusOrder.indexOf(b);
+
+      if (indexA !== -1 && indexB !== -1) {
+        return currentSortDir === 'Ascending' ? indexA - indexB : indexB - indexA;
+      }
+      if (indexA !== -1) return currentSortDir === 'Ascending' ? -1 : 1;
+      if (indexB !== -1) return currentSortDir === 'Ascending' ? 1 : -1;
+    }
+
     if (currentSortDir === 'Ascending') return a.localeCompare(b);
     return b.localeCompare(a);
   });
