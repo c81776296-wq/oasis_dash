@@ -109,7 +109,8 @@ import {
   Heading3,
   Heading4,
   GripVertical,
-  HelpCircle
+  HelpCircle,
+  CheckCircle2
 } from 'lucide-react';
 import { USERS, PRIORITY_COLORS, STATUS_COLORS, MOCK_TAGS, TEAMS, MOCK_TASKS } from './constants';
 import { Task, ViewType, Status, Priority, User as UserType } from './types';
@@ -313,6 +314,7 @@ const App: React.FC = () => {
   const [viewSearchQuery, setViewSearchQuery] = useState('');
   const [activeSettingsTab, setActiveSettingsTab] = useState<SettingsTab>('General');
   const [isSavingSettings, setIsSavingSettings] = useState(false);
+  const [isMainCreateDropdownOpen, setIsMainCreateDropdownOpen] = useState(false);
 
   // Temporary Settings State (for Cancel/Save logic)
   const [tempWorkspaceName, setTempWorkspaceName] = useState('');
@@ -842,10 +844,76 @@ const App: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <h2 className="text-xl font-bold text-gray-900 dark:text-white">Home</h2>
                 </div>
-                <div className="flex items-center gap-2">
-                  <button className="bg-primary hover:bg-primary-hover active:bg-primary-hover text-white px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors">
+                <div className="flex items-center gap-2 relative">
+                  <button
+                    onClick={() => setIsMainCreateDropdownOpen(!isMainCreateDropdownOpen)}
+                    className="bg-primary hover:bg-primary-hover active:bg-primary-hover text-white px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors"
+                  >
                     <Plus size={16} /> Create
                   </button>
+
+                  {isMainCreateDropdownOpen && (
+                    <>
+                      <div className="fixed inset-0 z-[100]" onClick={() => setIsMainCreateDropdownOpen(false)} />
+                      <div className="absolute top-full right-0 mt-2 w-64 bg-white dark:bg-[#1e1e1f] border border-gray-200 dark:border-gray-800 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] z-[101] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                        <div className="p-2 border-b border-gray-100 dark:border-gray-800">
+                          <div className="px-3 py-1.5 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">Create</div>
+                          <div className="space-y-0.5">
+                            <button
+                              onClick={() => {
+                                setIsModalOpen(true);
+                                setIsMainCreateDropdownOpen(false);
+                              }}
+                              className="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group"
+                            >
+                              <div className="flex items-center gap-3">
+                                <CheckCircle2 size={16} className="text-gray-400 group-hover:text-primary transition-colors" />
+                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Task</span>
+                              </div>
+                              <span className="text-[10px] font-medium text-gray-400">Alt T</span>
+                            </button>
+                            <button className="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group">
+                              <div className="flex items-center gap-3">
+                                <Send size={16} className="text-gray-400 group-hover:text-primary transition-colors -rotate-45" />
+                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Message</span>
+                              </div>
+                              <span className="text-[10px] font-medium text-gray-400">Ctrl G</span>
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="p-2">
+                          <button className="w-full flex items-start gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group">
+                            <LayoutList size={18} className="text-gray-400 group-hover:text-primary transition-colors mt-0.5" />
+                            <div className="flex flex-col text-left">
+                              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">List</span>
+                              <span className="text-[10px] text-gray-400 font-medium">Track tasks, projects, people & more</span>
+                            </div>
+                          </button>
+                          <button className="w-full flex items-start gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group">
+                            <Hash size={18} className="text-gray-400 group-hover:text-primary transition-colors mt-0.5" />
+                            <div className="flex flex-col text-left">
+                              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Channel</span>
+                              <span className="text-[10px] text-gray-400 font-medium">Conversations on specific topics</span>
+                            </div>
+                          </button>
+                          <button
+                            onClick={() => {
+                              setIsSpaceModalOpen(true);
+                              setIsMainCreateDropdownOpen(false);
+                            }}
+                            className="w-full flex items-start gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group"
+                          >
+                            <Layers size={18} className="text-gray-400 group-hover:text-primary transition-colors mt-0.5" />
+                            <div className="flex flex-col text-left">
+                              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Space</span>
+                              <span className="text-[10px] text-gray-400 font-medium">Organize work by team or department</span>
+                            </div>
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -1212,188 +1280,186 @@ const App: React.FC = () => {
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden bg-white dark:bg-black relative">
         {/* Header */}
         <header className="h-14 bg-white dark:bg-black border-b border-gray-200 dark:border-[#2a2a35] flex items-center px-6 z-40 relative">
-          <div className="flex items-center gap-4">
-            <div
-              className="flex items-center gap-1.5 text-gray-400 dark:text-gray-500 text-xs font-bold py-1"
-              onMouseEnter={() => setHoveredBreadcrumb('breadcrumbs')}
-              onMouseLeave={() => setHoveredBreadcrumb(null)}
+          <div
+            className="flex items-center gap-1.5 text-gray-400 dark:text-gray-500 text-xs font-bold py-1"
+            onMouseEnter={() => setHoveredBreadcrumb('breadcrumbs')}
+            onMouseLeave={() => setHoveredBreadcrumb(null)}
+          >
+            <span
+              className="flex items-center gap-1 cursor-pointer hover:text-black transition-colors py-1 group/space"
+              onClick={() => setActiveView('Overview')}
             >
+              <div className="w-4 h-4 bg-black rounded flex items-center justify-center text-[10px] text-white">
+                {(workspaceName ? workspaceName[0] : '?').toUpperCase()}
+              </div>
+              {workspaceName || 'Workspace (?)'}
+            </span>
+            <span className="text-gray-300 dark:text-gray-600 px-1">/</span>
+            <div className="relative">
               <span
-                className="flex items-center gap-1 cursor-pointer hover:text-black transition-colors py-1 group/space"
-                onClick={() => setActiveView('Overview')}
+                className="flex items-center gap-1 font-bold text-gray-900 dark:text-gray-100 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800/50 px-2 py-1 rounded transition-colors group/task"
+                onClick={() => setIsListSelectorOpen(!isListSelectorOpen)}
               >
-                <div className="w-4 h-4 bg-black rounded flex items-center justify-center text-[10px] text-white">
-                  {(workspaceName ? workspaceName[0] : '?').toUpperCase()}
-                </div>
-                {workspaceName || 'Workspace (?)'}
+                <Activity size={12} className="text-gray-400 dark:text-gray-500" />
+                {/* Fallback for Task name */}
+                {activeContext && activeContext !== 'Everything' ? activeContext : 'Task (?)'}
+                <ChevronDown size={12} className={`transition-transform duration-200 ${isListSelectorOpen ? 'rotate-180' : ''}`} />
               </span>
-              <span className="text-gray-300 dark:text-gray-600 px-1">/</span>
-              <div className="relative">
-                <span
-                  className="flex items-center gap-1 font-bold text-gray-900 dark:text-gray-100 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800/50 px-2 py-1 rounded transition-colors group/task"
-                  onClick={() => setIsListSelectorOpen(!isListSelectorOpen)}
-                >
-                  <Activity size={12} className="text-gray-400 dark:text-gray-500" />
-                  {/* Fallback for Task name */}
-                  {activeContext && activeContext !== 'Everything' ? activeContext : 'Task (?)'}
-                  <ChevronDown size={12} className={`transition-transform duration-200 ${isListSelectorOpen ? 'rotate-180' : ''}`} />
-                </span>
 
-                {isListSelectorOpen && (
-                  <>
-                    <div className="fixed inset-0 z-50" onClick={() => setIsListSelectorOpen(false)} />
-                    <div className="absolute top-full left-0 mt-1 w-80 bg-white dark:bg-[#1c1c1e] border border-gray-200 dark:border-[#2c2c2e] rounded-xl shadow-2xl z-[60] py-2 animate-in fade-in zoom-in-95 duration-100 font-normal">
-                      <div className="px-3 pb-2 border-b border-gray-100 dark:border-white/5 mx-2 mb-2">
-                        <div className="flex items-center gap-2 p-2 bg-gray-50 dark:bg-white/5 rounded-lg border border-gray-100 dark:border-white/5">
-                          <Activity size={14} className="text-gray-400" />
-                          <input
-                            type="text"
-                            placeholder="Search lists..."
-                            className="bg-transparent border-none outline-none text-sm w-full font-medium"
-                            readOnly
+              {isListSelectorOpen && (
+                <>
+                  <div className="fixed inset-0 z-50" onClick={() => setIsListSelectorOpen(false)} />
+                  <div className="absolute top-full left-0 mt-1 w-80 bg-white dark:bg-[#1c1c1e] border border-gray-200 dark:border-[#2c2c2e] rounded-xl shadow-2xl z-[60] py-2 animate-in fade-in zoom-in-95 duration-100 font-normal">
+                    <div className="px-3 pb-2 border-b border-gray-100 dark:border-white/5 mx-2 mb-2">
+                      <div className="flex items-center gap-2 p-2 bg-gray-50 dark:bg-white/5 rounded-lg border border-gray-100 dark:border-white/5">
+                        <Activity size={14} className="text-gray-400" />
+                        <input
+                          type="text"
+                          placeholder="Search lists..."
+                          className="bg-transparent border-none outline-none text-sm w-full font-medium"
+                          readOnly
+                        />
+                        <Share2 size={14} className="text-gray-400 cursor-pointer hover:text-gray-600 dark:hover:text-gray-200 transition-colors" />
+                        <div className="relative">
+                          <MoreHorizontal
+                            size={14}
+                            className="text-gray-400 cursor-pointer hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+                            onClick={() => {
+                              setIsTaskOptionsOpen(!isTaskOptionsOpen);
+                            }}
                           />
-                          <Share2 size={14} className="text-gray-400 cursor-pointer hover:text-gray-600 dark:hover:text-gray-200 transition-colors" />
-                          <div className="relative">
-                            <MoreHorizontal
-                              size={14}
-                              className="text-gray-400 cursor-pointer hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
-                              onClick={() => {
-                                setIsTaskOptionsOpen(!isTaskOptionsOpen);
-                              }}
-                            />
 
-                            {/* Image 2: Task options menu */}
-                            {isTaskOptionsOpen && (
-                              <>
-                                <div className="fixed inset-0 z-[70]" onClick={() => setIsTaskOptionsOpen(false)} />
-                                <div className="absolute top-0 left-full ml-2 w-72 bg-white dark:bg-[#1c1c1e] border border-gray-200 dark:border-[#2c2c2e] rounded-xl shadow-2xl z-[80] overflow-hidden py-1 animate-in fade-in zoom-in duration-200">
-                                  <div className="space-y-0.5 py-1">
-                                    <button className="w-full px-4 py-2 flex items-center justify-between text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
-                                      <div className="flex items-center gap-3"><Star size={14} /> Favorite</div>
-                                      <ChevronRight size={14} />
-                                    </button>
-                                    <button className="w-full px-4 py-2 flex items-center gap-3 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
-                                      <Pencil size={14} /> Rename
-                                    </button>
-                                    <button className="w-full px-4 py-2 flex items-center gap-3 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
-                                      <Link size={14} /> Copy link
-                                    </button>
-                                  </div>
-                                  <div className="h-px bg-gray-100 dark:bg-white/5 my-1 mx-2" />
-                                  <div className="space-y-0.5 py-1">
-                                    <button className="w-full px-4 py-2 flex items-center justify-between text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
-                                      <div className="flex items-center gap-3"><Plus size={14} /> Create new</div>
-                                      <ChevronRight size={14} />
-                                    </button>
-                                    <button className="w-full px-4 py-2 flex items-center justify-between text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
-                                      <div className="flex items-center gap-3"><Droplet size={14} /> Color & Icon</div>
-                                      <ChevronRight size={14} />
-                                    </button>
-                                    <button className="w-full px-4 py-2 flex items-center justify-between text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
-                                      <div className="flex items-center gap-3"><PenTool size={14} /> Templates</div>
-                                      <ChevronRight size={14} />
-                                    </button>
-                                    <button className="w-full px-4 py-2 flex items-center gap-3 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
-                                      <Zap size={14} /> Automations
-                                    </button>
-                                    <button className="w-full px-4 py-2 flex items-center gap-3 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
-                                      <Pencil size={14} /> Custom Fields
-                                    </button>
-                                    <button className="w-full px-4 py-2 flex items-center gap-3 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
-                                      <CircleDot size={14} /> Task statuses
-                                    </button>
-                                    <button className="w-full px-4 py-2 flex items-center justify-between text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
-                                      <div className="flex items-center gap-3"><MoreHorizontal size={14} /> More</div>
-                                      <ChevronRight size={14} />
-                                    </button>
-                                  </div>
-                                  <div className="h-px bg-gray-100 dark:bg-white/5 my-1 mx-2" />
-                                  <div className="space-y-0.5 py-1">
-                                    <button className="w-full px-4 py-2 flex items-center gap-3 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
-                                      <Info size={14} /> List Info
-                                    </button>
-                                    <button className="w-full px-4 py-2 flex items-center justify-between text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
-                                      <div className="flex items-center gap-3"><Box size={14} /> Default task type</div>
-                                      <ChevronRight size={14} />
-                                    </button>
-                                    <button className="w-full px-4 py-2 flex items-center gap-3 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
-                                      <Mail size={14} /> Email to List
-                                    </button>
-                                  </div>
-                                  <div className="h-px bg-gray-100 dark:bg-white/5 my-1 mx-2" />
-                                  <div className="space-y-0.5 py-1">
-                                    <button className="w-full px-4 py-2 flex items-center justify-between text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
-                                      <div className="flex items-center gap-3"><ArrowRight size={14} /> Move</div>
-                                      <ChevronRight size={14} />
-                                    </button>
-                                    <button className="w-full px-4 py-2 flex items-center gap-3 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
-                                      <Copy size={14} /> Duplicate
-                                    </button>
-                                    <button className="w-full px-4 py-2 flex items-center gap-3 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
-                                      <Archive size={14} /> Archive
-                                    </button>
-                                    <button className="w-full px-4 py-2 flex items-center gap-3 text-xs text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors">
-                                      <Trash size={14} /> Delete
-                                    </button>
-                                  </div>
-                                  <div className="p-2 mt-1">
-                                    <button className="w-full py-2 bg-primary hover:bg-primary-hover active:bg-primary-hover text-white text-xs font-bold rounded-lg transition-colors shadow-lg">
-                                      Sharing & Permissions
-                                    </button>
-                                  </div>
+                          {/* Image 2: Task options menu */}
+                          {isTaskOptionsOpen && (
+                            <>
+                              <div className="fixed inset-0 z-[70]" onClick={() => setIsTaskOptionsOpen(false)} />
+                              <div className="absolute top-0 left-full ml-2 w-72 bg-white dark:bg-[#1c1c1e] border border-gray-200 dark:border-[#2c2c2e] rounded-xl shadow-2xl z-[80] overflow-hidden py-1 animate-in fade-in zoom-in duration-200">
+                                <div className="space-y-0.5 py-1">
+                                  <button className="w-full px-4 py-2 flex items-center justify-between text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+                                    <div className="flex items-center gap-3"><Star size={14} /> Favorite</div>
+                                    <ChevronRight size={14} />
+                                  </button>
+                                  <button className="w-full px-4 py-2 flex items-center gap-3 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+                                    <Pencil size={14} /> Rename
+                                  </button>
+                                  <button className="w-full px-4 py-2 flex items-center gap-3 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+                                    <Link size={14} /> Copy link
+                                  </button>
                                 </div>
-                              </>
-                            )}
-                          </div>
+                                <div className="h-px bg-gray-100 dark:bg-white/5 my-1 mx-2" />
+                                <div className="space-y-0.5 py-1">
+                                  <button className="w-full px-4 py-2 flex items-center justify-between text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+                                    <div className="flex items-center gap-3"><Plus size={14} /> Create new</div>
+                                    <ChevronRight size={14} />
+                                  </button>
+                                  <button className="w-full px-4 py-2 flex items-center justify-between text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+                                    <div className="flex items-center gap-3"><Droplet size={14} /> Color & Icon</div>
+                                    <ChevronRight size={14} />
+                                  </button>
+                                  <button className="w-full px-4 py-2 flex items-center justify-between text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+                                    <div className="flex items-center gap-3"><PenTool size={14} /> Templates</div>
+                                    <ChevronRight size={14} />
+                                  </button>
+                                  <button className="w-full px-4 py-2 flex items-center gap-3 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+                                    <Zap size={14} /> Automations
+                                  </button>
+                                  <button className="w-full px-4 py-2 flex items-center gap-3 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+                                    <Pencil size={14} /> Custom Fields
+                                  </button>
+                                  <button className="w-full px-4 py-2 flex items-center gap-3 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+                                    <CircleDot size={14} /> Task statuses
+                                  </button>
+                                  <button className="w-full px-4 py-2 flex items-center justify-between text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+                                    <div className="flex items-center gap-3"><MoreHorizontal size={14} /> More</div>
+                                    <ChevronRight size={14} />
+                                  </button>
+                                </div>
+                                <div className="h-px bg-gray-100 dark:bg-white/5 my-1 mx-2" />
+                                <div className="space-y-0.5 py-1">
+                                  <button className="w-full px-4 py-2 flex items-center gap-3 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+                                    <Info size={14} /> List Info
+                                  </button>
+                                  <button className="w-full px-4 py-2 flex items-center justify-between text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+                                    <div className="flex items-center gap-3"><Box size={14} /> Default task type</div>
+                                    <ChevronRight size={14} />
+                                  </button>
+                                  <button className="w-full px-4 py-2 flex items-center gap-3 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+                                    <Mail size={14} /> Email to List
+                                  </button>
+                                </div>
+                                <div className="h-px bg-gray-100 dark:bg-white/5 my-1 mx-2" />
+                                <div className="space-y-0.5 py-1">
+                                  <button className="w-full px-4 py-2 flex items-center justify-between text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+                                    <div className="flex items-center gap-3"><ArrowRight size={14} /> Move</div>
+                                    <ChevronRight size={14} />
+                                  </button>
+                                  <button className="w-full px-4 py-2 flex items-center gap-3 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+                                    <Copy size={14} /> Duplicate
+                                  </button>
+                                  <button className="w-full px-4 py-2 flex items-center gap-3 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+                                    <Archive size={14} /> Archive
+                                  </button>
+                                  <button className="w-full px-4 py-2 flex items-center gap-3 text-xs text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors">
+                                    <Trash size={14} /> Delete
+                                  </button>
+                                </div>
+                                <div className="p-2 mt-1">
+                                  <button className="w-full py-2 bg-primary hover:bg-primary-hover active:bg-primary-hover text-white text-xs font-bold rounded-lg transition-colors shadow-lg">
+                                    Sharing & Permissions
+                                  </button>
+                                </div>
+                              </div>
+                            </>
+                          )}
                         </div>
                       </div>
-                      <div className="max-h-[300px] overflow-y-auto custom-scrollbar px-1">
-                        {spaces.map(space => (
-                          <div key={space.id} className="mb-2 last:mb-0">
-                            <div className="px-4 py-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                              <div className="w-4 h-4 bg-black rounded flex items-center justify-center text-[8px] text-white">
-                                {space.name[0].toUpperCase()}
-                              </div>
-                              {space.name}
-                            </div>
-                            <div className="px-1 space-y-0.5">
-                              {space.lists.map((listName) => (
-                                <div
-                                  key={listName}
-                                  className={`px-3 py-1.5 flex items-center gap-3 text-sm transition-colors rounded-lg cursor-pointer ${activeContext === listName ? 'bg-black/10 text-black dark:text-purple-400 border border-black/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5'}`}
-                                  onClick={() => {
-                                    setActiveContext(listName as any);
-                                    setIsListSelectorOpen(false);
-                                  }}
-                                >
-                                  <Activity size={14} /> {listName}
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
                     </div>
-                  </>
-                )}
-              </div>
+                    <div className="max-h-[300px] overflow-y-auto custom-scrollbar px-1">
+                      {spaces.map(space => (
+                        <div key={space.id} className="mb-2 last:mb-0">
+                          <div className="px-4 py-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                            <div className="w-4 h-4 bg-black rounded flex items-center justify-center text-[8px] text-white">
+                              {space.name[0].toUpperCase()}
+                            </div>
+                            {space.name}
+                          </div>
+                          <div className="px-1 space-y-0.5">
+                            {space.lists.map((listName) => (
+                              <div
+                                key={listName}
+                                className={`px-3 py-1.5 flex items-center gap-3 text-sm transition-colors rounded-lg cursor-pointer ${activeContext === listName ? 'bg-black/10 text-black dark:text-purple-400 border border-black/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5'}`}
+                                onClick={() => {
+                                  setActiveContext(listName as any);
+                                  setIsListSelectorOpen(false);
+                                }}
+                              >
+                                <Activity size={14} /> {listName}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
 
-              <button
-                className={`p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ml-1 ${isFavorited ? 'text-yellow-500' : 'text-gray-400'}`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsFavorited(!isFavorited);
-                }}
-              >
-                <Star size={16} fill={isFavorited ? "currentColor" : "none"} />
-              </button>
+            <button
+              className={`p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ml-1 ${isFavorited ? 'text-yellow-500' : 'text-gray-400'}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsFavorited(!isFavorited);
+              }}
+            >
+              <Star size={16} fill={isFavorited ? "currentColor" : "none"} />
+            </button>
 
-              <div className={`flex items-center gap-2 ml-1 px-2 py-1 bg-white dark:bg-black/40 border border-gray-100 dark:border-white/10 rounded-lg shadow-sm transition-all duration-200 ${hoveredBreadcrumb ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-2 pointer-events-none'}`}>
-                <FileText size={14} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer" />
-                <UserIcon size={14} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer" />
-                <Flag size={14} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer" />
-                <Calendar size={14} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer" />
-              </div>
+            <div className={`flex items-center gap-2 ml-1 px-2 py-1 bg-white dark:bg-black/40 border border-gray-100 dark:border-white/10 rounded-lg shadow-sm transition-all duration-200 ${hoveredBreadcrumb ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-2 pointer-events-none'}`}>
+              <FileText size={14} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer" />
+              <UserIcon size={14} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer" />
+              <Flag size={14} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer" />
+              <Calendar size={14} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer" />
             </div>
           </div>
 
@@ -3332,541 +3398,546 @@ const App: React.FC = () => {
               }
             </div>
           </div>
-        )}
+        )
+      }
       {/* Settings Modal */}
-      {isSettingsOpen && (
-        <div>
-          <div className="fixed inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200" onClick={() => setIsSettingsOpen(false)} />
-          <div className="fixed inset-0 z-[101] flex items-center justify-center p-4 pointer-events-none">
-            <div className="bg-white dark:bg-black w-full max-w-4xl max-h-[90vh] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl overflow-hidden flex flex-col animate-in zoom-in duration-300 pointer-events-auto">
-              <div className="p-6 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between bg-gray-50 dark:bg-black">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white uppercase tracking-tighter">My Settings</h2>
-                <button onClick={() => setIsSettingsOpen(false)} className="p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-lg text-gray-400 transition-colors">
-                  <X size={20} />
-                </button>
-              </div>
+      {
+        isSettingsOpen && (
+          <div>
+            <div className="fixed inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200" onClick={() => setIsSettingsOpen(false)} />
+            <div className="fixed inset-0 z-[101] flex items-center justify-center p-4 pointer-events-none">
+              <div className="bg-white dark:bg-black w-full max-w-4xl max-h-[90vh] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl overflow-hidden flex flex-col animate-in zoom-in duration-300 pointer-events-auto">
+                <div className="p-6 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between bg-gray-50 dark:bg-black">
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white uppercase tracking-tighter">My Settings</h2>
+                  <button onClick={() => setIsSettingsOpen(false)} className="p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-lg text-gray-400 transition-colors">
+                    <X size={20} />
+                  </button>
+                </div>
 
-              <div className="flex-1 overflow-y-auto custom-scrollbar p-8 bg-white dark:bg-black">
-                <div className="grid grid-cols-12 gap-12">
-                  <div className="col-span-4">
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 uppercase">Profile</h3>
-                    <p className="text-sm text-gray-500 leading-relaxed font-bold">Your personal information and account security settings.</p>
-                  </div>
-
-                  <div className="col-span-8 space-y-8">
-                    <div>
-                      <label className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4 block">Avatar</label>
-                      <div className="w-20 h-20 rounded-full bg-orange-100 dark:bg-orange-950/30 flex items-center justify-center text-orange-600 dark:text-orange-200 text-3xl font-bold border border-orange-200 dark:border-orange-900/30">A</div>
-                      <p className="text-sm font-bold text-gray-900 dark:text-white mt-4 italic">AlBot</p>
+                <div className="flex-1 overflow-y-auto custom-scrollbar p-8 bg-white dark:bg-black">
+                  <div className="grid grid-cols-12 gap-12">
+                    <div className="col-span-4">
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 uppercase">Profile</h3>
+                      <p className="text-sm text-gray-500 leading-relaxed font-bold">Your personal information and account security settings.</p>
                     </div>
 
-                    <div className="space-y-6">
-                      <div className="space-y-2">
-                        <label className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest block">Full Name</label>
-                        <div className="relative">
-                          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><UserIcon size={18} /></div>
-                          <input
-                            type="text"
-                            defaultValue="AlBot"
-                            className="w-full bg-gray-50 dark:bg-[#16161e] border border-gray-200 dark:border-gray-800 rounded-xl py-3 pl-10 pr-4 text-gray-900 dark:text-white focus:outline-none focus:border-black transition-colors font-bold"
-                          />
-                        </div>
+                    <div className="col-span-8 space-y-8">
+                      <div>
+                        <label className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4 block">Avatar</label>
+                        <div className="w-20 h-20 rounded-full bg-orange-100 dark:bg-orange-950/30 flex items-center justify-center text-orange-600 dark:text-orange-200 text-3xl font-bold border border-orange-200 dark:border-orange-900/30">A</div>
+                        <p className="text-sm font-bold text-gray-900 dark:text-white mt-4 italic">AlBot</p>
                       </div>
 
-                      <div className="space-y-2">
-                        <label className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest block">Email</label>
-                        <div className="relative">
-                          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><Mail size={18} /></div>
-                          <input
-                            type="email"
-                            defaultValue="c81776296@gmail.com"
-                            className="w-full bg-gray-50 dark:bg-[#16161e] border border-gray-200 dark:border-gray-800 rounded-xl py-3 pl-10 pr-4 text-gray-900 dark:text-white focus:outline-none focus:border-black transition-colors font-bold"
-                          />
+                      <div className="space-y-6">
+                        <div className="space-y-2">
+                          <label className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest block">Full Name</label>
+                          <div className="relative">
+                            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><UserIcon size={18} /></div>
+                            <input
+                              type="text"
+                              defaultValue="AlBot"
+                              className="w-full bg-gray-50 dark:bg-[#16161e] border border-gray-200 dark:border-gray-800 rounded-xl py-3 pl-10 pr-4 text-gray-900 dark:text-white focus:outline-none focus:border-black transition-colors font-bold"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <label className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest block">Email</label>
+                          <div className="relative">
+                            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><Mail size={18} /></div>
+                            <input
+                              type="email"
+                              defaultValue="c81776296@gmail.com"
+                              className="w-full bg-gray-50 dark:bg-[#16161e] border border-gray-200 dark:border-gray-800 rounded-xl py-3 pl-10 pr-4 text-gray-900 dark:text-white focus:outline-none focus:border-black transition-colors font-bold"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <label className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest block">Password</label>
+                          <div className="relative">
+                            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><Shield size={18} /></div>
+                            <input
+                              type="password"
+                              placeholder="Enter New Password"
+                              className="w-full bg-gray-50 dark:bg-[#16161e] border border-gray-200 dark:border-gray-800 rounded-xl py-3 pl-10 pr-4 text-gray-900 dark:text-white focus:outline-none focus:border-black transition-colors font-bold"
+                            />
+                          </div>
                         </div>
                       </div>
+                    </div>
+                  </div>
 
-                      <div className="space-y-2">
-                        <label className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest block">Password</label>
-                        <div className="relative">
-                          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><Shield size={18} /></div>
-                          <input
-                            type="password"
-                            placeholder="Enter New Password"
-                            className="w-full bg-gray-50 dark:bg-[#16161e] border border-gray-200 dark:border-gray-800 rounded-xl py-3 pl-10 pr-4 text-gray-900 dark:text-white focus:outline-none focus:border-black transition-colors font-bold"
-                          />
-                        </div>
+                  <div className="mt-16 pt-8 border-t border-gray-100 dark:border-gray-800 grid grid-cols-12 gap-12 font-bold">
+                    <div className="col-span-4">
+                      <h3 className="text-lg font-bold text-red-500 mb-2 uppercase">Danger zone</h3>
+                      <p className="text-sm text-gray-500 leading-relaxed">Proceed with caution.</p>
+                    </div>
+                    <div className="col-span-8 flex flex-col gap-6">
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Log out all sessions including any session on mobile, iPad, and other browsers</p>
+                        <button className="bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors uppercase">Log out all</button>
+                      </div>
+                      <div className="flex justify-end">
+                        <button className="bg-red-50 dark:bg-red-950/20 hover:bg-red-100 dark:hover:bg-red-950/40 text-red-600 dark:text-red-500 px-6 py-2.5 rounded-xl text-sm font-bold transition-colors uppercase border border-red-100 dark:border-red-900/30">Delete account</button>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-16 pt-8 border-t border-gray-100 dark:border-gray-800 grid grid-cols-12 gap-12 font-bold">
-                  <div className="col-span-4">
-                    <h3 className="text-lg font-bold text-red-500 mb-2 uppercase">Danger zone</h3>
-                    <p className="text-sm text-gray-500 leading-relaxed">Proceed with caution.</p>
-                  </div>
-                  <div className="col-span-8 flex flex-col gap-6">
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm text-gray-600 dark:text-gray-400">Log out all sessions including any session on mobile, iPad, and other browsers</p>
-                      <button className="bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors uppercase">Log out all</button>
-                    </div>
-                    <div className="flex justify-end">
-                      <button className="bg-red-50 dark:bg-red-950/20 hover:bg-red-100 dark:hover:bg-red-950/40 text-red-600 dark:text-red-500 px-6 py-2.5 rounded-xl text-sm font-bold transition-colors uppercase border border-red-100 dark:border-red-900/30">Delete account</button>
-                    </div>
-                  </div>
+                <div className="p-6 border-t border-gray-100 dark:border-gray-800 flex justify-end bg-gray-50 dark:bg-black">
+                  <button
+                    onClick={() => setIsSettingsOpen(false)}
+                    className="bg-primary hover:bg-primary-hover active:bg-primary-hover text-white px-10 py-3 rounded-xl font-bold shadow-lg shadow-black/20 transition-all hover:scale-105 active:scale-95 uppercase"
+                  >
+                    Save changes
+                  </button>
                 </div>
-              </div>
-
-              <div className="p-6 border-t border-gray-100 dark:border-gray-800 flex justify-end bg-gray-50 dark:bg-black">
-                <button
-                  onClick={() => setIsSettingsOpen(false)}
-                  className="bg-primary hover:bg-primary-hover active:bg-primary-hover text-white px-10 py-3 rounded-xl font-bold shadow-lg shadow-black/20 transition-all hover:scale-105 active:scale-95 uppercase"
-                >
-                  Save changes
-                </button>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
 
       {/* Create Space Modal */}
-      {isSpaceModalOpen && (
-        <div>
-          <div className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setIsSpaceModalOpen(false)} />
-          <div className="fixed inset-0 z-[201] flex items-center justify-center p-4 pointer-events-none">
-            <div className="bg-white dark:bg-[#121213] w-full max-w-2xl rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl animate-in zoom-in duration-300 flex flex-col pointer-events-auto relative max-h-[90vh] overflow-hidden">
-              {spaceModalStep === 1 ? (
-                <>
-                  {/* Step 1: Modal Header */}
-                  <div className="px-8 pt-6 pb-2 flex items-center justify-between">
-                    <div className="space-y-1">
-                      <h2 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">Create a Space</h2>
-                      <p className="text-sm text-gray-500 font-medium">A Space represents teams, departments, or groups, each with its own Lists, workflows, and settings.</p>
+      {
+        isSpaceModalOpen && (
+          <div>
+            <div className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setIsSpaceModalOpen(false)} />
+            <div className="fixed inset-0 z-[201] flex items-center justify-center p-4 pointer-events-none">
+              <div className="bg-white dark:bg-[#121213] w-full max-w-2xl rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl animate-in zoom-in duration-300 flex flex-col pointer-events-auto relative max-h-[90vh] overflow-hidden">
+                {spaceModalStep === 1 ? (
+                  <>
+                    {/* Step 1: Modal Header */}
+                    <div className="px-8 pt-6 pb-2 flex items-center justify-between">
+                      <div className="space-y-1">
+                        <h2 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">Create a Space</h2>
+                        <p className="text-sm text-gray-500 font-medium">A Space represents teams, departments, or groups, each with its own Lists, workflows, and settings.</p>
+                      </div>
+                      <button onClick={() => setIsSpaceModalOpen(false)} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-500 dark:text-gray-400 self-start mt-1">
+                        <X size={20} />
+                      </button>
                     </div>
-                    <button onClick={() => setIsSpaceModalOpen(false)} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-500 dark:text-gray-400 self-start mt-1">
-                      <X size={20} />
-                    </button>
-                  </div>
 
-                  <div className="p-8 pb-4 space-y-8 custom-scrollbar overflow-y-auto">
-                    {/* Icon & Name Section */}
-                    <div className="space-y-3">
-                      <label className="text-sm font-bold text-gray-700 dark:text-gray-300">Icon & name</label>
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-xl bg-gray-100 dark:bg-[#2e2e2e] border border-gray-200 dark:border-gray-700 font-black text-gray-700 dark:text-white flex items-center justify-center text-lg shadow-inner uppercase">
-                          {newSpaceName.trim() ? newSpaceName.trim()[0] : 'S'}
+                    <div className="p-8 pb-4 space-y-8 custom-scrollbar overflow-y-auto">
+                      {/* Icon & Name Section */}
+                      <div className="space-y-3">
+                        <label className="text-sm font-bold text-gray-700 dark:text-gray-300">Icon & name</label>
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-xl bg-gray-100 dark:bg-[#2e2e2e] border border-gray-200 dark:border-gray-700 font-black text-gray-700 dark:text-white flex items-center justify-center text-lg shadow-inner uppercase">
+                            {newSpaceName.trim() ? newSpaceName.trim()[0] : 'S'}
+                          </div>
+                          <input
+                            type="text"
+                            placeholder="e.g. Marketing, Engineering, HR"
+                            value={newSpaceName}
+                            onChange={(e) => setNewSpaceName(e.target.value)}
+                            className="flex-1 bg-transparent border border-gray-200 dark:border-gray-800 rounded-xl py-3 px-4 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:focus:ring-gray-700 transition-all font-medium"
+                            autoFocus
+                          />
                         </div>
-                        <input
-                          type="text"
-                          placeholder="e.g. Marketing, Engineering, HR"
-                          value={newSpaceName}
-                          onChange={(e) => setNewSpaceName(e.target.value)}
-                          className="flex-1 bg-transparent border border-gray-200 dark:border-gray-800 rounded-xl py-3 px-4 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:focus:ring-gray-700 transition-all font-medium"
-                          autoFocus
+                      </div>
+
+                      {/* Description Section */}
+                      <div className="space-y-3">
+                        <label className="text-sm font-bold text-gray-700 dark:text-gray-300">Description <span className="text-gray-400 dark:text-gray-600 font-medium">(optional)</span></label>
+                        <textarea
+                          placeholder="Type here..."
+                          value={newSpaceDescription}
+                          onChange={(e) => setNewSpaceDescription(e.target.value)}
+                          className="w-full bg-transparent border border-gray-200 dark:border-gray-800 rounded-xl py-3 px-4 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:focus:ring-gray-700 transition-all font-medium min-h-[44px] resize-none"
                         />
                       </div>
-                    </div>
 
-                    {/* Description Section */}
-                    <div className="space-y-3">
-                      <label className="text-sm font-bold text-gray-700 dark:text-gray-300">Description <span className="text-gray-400 dark:text-gray-600 font-medium">(optional)</span></label>
-                      <textarea
-                        placeholder="Type here..."
-                        value={newSpaceDescription}
-                        onChange={(e) => setNewSpaceDescription(e.target.value)}
-                        className="w-full bg-transparent border border-gray-200 dark:border-gray-800 rounded-xl py-3 px-4 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:focus:ring-gray-700 transition-all font-medium min-h-[44px] resize-none"
-                      />
-                    </div>
+                      {/* Default Permissions Section */}
+                      <div className="relative pt-2">
+                        <div
+                          onClick={() => setIsPermissionPickerOpen(!isPermissionPickerOpen)}
+                          className="flex items-center justify-between group cursor-pointer"
+                        >
+                          <div className="flex items-center gap-2">
+                            <UserPlus size={18} className="text-gray-400" />
+                            <span className="text-sm font-bold text-gray-700 dark:text-gray-300">Default permission</span>
+                            <span className="w-4 h-4 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center text-[10px] text-gray-400">?</span>
+                          </div>
+                          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 dark:bg-[#1a1a1b] border border-gray-200 dark:border-gray-800 rounded-lg text-xs font-bold text-gray-500 dark:text-gray-400 group-hover:bg-gray-100 dark:group-hover:bg-[#202021] transition-colors">
+                            {selectedSpacePermission}
+                            <ChevronDown size={14} className={`transition-transform duration-200 ${isPermissionPickerOpen ? 'rotate-180' : ''}`} />
+                          </div>
+                        </div>
 
-                    {/* Default Permissions Section */}
-                    <div className="relative pt-2">
-                      <div
-                        onClick={() => setIsPermissionPickerOpen(!isPermissionPickerOpen)}
-                        className="flex items-center justify-between group cursor-pointer"
-                      >
-                        <div className="flex items-center gap-2">
-                          <UserPlus size={18} className="text-gray-400" />
-                          <span className="text-sm font-bold text-gray-700 dark:text-gray-300">Default permission</span>
-                          <span className="w-4 h-4 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center text-[10px] text-gray-400">?</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 dark:bg-[#1a1a1b] border border-gray-200 dark:border-gray-800 rounded-lg text-xs font-bold text-gray-500 dark:text-gray-400 group-hover:bg-gray-100 dark:group-hover:bg-[#202021] transition-colors">
-                          {selectedSpacePermission}
-                          <ChevronDown size={14} className={`transition-transform duration-200 ${isPermissionPickerOpen ? 'rotate-180' : ''}`} />
-                        </div>
+                        {isPermissionPickerOpen && (
+                          <div className="fixed inset-0 z-[500] flex items-center justify-center p-4 pointer-events-auto">
+                            <div className="fixed inset-0 bg-black/40 backdrop-blur-[2px]" onClick={() => setIsPermissionPickerOpen(false)} />
+                            <div className="relative w-[400px] bg-white dark:bg-[#1a1a1c] rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-gray-100 dark:border-gray-800 overflow-hidden animate-in zoom-in-95 fade-in duration-200">
+                              <div className="p-1 space-y-0.5">
+                                {[
+                                  { id: 'Full edit', desc: 'Can create and edit entities in this Space. Owners and admins can manage Space settings.' },
+                                  { id: 'Edit', desc: "Can create and edit entities in this Space. Can't manage Space settings or delete entities." },
+                                  { id: 'Comment', desc: "Can comment on entities within this Space. Can't manage Space settings or edit entities." },
+                                  { id: 'View only', desc: "Read-only. Can't edit entities or comment in this Space outside of Chat. Can collaborate in Chat." }
+                                ].map((perm) => (
+                                  <button
+                                    key={perm.id}
+                                    onClick={() => {
+                                      setSelectedSpacePermission(perm.id);
+                                      setIsPermissionPickerOpen(false);
+                                    }}
+                                    className="w-full text-left p-5 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group relative"
+                                  >
+                                    <div className="flex items-center justify-between mb-1.5">
+                                      <span className="text-base font-bold text-gray-900 dark:text-white">{perm.id}</span>
+                                      {selectedSpacePermission === perm.id && (
+                                        <Check size={18} className="text-primary" />
+                                      )}
+                                    </div>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed font-medium">
+                                      {perm.desc}
+                                    </p>
+                                  </button>
+                                ))}
+                              </div>
+                              <div className="p-6 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-black/20 text-center">
+                                <button className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
+                                  <span className="underline cursor-pointer">Learn more</span> about permissions.
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
 
-                      {isPermissionPickerOpen && (
-                        <div className="fixed inset-0 z-[500] flex items-center justify-center p-4 pointer-events-auto">
-                          <div className="fixed inset-0 bg-black/40 backdrop-blur-[2px]" onClick={() => setIsPermissionPickerOpen(false)} />
-                          <div className="relative w-[400px] bg-white dark:bg-[#1a1a1c] rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-gray-100 dark:border-gray-800 overflow-hidden animate-in zoom-in-95 fade-in duration-200">
-                            <div className="p-1 space-y-0.5">
-                              {[
-                                { id: 'Full edit', desc: 'Can create and edit entities in this Space. Owners and admins can manage Space settings.' },
-                                { id: 'Edit', desc: "Can create and edit entities in this Space. Can't manage Space settings or delete entities." },
-                                { id: 'Comment', desc: "Can comment on entities within this Space. Can't manage Space settings or edit entities." },
-                                { id: 'View only', desc: "Read-only. Can't edit entities or comment in this Space outside of Chat. Can collaborate in Chat." }
-                              ].map((perm) => (
-                                <button
-                                  key={perm.id}
-                                  onClick={() => {
-                                    setSelectedSpacePermission(perm.id);
-                                    setIsPermissionPickerOpen(false);
-                                  }}
-                                  className="w-full text-left p-5 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group relative"
-                                >
-                                  <div className="flex items-center justify-between mb-1.5">
-                                    <span className="text-base font-bold text-gray-900 dark:text-white">{perm.id}</span>
-                                    {selectedSpacePermission === perm.id && (
-                                      <Check size={18} className="text-primary" />
-                                    )}
-                                  </div>
-                                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed font-medium">
-                                    {perm.desc}
-                                  </p>
-                                </button>
-                              ))}
+                      {/* Private Toggle Section */}
+                      <div className="flex items-center justify-between pt-2">
+                        <div className="space-y-1">
+                          <div className="text-sm font-bold text-gray-700 dark:text-gray-300">Make Private</div>
+                          <div className="text-xs text-gray-500 font-medium">Only you and invited members have access</div>
+                        </div>
+                        <div
+                          onClick={() => setIsSpacePrivate(!isSpacePrivate)}
+                          className={`w-11 h-6 ${isSpacePrivate ? 'bg-black' : 'bg-gray-200 dark:bg-[#2a2a2b]'} rounded-full relative p-1 cursor-pointer transition-colors active:scale-95`}
+                        >
+                          <div className={`w-4 h-4 bg-white rounded-full transition-transform ${isSpacePrivate ? 'translate-x-5' : 'translate-x-0'}`} />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Footer */}
+                    <div className="px-8 py-6 border-t border-gray-200 dark:border-gray-800 flex items-center justify-end bg-gray-50 dark:bg-[#121213]">
+                      <button
+                        onClick={() => setSpaceModalStep(2)}
+                        className="bg-primary hover:bg-primary-hover active:bg-primary-hover text-white px-8 py-2.5 rounded-xl font-black text-sm transition-all hover:scale-105 active:scale-95 shadow-lg shadow-black/10"
+                      >
+                        Continue
+                      </button>
+                    </div>
+                  </>
+                ) : spaceModalStep === 2 ? (
+                  <>
+                    {/* Step 2: Define your workflow */}
+                    <div className="px-8 pt-6 pb-2 flex items-center justify-between">
+                      <div className="space-y-1">
+                        <h2 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">Define your workflow</h2>
+                        <p className="text-sm text-gray-500 font-medium leading-relaxed">Choose a pre-configured solution, required views, and task statuses.</p>
+                      </div>
+                      <button onClick={() => setIsSpaceModalOpen(false)} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-500 dark:text-gray-400 self-start mt-1">
+                        <X size={20} />
+                      </button>
+                    </div>
+
+                    <div className="p-8 pb-4 space-y-8 overflow-y-auto custom-scrollbar">
+                      {/* Workflow Options Grid */}
+                      <div className="grid grid-cols-2 gap-4">
+                        {[
+                          { title: 'Starter', desc: 'The basics for any project' },
+                          { title: 'Marketing', desc: 'Campaigns, content & events' },
+                          { title: 'Sales', desc: 'CRM, deals & pipelines' },
+                          { title: 'Product + Engineering', desc: 'Streamline your product lifecycle' }
+                        ].map(option => (
+                          <button
+                            key={option.title}
+                            onClick={() => setSpaceWorkflowOption(option.title)}
+                            className={`p-4 rounded-xl border-2 text-left transition-all hover:border-primary/50 ${spaceWorkflowOption === option.title ? 'border-primary bg-primary/5 dark:bg-primary/10 shadow-lg shadow-primary/5' : 'border-gray-100 dark:border-gray-800 bg-transparent hover:bg-gray-50 dark:hover:bg-white/5'}`}
+                          >
+                            <div className={`text-sm font-bold mb-1 ${spaceWorkflowOption === option.title ? 'text-primary' : 'text-gray-900 dark:text-white'}`}>{option.title}</div>
+                            <div className="text-xs text-gray-500 font-medium">{option.desc}</div>
+                          </button>
+                        ))}
+                      </div>
+
+                      <div className="pt-2">
+                        <div className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-4">Customize defaults for <span className="text-primary">{spaceWorkflowOption}</span></div>
+
+                        <div className="space-y-3">
+                          {/* Default views */}
+                          <div
+                            onClick={() => {
+                              setTempSpaceDefaultViews([...spaceDefaultViews]);
+                              setSpaceModalStep(3);
+                            }}
+                            className="flex items-center justify-between p-4 bg-white dark:bg-transparent border border-gray-100 dark:border-gray-800 rounded-xl group hover:border-gray-300 dark:hover:border-gray-600 transition-all cursor-pointer"
+                          >
+                            <div className="flex items-center gap-4">
+                              <div className="w-10 h-10 rounded-lg bg-gray-50 dark:bg-white/5 flex items-center justify-center text-gray-500">
+                                <Layers size={18} />
+                              </div>
+                              <div className="space-y-0.5">
+                                <div className="text-sm font-bold text-gray-900 dark:text-white">Default views</div>
+                                <div className="text-xs text-gray-500 font-medium">
+                                  {spaceDefaultViews.length > 0 ? spaceDefaultViews.join(', ') : 'None selected'}
+                                </div>
+                              </div>
                             </div>
-                            <div className="p-6 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-black/20 text-center">
-                              <button className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
-                                <span className="underline cursor-pointer">Learn more</span> about permissions.
+                            <div className="flex items-center gap-3">
+                              <span className="w-4 h-4 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center text-[10px] text-gray-400">?</span>
+                              <ChevronRight size={16} className="text-gray-400" />
+                            </div>
+                          </div>
+
+                          {/* Task statuses */}
+                          <div
+                            onClick={() => {
+                              setTempSpaceTaskStatuses(JSON.parse(JSON.stringify(spaceTaskStatuses)));
+                              setSpaceModalStep(4);
+                            }}
+                            className="flex items-center justify-between p-4 bg-white dark:bg-transparent border border-gray-100 dark:border-gray-800 rounded-xl group hover:border-gray-300 dark:hover:border-gray-600 transition-all cursor-pointer"
+                          >
+                            <div className="flex items-center gap-4">
+                              <div className="w-10 h-10 rounded-lg bg-gray-50 dark:bg-white/5 flex items-center justify-center text-gray-500">
+                                <CircleDot size={18} />
+                              </div>
+                              <div className="space-y-0.5">
+                                <div className="text-sm font-bold text-gray-900 dark:text-white">Task statuses</div>
+                                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-tight text-gray-500">
+                                  {spaceTaskStatuses.map((cat, i) => (
+                                    <React.Fragment key={cat.category}>
+                                      {cat.statuses.map((status, si) => (
+                                        <React.Fragment key={status.name + si}>
+                                          <span className="flex items-center gap-1">
+                                            <div className="w-1.5 h-1.5 rounded-full border-2" style={{ borderColor: status.color }} />
+                                            {status.name}
+                                          </span>
+                                          {(si < cat.statuses.length - 1 || (i < spaceTaskStatuses.length - 1 && spaceTaskStatuses[i + 1].statuses.length > 0)) && <ChevronRight size={10} />}
+                                        </React.Fragment>
+                                      ))}
+                                    </React.Fragment>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <span className="w-4 h-4 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center text-[10px] text-gray-400">?</span>
+                              <ChevronRight size={16} className="text-gray-400" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Footer Step 2 */}
+                    <div className="px-8 py-6 border-t border-gray-200 dark:border-gray-800 flex items-center justify-between bg-gray-50 dark:bg-[#121213]">
+                      <button
+                        onClick={() => setSpaceModalStep(1)}
+                        className="px-6 py-2.5 border border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-white/5 text-gray-600 dark:text-gray-400 rounded-xl font-bold text-sm transition-all shadow-sm"
+                      >
+                        Back
+                      </button>
+                      <button
+                        onClick={() => {
+                          setIsSpaceModalOpen(false);
+                          setSpaceModalStep(1);
+                        }}
+                        className="bg-primary hover:bg-primary-hover active:bg-primary-hover text-white px-8 py-2.5 rounded-xl font-black text-sm transition-all hover:scale-105 active:scale-95 shadow-lg shadow-primary/20"
+                      >
+                        Create Space
+                      </button>
+                    </div>
+                  </>
+                ) : spaceModalStep === 3 ? (
+                  <>
+                    {/* Step 3: Default settings for views */}
+                    <div className="px-8 pt-6 pb-2 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => setSpaceModalStep(2)}
+                          className="p-1.5 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg text-gray-500 transition-colors"
+                        >
+                          <ChevronLeft size={20} />
+                        </button>
+                        <h2 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">Default settings for views</h2>
+                      </div>
+                      <button onClick={() => setIsSpaceModalOpen(false)} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-500 dark:text-gray-400 self-start mt-1">
+                        <X size={20} />
+                      </button>
+                    </div>
+
+                    <div className="px-8 pt-2">
+                      <div className="flex bg-gray-100 dark:bg-white/5 p-1 rounded-xl mb-6">
+                        <button className="flex-1 py-1.5 text-xs font-bold text-gray-900 dark:text-white bg-white dark:bg-[#2a2a2c] rounded-lg shadow-sm">Required views</button>
+                        <button className="flex-1 py-1.5 text-xs font-bold text-gray-400 dark:text-gray-500 hover:text-gray-600 transition-colors">Default View Templates</button>
+                      </div>
+
+                      <p className="text-sm text-gray-500 font-medium leading-relaxed mb-6">
+                        Set up views that appear automatically in every Space, Folder, or List — and can't be removed.
+                      </p>
+
+                      <div className="bg-white dark:bg-[#1a1a1c] border border-gray-100 dark:border-gray-800 rounded-2xl overflow-hidden mb-8">
+                        <div className="p-2 space-y-1 max-h-[400px] overflow-y-auto custom-scrollbar">
+                          {[
+                            { id: 'List', icon: <Hash size={16} />, required: true },
+                            { id: 'Board', icon: <Layout size={16} /> },
+                            { id: 'Calendar', icon: <CalendarIcon size={16} /> },
+                            { id: 'Map', icon: <MapPin size={16} /> },
+                            { id: 'Activity', icon: <Activity size={16} /> },
+                            { id: 'Team', icon: <Users size={16} /> },
+                            { id: 'Gantt', icon: <GanttChart size={16} /> },
+                            { id: 'Mind Map', icon: <MindMapIcon size={16} /> },
+                            { id: 'Table', icon: <TableIcon size={16} /> },
+                            { id: 'Timeline', icon: <Clock size={16} /> },
+                            { id: 'Workload', icon: <BarChart3 size={16} /> },
+                          ].map((view) => {
+                            const isActive = tempSpaceDefaultViews.includes(view.id);
+                            return (
+                              <div key={view.id} className="flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl transition-colors">
+                                <div className="flex items-center gap-3">
+                                  <div className={`text-gray-400 ${view.id === 'List' ? 'text-gray-400' : isActive ? 'text-primary' : ''}`}>
+                                    {view.icon}
+                                  </div>
+                                  <span className={`text-sm font-bold ${isActive ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
+                                    {view.id} {view.required && <span className="text-gray-400 font-medium">— Required</span>}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-4">
+                                  {view.required && <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Default</span>}
+                                  <div
+                                    onClick={() => {
+                                      if (view.required) return;
+                                      setTempSpaceDefaultViews(prev =>
+                                        prev.includes(view.id)
+                                          ? prev.filter(v => v !== view.id)
+                                          : [...prev, view.id]
+                                      );
+                                    }}
+                                    className={`w-10 h-5 rounded-full relative p-1 cursor-pointer transition-colors ${isActive ? (view.required ? 'bg-primary/40' : 'bg-primary') : 'bg-gray-200 dark:bg-[#2a2a2b]'} ${view.required ? 'cursor-not-allowed opacity-60' : 'active:scale-95'}`}
+                                  >
+                                    <div className={`w-3 h-3 bg-white rounded-full transition-transform ${isActive ? 'translate-x-5' : 'translate-x-0'}`} />
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Step 3 Footer */}
+                    <div className="px-8 py-6 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-[#121213]">
+                      <button
+                        onClick={() => {
+                          setSpaceDefaultViews([...tempSpaceDefaultViews]);
+                          setSpaceModalStep(2);
+                        }}
+                        className="w-full bg-primary hover:bg-primary-hover active:bg-primary-hover text-white py-3 rounded-xl font-black text-sm transition-all hover:scale-[1.02] active:scale-95 shadow-lg shadow-primary/20"
+                      >
+                        Done
+                      </button>
+                    </div>
+                  </>
+                ) : spaceModalStep === 4 ? (
+                  <>
+                    {/* Step 4: Edit task statuses */}
+                    <div className="px-8 pt-6 pb-2 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => setSpaceModalStep(2)}
+                          className="p-1.5 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg text-gray-500 transition-colors"
+                        >
+                          <ChevronLeft size={20} />
+                        </button>
+                        <h2 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">Edit {spaceWorkflowOption.toLowerCase()} statuses</h2>
+                      </div>
+                      <button onClick={() => setIsSpaceModalOpen(false)} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-500 dark:text-gray-400 self-start mt-1">
+                        <X size={20} />
+                      </button>
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto custom-scrollbar p-8">
+                      <div className="space-y-8">
+                        {tempSpaceTaskStatuses.map((category, catIndex) => (
+                          <div key={category.category} className="space-y-3">
+                            <div className="flex items-center gap-2">
+                              <h4 className="text-xs font-black uppercase tracking-wider text-gray-400">{category.category}</h4>
+                              <Info size={12} className="text-gray-300" />
+                              <button className="ml-auto text-gray-300 hover:text-gray-500 transition-colors">
+                                <Plus size={14} />
+                              </button>
+                            </div>
+
+                            <div className="space-y-2">
+                              {category.statuses.map((status, statusIndex) => (
+                                <div key={statusIndex} className="flex items-center gap-3 p-3 bg-white dark:bg-[#1a1a1c] border border-gray-100 dark:border-gray-800 rounded-xl group hover:border-gray-300 dark:hover:border-gray-600 transition-all">
+                                  <div className="w-4 h-4 cursor-grab active:cursor-grabbing text-gray-300 group-hover:text-gray-400">
+                                    <div className="grid grid-cols-2 gap-0.5">
+                                      {[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="w-0.5 h-0.5 bg-current rounded-full" />)}
+                                    </div>
+                                  </div>
+                                  <div className="w-5 h-5 rounded-full border-2 flex items-center justify-center" style={{ borderColor: status.color }}>
+                                    {category.category === 'Closed' && <Check size={10} style={{ color: status.color }} />}
+                                    {category.category === 'Active' && <div className="w-2 h-2 rounded-full" style={{ backgroundColor: status.color }} />}
+                                  </div>
+                                  <input
+                                    value={status.name}
+                                    onChange={(e) => {
+                                      const newStatuses = [...tempSpaceTaskStatuses];
+                                      newStatuses[catIndex].statuses[statusIndex].name = e.target.value;
+                                      setTempSpaceTaskStatuses(newStatuses);
+                                    }}
+                                    className="flex-1 bg-transparent border-none focus:outline-none text-sm font-bold text-gray-900 dark:text-white"
+                                  />
+                                  <button className="opacity-0 group-hover:opacity-100 text-gray-300 hover:text-gray-600 transition-all p-1">
+                                    <MoreHorizontal size={16} />
+                                  </button>
+                                </div>
+                              ))}
+                              <button
+                                onClick={() => {
+                                  const newStatuses = [...tempSpaceTaskStatuses];
+                                  newStatuses[catIndex].statuses.push({ name: 'NEW STATUS', color: '#94a3b8' });
+                                  setTempSpaceTaskStatuses(newStatuses);
+                                }}
+                                className="w-full py-3 border border-dashed border-gray-200 dark:border-gray-800 rounded-xl text-xs font-bold text-gray-400 hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-white/5 transition-all flex items-center justify-center gap-2"
+                              >
+                                <Plus size={14} /> Add status
                               </button>
                             </div>
                           </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Private Toggle Section */}
-                    <div className="flex items-center justify-between pt-2">
-                      <div className="space-y-1">
-                        <div className="text-sm font-bold text-gray-700 dark:text-gray-300">Make Private</div>
-                        <div className="text-xs text-gray-500 font-medium">Only you and invited members have access</div>
-                      </div>
-                      <div
-                        onClick={() => setIsSpacePrivate(!isSpacePrivate)}
-                        className={`w-11 h-6 ${isSpacePrivate ? 'bg-black' : 'bg-gray-200 dark:bg-[#2a2a2b]'} rounded-full relative p-1 cursor-pointer transition-colors active:scale-95`}
-                      >
-                        <div className={`w-4 h-4 bg-white rounded-full transition-transform ${isSpacePrivate ? 'translate-x-5' : 'translate-x-0'}`} />
+                        ))}
                       </div>
                     </div>
-                  </div>
 
-                  {/* Footer */}
-                  <div className="px-8 py-6 border-t border-gray-200 dark:border-gray-800 flex items-center justify-end bg-gray-50 dark:bg-[#121213]">
-                    <button
-                      onClick={() => setSpaceModalStep(2)}
-                      className="bg-primary hover:bg-primary-hover active:bg-primary-hover text-white px-8 py-2.5 rounded-xl font-black text-sm transition-all hover:scale-105 active:scale-95 shadow-lg shadow-black/10"
-                    >
-                      Continue
-                    </button>
-                  </div>
-                </>
-              ) : spaceModalStep === 2 ? (
-                <>
-                  {/* Step 2: Define your workflow */}
-                  <div className="px-8 pt-6 pb-2 flex items-center justify-between">
-                    <div className="space-y-1">
-                      <h2 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">Define your workflow</h2>
-                      <p className="text-sm text-gray-500 font-medium leading-relaxed">Choose a pre-configured solution, required views, and task statuses.</p>
-                    </div>
-                    <button onClick={() => setIsSpaceModalOpen(false)} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-500 dark:text-gray-400 self-start mt-1">
-                      <X size={20} />
-                    </button>
-                  </div>
-
-                  <div className="p-8 pb-4 space-y-8 overflow-y-auto custom-scrollbar">
-                    {/* Workflow Options Grid */}
-                    <div className="grid grid-cols-2 gap-4">
-                      {[
-                        { title: 'Starter', desc: 'The basics for any project' },
-                        { title: 'Marketing', desc: 'Campaigns, content & events' },
-                        { title: 'Sales', desc: 'CRM, deals & pipelines' },
-                        { title: 'Product + Engineering', desc: 'Streamline your product lifecycle' }
-                      ].map(option => (
-                        <button
-                          key={option.title}
-                          onClick={() => setSpaceWorkflowOption(option.title)}
-                          className={`p-4 rounded-xl border-2 text-left transition-all hover:border-primary/50 ${spaceWorkflowOption === option.title ? 'border-primary bg-primary/5 dark:bg-primary/10 shadow-lg shadow-primary/5' : 'border-gray-100 dark:border-gray-800 bg-transparent hover:bg-gray-50 dark:hover:bg-white/5'}`}
-                        >
-                          <div className={`text-sm font-bold mb-1 ${spaceWorkflowOption === option.title ? 'text-primary' : 'text-gray-900 dark:text-white'}`}>{option.title}</div>
-                          <div className="text-xs text-gray-500 font-medium">{option.desc}</div>
-                        </button>
-                      ))}
-                    </div>
-
-                    <div className="pt-2">
-                      <div className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-4">Customize defaults for <span className="text-primary">{spaceWorkflowOption}</span></div>
-
-                      <div className="space-y-3">
-                        {/* Default views */}
-                        <div
-                          onClick={() => {
-                            setTempSpaceDefaultViews([...spaceDefaultViews]);
-                            setSpaceModalStep(3);
-                          }}
-                          className="flex items-center justify-between p-4 bg-white dark:bg-transparent border border-gray-100 dark:border-gray-800 rounded-xl group hover:border-gray-300 dark:hover:border-gray-600 transition-all cursor-pointer"
-                        >
-                          <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-lg bg-gray-50 dark:bg-white/5 flex items-center justify-center text-gray-500">
-                              <Layers size={18} />
-                            </div>
-                            <div className="space-y-0.5">
-                              <div className="text-sm font-bold text-gray-900 dark:text-white">Default views</div>
-                              <div className="text-xs text-gray-500 font-medium">
-                                {spaceDefaultViews.length > 0 ? spaceDefaultViews.join(', ') : 'None selected'}
-                              </div>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <span className="w-4 h-4 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center text-[10px] text-gray-400">?</span>
-                            <ChevronRight size={16} className="text-gray-400" />
-                          </div>
-                        </div>
-
-                        {/* Task statuses */}
-                        <div
-                          onClick={() => {
-                            setTempSpaceTaskStatuses(JSON.parse(JSON.stringify(spaceTaskStatuses)));
-                            setSpaceModalStep(4);
-                          }}
-                          className="flex items-center justify-between p-4 bg-white dark:bg-transparent border border-gray-100 dark:border-gray-800 rounded-xl group hover:border-gray-300 dark:hover:border-gray-600 transition-all cursor-pointer"
-                        >
-                          <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-lg bg-gray-50 dark:bg-white/5 flex items-center justify-center text-gray-500">
-                              <CircleDot size={18} />
-                            </div>
-                            <div className="space-y-0.5">
-                              <div className="text-sm font-bold text-gray-900 dark:text-white">Task statuses</div>
-                              <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-tight text-gray-500">
-                                {spaceTaskStatuses.map((cat, i) => (
-                                  <React.Fragment key={cat.category}>
-                                    {cat.statuses.map((status, si) => (
-                                      <React.Fragment key={status.name + si}>
-                                        <span className="flex items-center gap-1">
-                                          <div className="w-1.5 h-1.5 rounded-full border-2" style={{ borderColor: status.color }} />
-                                          {status.name}
-                                        </span>
-                                        {(si < cat.statuses.length - 1 || (i < spaceTaskStatuses.length - 1 && spaceTaskStatuses[i + 1].statuses.length > 0)) && <ChevronRight size={10} />}
-                                      </React.Fragment>
-                                    ))}
-                                  </React.Fragment>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <span className="w-4 h-4 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center text-[10px] text-gray-400">?</span>
-                            <ChevronRight size={16} className="text-gray-400" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Footer Step 2 */}
-                  <div className="px-8 py-6 border-t border-gray-200 dark:border-gray-800 flex items-center justify-between bg-gray-50 dark:bg-[#121213]">
-                    <button
-                      onClick={() => setSpaceModalStep(1)}
-                      className="px-6 py-2.5 border border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-white/5 text-gray-600 dark:text-gray-400 rounded-xl font-bold text-sm transition-all shadow-sm"
-                    >
-                      Back
-                    </button>
-                    <button
-                      onClick={() => {
-                        setIsSpaceModalOpen(false);
-                        setSpaceModalStep(1);
-                      }}
-                      className="bg-primary hover:bg-primary-hover active:bg-primary-hover text-white px-8 py-2.5 rounded-xl font-black text-sm transition-all hover:scale-105 active:scale-95 shadow-lg shadow-primary/20"
-                    >
-                      Create Space
-                    </button>
-                  </div>
-                </>
-              ) : spaceModalStep === 3 ? (
-                <>
-                  {/* Step 3: Default settings for views */}
-                  <div className="px-8 pt-6 pb-2 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={() => setSpaceModalStep(2)}
-                        className="p-1.5 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg text-gray-500 transition-colors"
-                      >
-                        <ChevronLeft size={20} />
+                    {/* Step 4 Footer */}
+                    <div className="px-8 py-6 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-[#121213] flex items-center justify-between">
+                      <button className="text-[12px] font-medium text-gray-500 hover:text-gray-900 transition-colors flex items-center gap-2">
+                        <HelpCircle size={14} />
+                        <span className="underline cursor-pointer">Learn more about statuses</span>
                       </button>
-                      <h2 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">Default settings for views</h2>
-                    </div>
-                    <button onClick={() => setIsSpaceModalOpen(false)} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-500 dark:text-gray-400 self-start mt-1">
-                      <X size={20} />
-                    </button>
-                  </div>
-
-                  <div className="px-8 pt-2">
-                    <div className="flex bg-gray-100 dark:bg-white/5 p-1 rounded-xl mb-6">
-                      <button className="flex-1 py-1.5 text-xs font-bold text-gray-900 dark:text-white bg-white dark:bg-[#2a2a2c] rounded-lg shadow-sm">Required views</button>
-                      <button className="flex-1 py-1.5 text-xs font-bold text-gray-400 dark:text-gray-500 hover:text-gray-600 transition-colors">Default View Templates</button>
-                    </div>
-
-                    <p className="text-sm text-gray-500 font-medium leading-relaxed mb-6">
-                      Set up views that appear automatically in every Space, Folder, or List — and can't be removed.
-                    </p>
-
-                    <div className="bg-white dark:bg-[#1a1a1c] border border-gray-100 dark:border-gray-800 rounded-2xl overflow-hidden mb-8">
-                      <div className="p-2 space-y-1 max-h-[400px] overflow-y-auto custom-scrollbar">
-                        {[
-                          { id: 'List', icon: <Hash size={16} />, required: true },
-                          { id: 'Board', icon: <Layout size={16} /> },
-                          { id: 'Calendar', icon: <CalendarIcon size={16} /> },
-                          { id: 'Map', icon: <MapPin size={16} /> },
-                          { id: 'Activity', icon: <Activity size={16} /> },
-                          { id: 'Team', icon: <Users size={16} /> },
-                          { id: 'Gantt', icon: <GanttChart size={16} /> },
-                          { id: 'Mind Map', icon: <MindMapIcon size={16} /> },
-                          { id: 'Table', icon: <TableIcon size={16} /> },
-                          { id: 'Timeline', icon: <Clock size={16} /> },
-                          { id: 'Workload', icon: <BarChart3 size={16} /> },
-                        ].map((view) => {
-                          const isActive = tempSpaceDefaultViews.includes(view.id);
-                          return (
-                            <div key={view.id} className="flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl transition-colors">
-                              <div className="flex items-center gap-3">
-                                <div className={`text-gray-400 ${view.id === 'List' ? 'text-gray-400' : isActive ? 'text-primary' : ''}`}>
-                                  {view.icon}
-                                </div>
-                                <span className={`text-sm font-bold ${isActive ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
-                                  {view.id} {view.required && <span className="text-gray-400 font-medium">— Required</span>}
-                                </span>
-                              </div>
-                              <div className="flex items-center gap-4">
-                                {view.required && <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Default</span>}
-                                <div
-                                  onClick={() => {
-                                    if (view.required) return;
-                                    setTempSpaceDefaultViews(prev =>
-                                      prev.includes(view.id)
-                                        ? prev.filter(v => v !== view.id)
-                                        : [...prev, view.id]
-                                    );
-                                  }}
-                                  className={`w-10 h-5 rounded-full relative p-1 cursor-pointer transition-colors ${isActive ? (view.required ? 'bg-primary/40' : 'bg-primary') : 'bg-gray-200 dark:bg-[#2a2a2b]'} ${view.required ? 'cursor-not-allowed opacity-60' : 'active:scale-95'}`}
-                                >
-                                  <div className={`w-3 h-3 bg-white rounded-full transition-transform ${isActive ? 'translate-x-5' : 'translate-x-0'}`} />
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Step 3 Footer */}
-                  <div className="px-8 py-6 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-[#121213]">
-                    <button
-                      onClick={() => {
-                        setSpaceDefaultViews([...tempSpaceDefaultViews]);
-                        setSpaceModalStep(2);
-                      }}
-                      className="w-full bg-primary hover:bg-primary-hover active:bg-primary-hover text-white py-3 rounded-xl font-black text-sm transition-all hover:scale-[1.02] active:scale-95 shadow-lg shadow-primary/20"
-                    >
-                      Done
-                    </button>
-                  </div>
-                </>
-              ) : spaceModalStep === 4 ? (
-                <>
-                  {/* Step 4: Edit task statuses */}
-                  <div className="px-8 pt-6 pb-2 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
                       <button
-                        onClick={() => setSpaceModalStep(2)}
-                        className="p-1.5 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg text-gray-500 transition-colors"
+                        onClick={() => {
+                          setSpaceTaskStatuses(JSON.parse(JSON.stringify(tempSpaceTaskStatuses)));
+                          setSpaceModalStep(2);
+                        }}
+                        className="bg-primary hover:bg-primary-hover active:bg-primary-hover text-white px-8 py-2.5 rounded-xl font-black text-sm transition-all hover:scale-[1.02] active:scale-95 shadow-lg shadow-primary/20"
                       >
-                        <ChevronLeft size={20} />
+                        Apply changes
                       </button>
-                      <h2 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">Edit {spaceWorkflowOption.toLowerCase()} statuses</h2>
                     </div>
-                    <button onClick={() => setIsSpaceModalOpen(false)} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-500 dark:text-gray-400 self-start mt-1">
-                      <X size={20} />
-                    </button>
-                  </div>
-
-                  <div className="flex-1 overflow-y-auto custom-scrollbar p-8">
-                    <div className="space-y-8">
-                      {tempSpaceTaskStatuses.map((category, catIndex) => (
-                        <div key={category.category} className="space-y-3">
-                          <div className="flex items-center gap-2">
-                            <h4 className="text-xs font-black uppercase tracking-wider text-gray-400">{category.category}</h4>
-                            <Info size={12} className="text-gray-300" />
-                            <button className="ml-auto text-gray-300 hover:text-gray-500 transition-colors">
-                              <Plus size={14} />
-                            </button>
-                          </div>
-
-                          <div className="space-y-2">
-                            {category.statuses.map((status, statusIndex) => (
-                              <div key={statusIndex} className="flex items-center gap-3 p-3 bg-white dark:bg-[#1a1a1c] border border-gray-100 dark:border-gray-800 rounded-xl group hover:border-gray-300 dark:hover:border-gray-600 transition-all">
-                                <div className="w-4 h-4 cursor-grab active:cursor-grabbing text-gray-300 group-hover:text-gray-400">
-                                  <div className="grid grid-cols-2 gap-0.5">
-                                    {[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="w-0.5 h-0.5 bg-current rounded-full" />)}
-                                  </div>
-                                </div>
-                                <div className="w-5 h-5 rounded-full border-2 flex items-center justify-center" style={{ borderColor: status.color }}>
-                                  {category.category === 'Closed' && <Check size={10} style={{ color: status.color }} />}
-                                  {category.category === 'Active' && <div className="w-2 h-2 rounded-full" style={{ backgroundColor: status.color }} />}
-                                </div>
-                                <input
-                                  value={status.name}
-                                  onChange={(e) => {
-                                    const newStatuses = [...tempSpaceTaskStatuses];
-                                    newStatuses[catIndex].statuses[statusIndex].name = e.target.value;
-                                    setTempSpaceTaskStatuses(newStatuses);
-                                  }}
-                                  className="flex-1 bg-transparent border-none focus:outline-none text-sm font-bold text-gray-900 dark:text-white"
-                                />
-                                <button className="opacity-0 group-hover:opacity-100 text-gray-300 hover:text-gray-600 transition-all p-1">
-                                  <MoreHorizontal size={16} />
-                                </button>
-                              </div>
-                            ))}
-                            <button
-                              onClick={() => {
-                                const newStatuses = [...tempSpaceTaskStatuses];
-                                newStatuses[catIndex].statuses.push({ name: 'NEW STATUS', color: '#94a3b8' });
-                                setTempSpaceTaskStatuses(newStatuses);
-                              }}
-                              className="w-full py-3 border border-dashed border-gray-200 dark:border-gray-800 rounded-xl text-xs font-bold text-gray-400 hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-white/5 transition-all flex items-center justify-center gap-2"
-                            >
-                              <Plus size={14} /> Add status
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Step 4 Footer */}
-                  <div className="px-8 py-6 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-[#121213] flex items-center justify-between">
-                    <button className="text-[12px] font-medium text-gray-500 hover:text-gray-900 transition-colors flex items-center gap-2">
-                      <HelpCircle size={14} />
-                      <span className="underline cursor-pointer">Learn more about statuses</span>
-                    </button>
-                    <button
-                      onClick={() => {
-                        setSpaceTaskStatuses(JSON.parse(JSON.stringify(tempSpaceTaskStatuses)));
-                        setSpaceModalStep(2);
-                      }}
-                      className="bg-primary hover:bg-primary-hover active:bg-primary-hover text-white px-8 py-2.5 rounded-xl font-black text-sm transition-all hover:scale-[1.02] active:scale-95 shadow-lg shadow-primary/20"
-                    >
-                      Apply changes
-                    </button>
-                  </div>
-                </>
-              ) : null}
+                  </>
+                ) : null}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
       {/* Task Detail Modal */}
       {
         selectedTask && (
@@ -4510,402 +4581,369 @@ const App: React.FC = () => {
       </div>
 
       {/* Replies Panel */}
-      {isRepliesOpen && (
-        <>
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[300]" onClick={() => setIsRepliesOpen(false)} />
-          <div className="fixed right-0 top-0 bottom-0 w-full max-w-2xl bg-white dark:bg-[#1e1e1e] shadow-2xl z-[301] animate-in slide-in-from-right duration-300 flex flex-col">
-            {/* Replies Header */}
-            <div className="border-b border-gray-200 dark:border-gray-800 p-4">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold text-gray-900 dark:text-white">Replies</h2>
-                <button
-                  onClick={() => setIsRepliesOpen(false)}
-                  className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                >
-                  <X size={16} />
-                </button>
-              </div>
-
-              {/* Tabs */}
-              <div className="flex items-center gap-6 border-b border-gray-200 dark:border-gray-800">
-                {(['Unread', 'Read'] as const).map((tab) => (
+      {
+        isRepliesOpen && (
+          <>
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[300]" onClick={() => setIsRepliesOpen(false)} />
+            <div className="fixed right-0 top-0 bottom-0 w-full max-w-2xl bg-white dark:bg-[#1e1e1e] shadow-2xl z-[301] animate-in slide-in-from-right duration-300 flex flex-col">
+              {/* Replies Header */}
+              <div className="border-b border-gray-200 dark:border-gray-800 p-4">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-bold text-gray-900 dark:text-white">Replies</h2>
                   <button
-                    key={tab}
-                    onClick={() => setRepliesActiveTab(tab)}
-                    className={`pb-3 text-sm font-bold relative transition-colors ${repliesActiveTab === tab
-                      ? 'text-gray-900 dark:text-white'
-                      : 'text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-                      }`}
+                    onClick={() => setIsRepliesOpen(false)}
+                    className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                   >
-                    {tab}
-                    {repliesActiveTab === tab && (
-                      <div className="absolute bottom-0 left-0 w-full h-0.5 bg-black animate-in fade-in slide-in-from-bottom-1 duration-200" />
-                    )}
+                    <X size={16} />
                   </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Replies Content */}
-            <div className="flex-1 overflow-auto p-8 flex items-center justify-center">
-              <div className="text-center space-y-4 max-w-md">
-                <div className="w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto relative">
-                  <div className="w-16 h-16 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center">
-                    <MessageSquare size={32} className="text-gray-300 dark:text-gray-600" />
-                  </div>
-                  <div className="absolute bottom-0 right-0 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center border-4 border-white dark:border-[#1e1e1e]">
-                    <Check size={16} className="text-white" />
-                  </div>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">You're all caught up</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Looks like you don't have any unread replies
-                </p>
-                <button className="mt-4 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
-                  Read old replies
-                </button>
-              </div>
-            </div>
 
-            {/* Replies Footer */}
-            <div className="border-t border-gray-200 dark:border-gray-800 p-4">
-              <button className="w-full flex items-center justify-between px-3 py-2 text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
-                <span>Draft</span>
-                <ChevronRight size={14} />
-              </button>
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* Inbox Panel */}
-      {isInboxOpen && (
-        <>
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[300]" onClick={() => setIsInboxOpen(false)} />
-          <div className="fixed right-0 top-0 bottom-0 w-full max-w-2xl bg-white dark:bg-[#1e1e1e] shadow-2xl z-[301] animate-in slide-in-from-right duration-300">
-            {/* Inbox Header */}
-            <div className="border-b border-gray-200 dark:border-gray-800">
-              {/* Tabs */}
-              <div className="flex items-center justify-between px-4 pt-4">
-                <div className="flex items-center gap-6">
-                  {(['Priority', 'Other', 'Later', 'Cleared'] as const).map((tab) => (
+                {/* Tabs */}
+                <div className="flex items-center gap-6 border-b border-gray-200 dark:border-gray-800">
+                  {(['Unread', 'Read'] as const).map((tab) => (
                     <button
                       key={tab}
-                      onClick={() => setInboxActiveTab(tab)}
-                      className={`pb-3 text-sm font-bold relative transition-colors ${inboxActiveTab === tab
+                      onClick={() => setRepliesActiveTab(tab)}
+                      className={`pb-3 text-sm font-bold relative transition-colors ${repliesActiveTab === tab
                         ? 'text-gray-900 dark:text-white'
                         : 'text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                         }`}
                     >
                       {tab}
-                      {inboxActiveTab === tab && (
+                      {repliesActiveTab === tab && (
                         <div className="absolute bottom-0 left-0 w-full h-0.5 bg-black animate-in fade-in slide-in-from-bottom-1 duration-200" />
                       )}
                     </button>
                   ))}
                 </div>
+              </div>
+
+              {/* Replies Content */}
+              <div className="flex-1 overflow-auto p-8 flex items-center justify-center">
+                <div className="text-center space-y-4 max-w-md">
+                  <div className="w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto relative">
+                    <div className="w-16 h-16 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center">
+                      <MessageSquare size={32} className="text-gray-300 dark:text-gray-600" />
+                    </div>
+                    <div className="absolute bottom-0 right-0 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center border-4 border-white dark:border-[#1e1e1e]">
+                      <Check size={16} className="text-white" />
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">You're all caught up</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Looks like you don't have any unread replies
+                  </p>
+                  <button className="mt-4 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+                    Read old replies
+                  </button>
+                </div>
+              </div>
+
+              {/* Replies Footer */}
+              <div className="border-t border-gray-200 dark:border-gray-800 p-4">
+                <button className="w-full flex items-center justify-between px-3 py-2 text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
+                  <span>Draft</span>
+                  <ChevronRight size={14} />
+                </button>
+              </div>
+            </div>
+          </>
+        )
+      }
+
+      {/* Inbox Panel */}
+      {
+        isInboxOpen && (
+          <>
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[300]" onClick={() => setIsInboxOpen(false)} />
+            <div className="fixed right-0 top-0 bottom-0 w-full max-w-2xl bg-white dark:bg-[#1e1e1e] shadow-2xl z-[301] animate-in slide-in-from-right duration-300">
+              {/* Inbox Header */}
+              <div className="border-b border-gray-200 dark:border-gray-800">
+                {/* Tabs */}
+                <div className="flex items-center justify-between px-4 pt-4">
+                  <div className="flex items-center gap-6">
+                    {(['Priority', 'Other', 'Later', 'Cleared'] as const).map((tab) => (
+                      <button
+                        key={tab}
+                        onClick={() => setInboxActiveTab(tab)}
+                        className={`pb-3 text-sm font-bold relative transition-colors ${inboxActiveTab === tab
+                          ? 'text-gray-900 dark:text-white'
+                          : 'text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                          }`}
+                      >
+                        {tab}
+                        {inboxActiveTab === tab && (
+                          <div className="absolute bottom-0 left-0 w-full h-0.5 bg-black animate-in fade-in slide-in-from-bottom-1 duration-200" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => setIsInboxOpen(false)}
+                    className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+
+                {/* Filter and Settings */}
+                <div className="flex items-center gap-2 px-4 pb-3">
+                  {/* Filter Button */}
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowInboxFilter(!showInboxFilter)}
+                      className="flex items-center gap-2 px-3 py-1.5 border border-gray-200 dark:border-gray-700 rounded-lg text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                    >
+                      <Filter size={14} />
+                      Filter
+                    </button>
+
+                    {showInboxFilter && (
+                      <>
+                        <div className="fixed inset-0 z-40" onClick={() => setShowInboxFilter(false)} />
+                        <div className="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                          <div className="p-2">
+                            {[
+                              { label: 'Mentions', icon: '@', count: 1, state: inboxFilterMentions, setState: setInboxFilterMentions },
+                              { label: 'Assigned to me', icon: '@', count: 2, state: inboxFilterAssigned, setState: setInboxFilterAssigned },
+                              { label: 'Unread', icon: '📧', count: 3, state: inboxFilterUnread, setState: setInboxFilterUnread },
+                              { label: 'Reminders', icon: '🔔', count: 4, state: inboxFilterReminders, setState: setInboxFilterReminders }
+                            ].map((filter) => (
+                              <button
+                                key={filter.label}
+                                onClick={() => filter.setState(!filter.state)}
+                                className="w-full flex items-center justify-between px-3 py-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors"
+                              >
+                                <div className="flex items-center gap-3">
+                                  <span className="text-sm">{filter.icon}</span>
+                                  <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{filter.label}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-xs text-gray-400">{filter.count}</span>
+                                  {filter.state && <Check size={14} className="text-black" />}
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+
+                  {/* Settings Button */}
+                  <button
+                    onClick={() => setIsInboxSettingsOpen(true)}
+                    className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                  >
+                    <Settings size={16} />
+                  </button>
+
+                  <button className="ml-auto flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
+                    <Check size={14} />
+                    Clear All
+                  </button>
+                </div>
+              </div>
+
+              {/* Inbox Content */}
+              <div className="flex-1 overflow-auto p-8">
+                <div className="flex flex-col items-center justify-center h-full text-center">
+                  <div className="w-24 h-24 bg-gray-100 dark:bg-purple-900/20 rounded-full flex items-center justify-center mb-4">
+                    <Inbox size={48} className="text-purple-400" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Inbox Zero</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 max-w-md">
+                    Congratulations! You cleared your important notifications 🎉
+                  </p>
+                </div>
+              </div>
+
+              {/* Inbox Footer */}
+              <div className="border-t border-gray-200 dark:border-gray-800 p-4">
+                <button className="w-full flex items-center justify-between px-3 py-2 text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
+                  <span>Draft</span>
+                  <ChevronRight size={14} />
+                </button>
+              </div>
+            </div>
+          </>
+        )
+      }
+
+      {/* Inbox Settings Panel */}
+      {
+        isInboxSettingsOpen && (
+          <>
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[400]" onClick={() => setIsInboxSettingsOpen(false)} />
+            <div className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white dark:bg-[#1e1e1e] shadow-2xl z-[401] animate-in slide-in-from-right duration-300">
+              {/* Settings Header */}
+              <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
+                <h2 className="text-lg font-bold text-gray-900 dark:text-white">Customize Inbox</h2>
                 <button
-                  onClick={() => setIsInboxOpen(false)}
+                  onClick={() => setIsInboxSettingsOpen(false)}
                   className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                 >
                   <X size={16} />
                 </button>
               </div>
 
-              {/* Filter and Settings */}
-              <div className="flex items-center gap-2 px-4 pb-3">
-                {/* Filter Button */}
-                <div className="relative">
-                  <button
-                    onClick={() => setShowInboxFilter(!showInboxFilter)}
-                    className="flex items-center gap-2 px-3 py-1.5 border border-gray-200 dark:border-gray-700 rounded-lg text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
-                  >
-                    <Filter size={14} />
-                    Filter
-                  </button>
-
-                  {showInboxFilter && (
-                    <>
-                      <div className="fixed inset-0 z-40" onClick={() => setShowInboxFilter(false)} />
-                      <div className="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-                        <div className="p-2">
-                          {[
-                            { label: 'Mentions', icon: '@', count: 1, state: inboxFilterMentions, setState: setInboxFilterMentions },
-                            { label: 'Assigned to me', icon: '@', count: 2, state: inboxFilterAssigned, setState: setInboxFilterAssigned },
-                            { label: 'Unread', icon: '📧', count: 3, state: inboxFilterUnread, setState: setInboxFilterUnread },
-                            { label: 'Reminders', icon: '🔔', count: 4, state: inboxFilterReminders, setState: setInboxFilterReminders }
-                          ].map((filter) => (
-                            <button
-                              key={filter.label}
-                              onClick={() => filter.setState(!filter.state)}
-                              className="w-full flex items-center justify-between px-3 py-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors"
-                            >
-                              <div className="flex items-center gap-3">
-                                <span className="text-sm">{filter.icon}</span>
-                                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{filter.label}</span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <span className="text-xs text-gray-400">{filter.count}</span>
-                                {filter.state && <Check size={14} className="text-black" />}
-                              </div>
-                            </button>
-                          ))}
-                        </div>
+              {/* Settings Content */}
+              <div className="p-6 space-y-6 overflow-auto">
+                {/* Toggle Options */}
+                <div className="space-y-4">
+                  {[
+                    { label: 'Show All tab', icon: '@', state: inboxShowAllTab, setState: setInboxShowAllTab },
+                    { label: 'Group by date', icon: '📅', state: inboxGroupByDate, setState: setInboxGroupByDate },
+                    { label: 'Sort by newest first', icon: '↕️', state: inboxSortNewest, setState: setInboxSortNewest }
+                  ].map((option) => (
+                    <div key={option.label} className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg">{option.icon}</span>
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{option.label}</span>
                       </div>
-                    </>
-                  )}
-                </div>
-
-                {/* Settings Button */}
-                <button
-                  onClick={() => setIsInboxSettingsOpen(true)}
-                  className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                >
-                  <Settings size={16} />
-                </button>
-
-                <button className="ml-auto flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
-                  <Check size={14} />
-                  Clear All
-                </button>
-              </div>
-            </div>
-
-            {/* Inbox Content */}
-            <div className="flex-1 overflow-auto p-8">
-              <div className="flex flex-col items-center justify-center h-full text-center">
-                <div className="w-24 h-24 bg-gray-100 dark:bg-purple-900/20 rounded-full flex items-center justify-center mb-4">
-                  <Inbox size={48} className="text-purple-400" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Inbox Zero</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400 max-w-md">
-                  Congratulations! You cleared your important notifications 🎉
-                </p>
-              </div>
-            </div>
-
-            {/* Inbox Footer */}
-            <div className="border-t border-gray-200 dark:border-gray-800 p-4">
-              <button className="w-full flex items-center justify-between px-3 py-2 text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
-                <span>Draft</span>
-                <ChevronRight size={14} />
-              </button>
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* Inbox Settings Panel */}
-      {isInboxSettingsOpen && (
-        <>
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[400]" onClick={() => setIsInboxSettingsOpen(false)} />
-          <div className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white dark:bg-[#1e1e1e] shadow-2xl z-[401] animate-in slide-in-from-right duration-300">
-            {/* Settings Header */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white">Customize Inbox</h2>
-              <button
-                onClick={() => setIsInboxSettingsOpen(false)}
-                className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-              >
-                <X size={16} />
-              </button>
-            </div>
-
-            {/* Settings Content */}
-            <div className="p-6 space-y-6 overflow-auto">
-              {/* Toggle Options */}
-              <div className="space-y-4">
-                {[
-                  { label: 'Show All tab', icon: '@', state: inboxShowAllTab, setState: setInboxShowAllTab },
-                  { label: 'Group by date', icon: '📅', state: inboxGroupByDate, setState: setInboxGroupByDate },
-                  { label: 'Sort by newest first', icon: '↕️', state: inboxSortNewest, setState: setInboxSortNewest }
-                ].map((option) => (
-                  <div key={option.label} className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <span className="text-lg">{option.icon}</span>
-                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{option.label}</span>
+                      <button
+                        onClick={() => option.setState(!option.state)}
+                        className={`w-11 h-6 rounded-full relative transition-colors duration-200 ${option.state ? 'bg-black' : 'bg-gray-200 dark:bg-gray-700'
+                          }`}
+                      >
+                        <div className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-200 ${option.state ? 'translate-x-5' : 'translate-x-0'
+                          }`} />
+                      </button>
                     </div>
+                  ))}
+                </div>
+
+                {/* Important Notifications */}
+                <div className="pt-4 border-t border-gray-200 dark:border-gray-800">
+                  <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Important notifications</h3>
+                  <button className="w-full flex items-center justify-between px-3 py-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
+                    <div className="flex items-center gap-3">
+                      <Zap size={16} className="text-gray-400" />
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Customize importance</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-gray-400">11/42</span>
+                      <ChevronRight size={14} className="text-gray-400" />
+                    </div>
+                  </button>
+                </div>
+
+                {/* Display Mode */}
+                <div className="pt-4 border-t border-gray-200 dark:border-gray-800">
+                  <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Display mode</h3>
+                  <div className="grid grid-cols-2 gap-3">
                     <button
-                      onClick={() => option.setState(!option.state)}
-                      className={`w-11 h-6 rounded-full relative transition-colors duration-200 ${option.state ? 'bg-black' : 'bg-gray-200 dark:bg-gray-700'
+                      onClick={() => setInboxDisplayMode('fullscreen')}
+                      className={`relative p-4 border-2 rounded-xl transition-all ${inboxDisplayMode === 'fullscreen'
+                        ? 'border-black bg-gray-50 dark:bg-purple-900/20'
+                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
                         }`}
                     >
-                      <div className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-200 ${option.state ? 'translate-x-5' : 'translate-x-0'
-                        }`} />
+                      {inboxDisplayMode === 'fullscreen' && (
+                        <div className="absolute top-2 right-2 w-4 h-4 bg-black rounded-full flex items-center justify-center">
+                          <div className="w-2 h-2 bg-white rounded-full" />
+                        </div>
+                      )}
+                      <div className="bg-gray-100 dark:bg-purple-900/30 rounded-lg p-3 mb-2">
+                        <div className="space-y-1.5">
+                          <div className="h-1 bg-purple-300 dark:bg-purple-700 rounded w-3/4" />
+                          <div className="h-1 bg-purple-200 dark:bg-purple-800 rounded w-full" />
+                          <div className="h-1 bg-purple-200 dark:bg-purple-800 rounded w-2/3" />
+                        </div>
+                      </div>
+                      <p className="text-xs font-medium text-gray-700 dark:text-gray-300">Fullscreen</p>
+                    </button>
+
+                    <button
+                      onClick={() => setInboxDisplayMode('inline')}
+                      className={`relative p-4 border-2 rounded-xl transition-all ${inboxDisplayMode === 'inline'
+                        ? 'border-black bg-gray-50 dark:bg-purple-900/20'
+                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                        }`}
+                    >
+                      {inboxDisplayMode === 'inline' && (
+                        <div className="absolute top-2 right-2 w-4 h-4 bg-black rounded-full flex items-center justify-center">
+                          <div className="w-2 h-2 bg-white rounded-full" />
+                        </div>
+                      )}
+                      <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-3 mb-2">
+                        <div className="space-y-1.5">
+                          <div className="h-1 bg-gray-300 dark:bg-gray-600 rounded w-full" />
+                          <div className="h-1 bg-gray-300 dark:bg-gray-600 rounded w-full" />
+                          <div className="h-1 bg-gray-300 dark:bg-gray-600 rounded w-3/4" />
+                        </div>
+                      </div>
+                      <p className="text-xs font-medium text-gray-700 dark:text-gray-300">Inline</p>
                     </button>
                   </div>
+                </div>
+
+                {/* Additional Settings */}
+                <div className="pt-4 border-t border-gray-200 dark:border-gray-800 space-y-2">
+                  <button className="w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
+                    <Settings size={16} className="text-gray-400" />
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Notification settings</span>
+                  </button>
+                  <button className="w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
+                    <Hash size={16} className="text-gray-400" />
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Keyboard shortcuts</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </>
+        )
+      }
+      {/* Customize Modal */}
+      {
+        isCustomizeModalOpen && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[500] flex items-center justify-center p-4 animate-in fade-in duration-200" onClick={() => setIsCustomizeModalOpen(false)}>
+            <div className="bg-white dark:bg-[#1e1e1e] w-full max-w-lg rounded-xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
+              {/* Header */}
+              <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex items-start justify-between">
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900 dark:text-white">Customize</h2>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Personalize and organize your ClickUp interface</p>
+                </div>
+                <button
+                  onClick={() => setIsCustomizeModalOpen(false)}
+                  className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              {/* Tabs */}
+              <div className="flex items-center gap-1 p-2 bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-800">
+                {['Navigation', 'Home', 'Sections'].map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setCustomizeActiveTab(tab as any)}
+                    className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-colors ${customizeActiveTab === tab
+                      ? 'bg-white dark:bg-[#2a2a2a] text-gray-900 dark:text-white shadow-sm'
+                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/5'
+                      }`}
+                  >
+                    {tab}
+                  </button>
                 ))}
               </div>
 
-              {/* Important Notifications */}
-              <div className="pt-4 border-t border-gray-200 dark:border-gray-800">
-                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Important notifications</h3>
-                <button className="w-full flex items-center justify-between px-3 py-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
-                  <div className="flex items-center gap-3">
-                    <Zap size={16} className="text-gray-400" />
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Customize importance</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-400">11/42</span>
-                    <ChevronRight size={14} className="text-gray-400" />
-                  </div>
-                </button>
-              </div>
-
-              {/* Display Mode */}
-              <div className="pt-4 border-t border-gray-200 dark:border-gray-800">
-                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Display mode</h3>
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    onClick={() => setInboxDisplayMode('fullscreen')}
-                    className={`relative p-4 border-2 rounded-xl transition-all ${inboxDisplayMode === 'fullscreen'
-                      ? 'border-black bg-gray-50 dark:bg-purple-900/20'
-                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-                      }`}
-                  >
-                    {inboxDisplayMode === 'fullscreen' && (
-                      <div className="absolute top-2 right-2 w-4 h-4 bg-black rounded-full flex items-center justify-center">
-                        <div className="w-2 h-2 bg-white rounded-full" />
-                      </div>
-                    )}
-                    <div className="bg-gray-100 dark:bg-purple-900/30 rounded-lg p-3 mb-2">
-                      <div className="space-y-1.5">
-                        <div className="h-1 bg-purple-300 dark:bg-purple-700 rounded w-3/4" />
-                        <div className="h-1 bg-purple-200 dark:bg-purple-800 rounded w-full" />
-                        <div className="h-1 bg-purple-200 dark:bg-purple-800 rounded w-2/3" />
-                      </div>
-                    </div>
-                    <p className="text-xs font-medium text-gray-700 dark:text-gray-300">Fullscreen</p>
-                  </button>
-
-                  <button
-                    onClick={() => setInboxDisplayMode('inline')}
-                    className={`relative p-4 border-2 rounded-xl transition-all ${inboxDisplayMode === 'inline'
-                      ? 'border-black bg-gray-50 dark:bg-purple-900/20'
-                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-                      }`}
-                  >
-                    {inboxDisplayMode === 'inline' && (
-                      <div className="absolute top-2 right-2 w-4 h-4 bg-black rounded-full flex items-center justify-center">
-                        <div className="w-2 h-2 bg-white rounded-full" />
-                      </div>
-                    )}
-                    <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-3 mb-2">
-                      <div className="space-y-1.5">
-                        <div className="h-1 bg-gray-300 dark:bg-gray-600 rounded w-full" />
-                        <div className="h-1 bg-gray-300 dark:bg-gray-600 rounded w-full" />
-                        <div className="h-1 bg-gray-300 dark:bg-gray-600 rounded w-3/4" />
-                      </div>
-                    </div>
-                    <p className="text-xs font-medium text-gray-700 dark:text-gray-300">Inline</p>
-                  </button>
-                </div>
-              </div>
-
-              {/* Additional Settings */}
-              <div className="pt-4 border-t border-gray-200 dark:border-gray-800 space-y-2">
-                <button className="w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
-                  <Settings size={16} className="text-gray-400" />
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Notification settings</span>
-                </button>
-                <button className="w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
-                  <Hash size={16} className="text-gray-400" />
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Keyboard shortcuts</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
-      {/* Customize Modal */}
-      {isCustomizeModalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[500] flex items-center justify-center p-4 animate-in fade-in duration-200" onClick={() => setIsCustomizeModalOpen(false)}>
-          <div className="bg-white dark:bg-[#1e1e1e] w-full max-w-lg rounded-xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
-            {/* Header */}
-            <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex items-start justify-between">
-              <div>
-                <h2 className="text-lg font-bold text-gray-900 dark:text-white">Customize</h2>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Personalize and organize your ClickUp interface</p>
-              </div>
-              <button
-                onClick={() => setIsCustomizeModalOpen(false)}
-                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            {/* Tabs */}
-            <div className="flex items-center gap-1 p-2 bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-800">
-              {['Navigation', 'Home', 'Sections'].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setCustomizeActiveTab(tab as any)}
-                  className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-colors ${customizeActiveTab === tab
-                    ? 'bg-white dark:bg-[#2a2a2a] text-gray-900 dark:text-white shadow-sm'
-                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/5'
-                    }`}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-
-            {/* Content */}
-            <div className="p-0 overflow-y-auto flex-1 custom-scrollbar">
-              {customizeActiveTab === 'Navigation' && (
-                <div className="p-4 space-y-1">
-                  {[
-                    { label: 'Inbox', icon: <Inbox size={16} />, state: navInbox, setState: setNavInbox },
-                    { label: 'Replies', icon: <Reply size={16} />, state: navReplies, setState: setNavReplies },
-                    { label: 'Assigned Comments', icon: <MessageIcon size={16} />, state: navAssignedComments, setState: setNavAssignedComments },
-                    { label: 'My Tasks', icon: <UserIcon size={16} />, state: navMyTasks, setState: setNavMyTasks },
-                    { label: 'Chat Activity', icon: <MessageCircle size={16} />, state: navChatActivity, setState: setNavChatActivity },
-                    { label: 'Drafts & Sent', icon: <Send size={16} />, state: navDraftsSent, setState: setNavDraftsSent },
-                    { label: 'Posts', icon: <FileText size={16} />, state: navPosts, setState: setNavPosts },
-                    { label: 'All Channels', icon: <Hash size={16} />, state: navAllChannels, setState: setNavAllChannels },
-                    { label: 'All Spaces', icon: <Layers size={16} />, state: navAllSpaces, setState: setNavAllSpaces },
-                    { label: 'All Tasks', icon: <Check size={16} />, state: navAllTasks, setState: setNavAllTasks },
-                  ].map((item) => (
-                    <label key={item.label} className="flex items-center gap-3 p-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg cursor-pointer group transition-colors">
-                      <div className={`w-5 h-5 rounded flex items-center justify-center transition-colors ${item.state ? 'bg-black text-white' : 'border border-gray-300 dark:border-gray-600 group-hover:border-gray-400'
-                        }`}>
-                        {item.state && <Check size={14} />}
-                      </div>
-                      <input
-                        type="checkbox"
-                        checked={item.state}
-                        onChange={() => item.setState(!item.state)}
-                        className="hidden"
-                      />
-                      <div className="text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors">
-                        {item.icon}
-                      </div>
-                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
-                        {item.label}
-                      </span>
-                    </label>
-                  ))}
-                </div>
-              )}
-
-              {customizeActiveTab === 'Home' && (
-                <div className="p-4 space-y-6">
-                  <div className="space-y-1">
+              {/* Content */}
+              <div className="p-0 overflow-y-auto flex-1 custom-scrollbar">
+                {customizeActiveTab === 'Navigation' && (
+                  <div className="p-4 space-y-1">
                     {[
-                      { label: 'Home', icon: <Home size={16} />, state: homeHome, setState: setHomeHome },
-                      { label: 'Spaces', icon: <Layers size={16} />, state: homeSpaces, setState: setHomeSpaces },
-                      { label: 'Chat', icon: <MessageCircle size={16} />, state: homeChat, setState: setHomeChat },
-                      { label: 'Planner', icon: <Calendar size={16} />, state: homePlanner, setState: setHomePlanner },
-                      { label: 'AI', icon: <Sparkles size={16} />, state: homeAI, setState: setHomeAI },
-                      { label: 'Teams', icon: <Users size={16} />, state: homeTeams, setState: setHomeTeams },
-                      { label: 'Docs', icon: <FileText size={16} />, state: homeDocs, setState: setHomeDocs },
-                      { label: 'Dashboards', icon: <LayoutGrid size={16} />, state: homeDashboards, setState: setHomeDashboards },
-                      { label: 'Whiteboards', icon: <WhiteboardIcon size={16} />, state: homeWhiteboards, setState: setHomeWhiteboards },
-                      { label: 'Forms', icon: <FormIcon size={16} />, state: homeForms, setState: setHomeForms },
-                      { label: 'Clips', icon: <Video size={16} />, state: homeClips, setState: setHomeClips },
-                      { label: 'Goals', icon: <Trophy size={16} />, state: homeGoals, setState: setHomeGoals },
-                      { label: 'Timesheets', icon: <Clock size={16} />, state: homeTimesheets, setState: setHomeTimesheets },
+                      { label: 'Inbox', icon: <Inbox size={16} />, state: navInbox, setState: setNavInbox },
+                      { label: 'Replies', icon: <Reply size={16} />, state: navReplies, setState: setNavReplies },
+                      { label: 'Assigned Comments', icon: <MessageIcon size={16} />, state: navAssignedComments, setState: setNavAssignedComments },
+                      { label: 'My Tasks', icon: <UserIcon size={16} />, state: navMyTasks, setState: setNavMyTasks },
+                      { label: 'Chat Activity', icon: <MessageCircle size={16} />, state: navChatActivity, setState: setNavChatActivity },
+                      { label: 'Drafts & Sent', icon: <Send size={16} />, state: navDraftsSent, setState: setNavDraftsSent },
+                      { label: 'Posts', icon: <FileText size={16} />, state: navPosts, setState: setNavPosts },
+                      { label: 'All Channels', icon: <Hash size={16} />, state: navAllChannels, setState: setNavAllChannels },
+                      { label: 'All Spaces', icon: <Layers size={16} />, state: navAllSpaces, setState: setNavAllSpaces },
+                      { label: 'All Tasks', icon: <Check size={16} />, state: navAllTasks, setState: setNavAllTasks },
                     ].map((item) => (
                       <label key={item.label} className="flex items-center gap-3 p-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg cursor-pointer group transition-colors">
                         <div className={`w-5 h-5 rounded flex items-center justify-center transition-colors ${item.state ? 'bg-black text-white' : 'border border-gray-300 dark:border-gray-600 group-hover:border-gray-400'
@@ -4927,89 +4965,130 @@ const App: React.FC = () => {
                       </label>
                     ))}
                   </div>
+                )}
 
-                  {/* Appearance */}
-                  <div className="pt-4 border-t border-gray-200 dark:border-gray-800">
-                    <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-3">Appearance</h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      <label className="cursor-pointer group">
-                        <input
-                          type="radio"
-                          name="appearance"
-                          checked={homeAppearance === 'icons-only'}
-                          onChange={() => setHomeAppearance('icons-only')}
-                          className="hidden"
-                        />
-                        <div className={`p-4 border-2 rounded-xl transition-all ${homeAppearance === 'icons-only'
-                          ? 'border-black bg-gray-50 dark:bg-purple-900/20'
-                          : 'border-gray-200 dark:border-gray-700 group-hover:border-purple-300'
-                          }`}>
-                          <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-3 aspect-video mb-2 flex items-center gap-2">
-                            <div className="w-6 h-6 bg-gray-300 dark:bg-gray-600 rounded" />
-                            <div className="w-16 h-2 bg-gray-200 dark:bg-gray-700 rounded" />
+                {customizeActiveTab === 'Home' && (
+                  <div className="p-4 space-y-6">
+                    <div className="space-y-1">
+                      {[
+                        { label: 'Home', icon: <Home size={16} />, state: homeHome, setState: setHomeHome },
+                        { label: 'Spaces', icon: <Layers size={16} />, state: homeSpaces, setState: setHomeSpaces },
+                        { label: 'Chat', icon: <MessageCircle size={16} />, state: homeChat, setState: setHomeChat },
+                        { label: 'Planner', icon: <Calendar size={16} />, state: homePlanner, setState: setHomePlanner },
+                        { label: 'AI', icon: <Sparkles size={16} />, state: homeAI, setState: setHomeAI },
+                        { label: 'Teams', icon: <Users size={16} />, state: homeTeams, setState: setHomeTeams },
+                        { label: 'Docs', icon: <FileText size={16} />, state: homeDocs, setState: setHomeDocs },
+                        { label: 'Dashboards', icon: <LayoutGrid size={16} />, state: homeDashboards, setState: setHomeDashboards },
+                        { label: 'Whiteboards', icon: <WhiteboardIcon size={16} />, state: homeWhiteboards, setState: setHomeWhiteboards },
+                        { label: 'Forms', icon: <FormIcon size={16} />, state: homeForms, setState: setHomeForms },
+                        { label: 'Clips', icon: <Video size={16} />, state: homeClips, setState: setHomeClips },
+                        { label: 'Goals', icon: <Trophy size={16} />, state: homeGoals, setState: setHomeGoals },
+                        { label: 'Timesheets', icon: <Clock size={16} />, state: homeTimesheets, setState: setHomeTimesheets },
+                      ].map((item) => (
+                        <label key={item.label} className="flex items-center gap-3 p-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg cursor-pointer group transition-colors">
+                          <div className={`w-5 h-5 rounded flex items-center justify-center transition-colors ${item.state ? 'bg-black text-white' : 'border border-gray-300 dark:border-gray-600 group-hover:border-gray-400'
+                            }`}>
+                            {item.state && <Check size={14} />}
                           </div>
-                          <span className="text-sm font-medium text-gray-900 dark:text-white">Icons only</span>
-                        </div>
-                      </label>
-                      <label className="cursor-pointer group">
-                        <input
-                          type="radio"
-                          name="appearance"
-                          checked={homeAppearance === 'icons-labels'}
-                          onChange={() => setHomeAppearance('icons-labels')}
-                          className="hidden"
-                        />
-                        <div className={`p-4 border-2 rounded-xl transition-all ${homeAppearance === 'icons-labels'
-                          ? 'border-black bg-gray-50 dark:bg-purple-900/20'
-                          : 'border-gray-200 dark:border-gray-700 group-hover:border-purple-300'
-                          }`}>
-                          <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-3 aspect-video mb-2 flex flex-col gap-2">
-                            <div className="flex items-center gap-2">
-                              <div className="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded" />
-                              <div className="w-12 h-2 bg-gray-200 dark:bg-gray-700 rounded" />
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <div className="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded" />
-                              <div className="w-10 h-2 bg-gray-200 dark:bg-gray-700 rounded" />
-                            </div>
+                          <input
+                            type="checkbox"
+                            checked={item.state}
+                            onChange={() => item.setState(!item.state)}
+                            className="hidden"
+                          />
+                          <div className="text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors">
+                            {item.icon}
                           </div>
-                          <span className="text-sm font-medium text-gray-900 dark:text-white">Icons & Labels</span>
-                        </div>
-                      </label>
+                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
+                            {item.label}
+                          </span>
+                        </label>
+                      ))}
                     </div>
-                  </div>
-                </div>
-              )}
 
-              {customizeActiveTab === 'Sections' && (
-                <div className="p-4 space-y-2">
-                  {[
-                    'Favorites',
-                    'Spaces',
-                    'Channels',
-                    'Direct Messages'
-                  ].map((section) => (
-                    <div key={section} className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-800 rounded-lg bg-white dark:bg-[#1e1e1e] hover:border-gray-300 dark:hover:border-gray-700 transition-colors group cursor-grab active:cursor-grabbing">
-                      <div className="flex items-center gap-3">
-                        <MoreVertical size={16} className="text-gray-300 cursor-grab" />
-                        <span className="text-sm font-medium text-gray-900 dark:text-white">{section}</span>
+                    {/* Appearance */}
+                    <div className="pt-4 border-t border-gray-200 dark:border-gray-800">
+                      <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-3">Appearance</h3>
+                      <div className="grid grid-cols-2 gap-4">
+                        <label className="cursor-pointer group">
+                          <input
+                            type="radio"
+                            name="appearance"
+                            checked={homeAppearance === 'icons-only'}
+                            onChange={() => setHomeAppearance('icons-only')}
+                            className="hidden"
+                          />
+                          <div className={`p-4 border-2 rounded-xl transition-all ${homeAppearance === 'icons-only'
+                            ? 'border-black bg-gray-50 dark:bg-purple-900/20'
+                            : 'border-gray-200 dark:border-gray-700 group-hover:border-purple-300'
+                            }`}>
+                            <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-3 aspect-video mb-2 flex items-center gap-2">
+                              <div className="w-6 h-6 bg-gray-300 dark:bg-gray-600 rounded" />
+                              <div className="w-16 h-2 bg-gray-200 dark:bg-gray-700 rounded" />
+                            </div>
+                            <span className="text-sm font-medium text-gray-900 dark:text-white">Icons only</span>
+                          </div>
+                        </label>
+                        <label className="cursor-pointer group">
+                          <input
+                            type="radio"
+                            name="appearance"
+                            checked={homeAppearance === 'icons-labels'}
+                            onChange={() => setHomeAppearance('icons-labels')}
+                            className="hidden"
+                          />
+                          <div className={`p-4 border-2 rounded-xl transition-all ${homeAppearance === 'icons-labels'
+                            ? 'border-black bg-gray-50 dark:bg-purple-900/20'
+                            : 'border-gray-200 dark:border-gray-700 group-hover:border-purple-300'
+                            }`}>
+                            <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-3 aspect-video mb-2 flex flex-col gap-2">
+                              <div className="flex items-center gap-2">
+                                <div className="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded" />
+                                <div className="w-12 h-2 bg-gray-200 dark:bg-gray-700 rounded" />
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <div className="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded" />
+                                <div className="w-10 h-2 bg-gray-200 dark:bg-gray-700 rounded" />
+                              </div>
+                            </div>
+                            <span className="text-sm font-medium text-gray-900 dark:text-white">Icons & Labels</span>
+                          </div>
+                        </label>
                       </div>
                     </div>
-                  ))}
+                  </div>
+                )}
 
-                  <button className="w-full flex items-center justify-center gap-2 p-3 mt-4 border border-dashed border-gray-300 dark:border-gray-700 rounded-lg text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
-                    <Plus size={16} />
-                    <span className="text-sm font-medium">Create section</span>
-                  </button>
-                </div>
-              )}
+                {customizeActiveTab === 'Sections' && (
+                  <div className="p-4 space-y-2">
+                    {[
+                      'Favorites',
+                      'Spaces',
+                      'Channels',
+                      'Direct Messages'
+                    ].map((section) => (
+                      <div key={section} className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-800 rounded-lg bg-white dark:bg-[#1e1e1e] hover:border-gray-300 dark:hover:border-gray-700 transition-colors group cursor-grab active:cursor-grabbing">
+                        <div className="flex items-center gap-3">
+                          <MoreVertical size={16} className="text-gray-300 cursor-grab" />
+                          <span className="text-sm font-medium text-gray-900 dark:text-white">{section}</span>
+                        </div>
+                      </div>
+                    ))}
+
+                    <button className="w-full flex items-center justify-center gap-2 p-3 mt-4 border border-dashed border-gray-300 dark:border-gray-700 rounded-lg text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                      <Plus size={16} />
+                      <span className="text-sm font-medium">Create section</span>
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
 
 
-    </div>
+    </div >
   );
 };
 
