@@ -286,6 +286,11 @@ const App: React.FC = () => {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isSpaceModalOpen, setIsSpaceModalOpen] = useState(false);
+  const [newSpaceName, setNewSpaceName] = useState('');
+  const [newSpaceDescription, setNewSpaceDescription] = useState('');
+  const [isSpacePrivate, setIsSpacePrivate] = useState(false);
+  const [isPermissionPickerOpen, setIsPermissionPickerOpen] = useState(false);
+  const [selectedSpacePermission, setSelectedSpacePermission] = useState('Full edit');
   const [isViewSelectorOpen, setIsViewSelectorOpen] = useState(false);
   const [isTaskOptionsOpen, setIsTaskOptionsOpen] = useState(false);
   const [viewSearchQuery, setViewSearchQuery] = useState('');
@@ -3413,7 +3418,7 @@ const App: React.FC = () => {
         <div>
           <div className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setIsSpaceModalOpen(false)} />
           <div className="fixed inset-0 z-[201] flex items-center justify-center p-4 pointer-events-none">
-            <div className="bg-white dark:bg-[#121213] w-full max-w-2xl rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl overflow-hidden animate-in zoom-in duration-300 flex flex-col pointer-events-auto">
+            <div className="bg-white dark:bg-[#121213] w-full max-w-2xl rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl animate-in zoom-in duration-300 flex flex-col pointer-events-auto relative">
               {/* Modal Header */}
               <div className="px-8 pt-6 pb-2 flex items-center justify-between">
                 <div className="space-y-1">
@@ -3425,15 +3430,19 @@ const App: React.FC = () => {
                 </button>
               </div>
 
-              <div className="p-8 pb-4 space-y-8 overflow-y-auto custom-scrollbar">
+              <div className="p-8 pb-4 space-y-8 custom-scrollbar">
                 {/* Icon & Name Section */}
                 <div className="space-y-3">
                   <label className="text-sm font-bold text-gray-700 dark:text-gray-300">Icon & name</label>
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-gray-100 dark:bg-[#2e2e2e] border border-gray-200 dark:border-gray-700 font-black text-gray-700 dark:text-white flex items-center justify-center text-lg shadow-inner">S</div>
+                    <div className="w-12 h-12 rounded-xl bg-gray-100 dark:bg-[#2e2e2e] border border-gray-200 dark:border-gray-700 font-black text-gray-700 dark:text-white flex items-center justify-center text-lg shadow-inner uppercase">
+                      {newSpaceName.trim() ? newSpaceName.trim()[0] : 'S'}
+                    </div>
                     <input
                       type="text"
                       placeholder="e.g. Marketing, Engineering, HR"
+                      value={newSpaceName}
+                      onChange={(e) => setNewSpaceName(e.target.value)}
                       className="flex-1 bg-transparent border border-gray-200 dark:border-gray-800 rounded-xl py-3 px-4 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:focus:ring-gray-700 transition-all font-medium"
                       autoFocus
                     />
@@ -3444,21 +3453,66 @@ const App: React.FC = () => {
                 <div className="space-y-3">
                   <label className="text-sm font-bold text-gray-700 dark:text-gray-300">Description <span className="text-gray-400 dark:text-gray-600 font-medium">(optional)</span></label>
                   <textarea
+                    placeholder="Type here..."
+                    value={newSpaceDescription}
+                    onChange={(e) => setNewSpaceDescription(e.target.value)}
                     className="w-full bg-transparent border border-gray-200 dark:border-gray-800 rounded-xl py-3 px-4 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:focus:ring-gray-700 transition-all font-medium min-h-[44px] resize-none"
                   />
                 </div>
 
                 {/* Default Permissions Section */}
-                <div className="flex items-center justify-between group cursor-pointer pt-2">
-                  <div className="flex items-center gap-2">
-                    <UserPlus size={18} className="text-gray-400" />
-                    <span className="text-sm font-bold text-gray-700 dark:text-gray-300">Default permission</span>
-                    <Info size={14} className="text-gray-400 dark:text-gray-600" />
+                <div className="relative pt-2">
+                  <div
+                    onClick={() => setIsPermissionPickerOpen(!isPermissionPickerOpen)}
+                    className="flex items-center justify-between group cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2">
+                      <UserPlus size={18} className="text-gray-400" />
+                      <span className="text-sm font-bold text-gray-700 dark:text-gray-300">Default permission</span>
+                      <Info size={14} className="text-gray-400 dark:text-gray-600" />
+                    </div>
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 dark:bg-[#1a1a1b] border border-gray-200 dark:border-gray-800 rounded-lg text-xs font-bold text-gray-500 dark:text-gray-400 group-hover:bg-gray-100 dark:group-hover:bg-[#202021] transition-colors">
+                      {selectedSpacePermission}
+                      <ChevronDown size={14} className={`transition-transform duration-200 ${isPermissionPickerOpen ? 'rotate-180' : ''}`} />
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 dark:bg-[#1a1a1b] border border-gray-200 dark:border-gray-800 rounded-lg text-xs font-bold text-gray-500 dark:text-gray-400 group-hover:bg-gray-100 dark:group-hover:bg-[#202021] transition-colors">
-                    Full edit
-                    <ChevronDown size={14} />
-                  </div>
+
+                  {isPermissionPickerOpen && (
+                    <div className="absolute bottom-full right-0 mb-2 w-[340px] bg-white dark:bg-[#1a1a1c] rounded-xl shadow-2xl border border-gray-100 dark:border-gray-800 z-[210] overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200">
+                      <div className="p-1 space-y-0.5">
+                        {[
+                          { id: 'Full edit', desc: 'Can create and edit entities in this Space. Owners and admins can manage Space settings.' },
+                          { id: 'Edit', desc: "Can create and edit entities in this Space. Can't manage Space settings or delete entities." },
+                          { id: 'Comment', desc: "Can comment on entities within this Space. Can't manage Space settings or edit entities." },
+                          { id: 'View only', desc: "Read-only. Can't edit entities or comment in this Space outside of Chat. Can collaborate in Chat." }
+                        ].map((perm) => (
+                          <button
+                            key={perm.id}
+                            onClick={() => {
+                              setSelectedSpacePermission(perm.id);
+                              setIsPermissionPickerOpen(false);
+                            }}
+                            className="w-full text-left p-4 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors group relative"
+                          >
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="text-sm font-bold text-gray-900 dark:text-white">{perm.id}</span>
+                              {selectedSpacePermission === perm.id && (
+                                <Check size={14} className="text-primary" />
+                              )}
+                            </div>
+                            <p className="text-[12px] text-gray-500 dark:text-gray-400 leading-relaxed font-medium pr-4">
+                              {perm.desc}
+                            </p>
+                          </button>
+                        ))}
+                      </div>
+                      <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-black/20 text-center">
+                        <button className="text-[12px] font-medium text-gray-500 hover:text-gray-900 transition-colors">
+                          <span className="underline cursor-pointer">Learn more</span> about permissions.
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Private Toggle Section */}
@@ -3467,17 +3521,17 @@ const App: React.FC = () => {
                     <div className="text-sm font-bold text-gray-700 dark:text-gray-300">Make Private</div>
                     <div className="text-xs text-gray-500 font-medium">Only you and invited members have access</div>
                   </div>
-                  <div className="w-11 h-6 bg-gray-200 dark:bg-[#2a2a2b] rounded-full relative p-1 cursor-pointer transition-colors active:scale-95">
-                    <div className="w-4 h-4 bg-white rounded-full transition-transform" />
+                  <div
+                    onClick={() => setIsSpacePrivate(!isSpacePrivate)}
+                    className={`w-11 h-6 ${isSpacePrivate ? 'bg-black' : 'bg-gray-200 dark:bg-[#2a2a2b]'} rounded-full relative p-1 cursor-pointer transition-colors active:scale-95`}
+                  >
+                    <div className={`w-4 h-4 bg-white rounded-full transition-transform ${isSpacePrivate ? 'translate-x-5' : 'translate-x-0'}`} />
                   </div>
                 </div>
               </div>
 
               {/* Footer */}
-              <div className="px-8 py-6 border-t border-gray-200 dark:border-gray-800 flex items-center justify-between bg-gray-50 dark:bg-[#121213]">
-                <button className="text-sm font-bold text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
-                  Use Templates
-                </button>
+              <div className="px-8 py-6 border-t border-gray-200 dark:border-gray-800 flex items-center justify-end bg-gray-50 dark:bg-[#121213]">
                 <button
                   onClick={() => setIsSpaceModalOpen(false)}
                   className="bg-primary hover:bg-primary-hover active:bg-primary-hover text-white px-8 py-2.5 rounded-xl font-black text-sm transition-all hover:scale-105 active:scale-95 shadow-lg shadow-black/10"
