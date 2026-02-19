@@ -268,6 +268,13 @@ const App: React.FC = () => {
   const [isListSelectorOpen, setIsListSelectorOpen] = useState(false);
   const [hoveredBreadcrumb, setHoveredBreadcrumb] = useState<'space' | 'task' | null>(null);
 
+  // Create List Modal State
+  const [isListModalOpen, setIsListModalOpen] = useState(false);
+  const [newListName, setNewListName] = useState('');
+  const [selectedSpaceIdForList, setSelectedSpaceIdForList] = useState<string>('');
+  const [isListPrivate, setIsListPrivate] = useState(false);
+  const [isSpaceSelectorOpen, setIsSpaceSelectorOpen] = useState(false);
+
   // Sync theme with document element
   useEffect(() => {
     if (currentTheme === 'dark') {
@@ -883,7 +890,13 @@ const App: React.FC = () => {
                         </div>
 
                         <div className="p-2">
-                          <button className="w-full flex items-start gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group">
+                          <button
+                            onClick={() => {
+                              setIsListModalOpen(true);
+                              setIsMainCreateDropdownOpen(false);
+                            }}
+                            className="w-full flex items-start gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group"
+                          >
                             <LayoutList size={18} className="text-gray-400 group-hover:text-primary transition-colors mt-0.5" />
                             <div className="flex flex-col text-left">
                               <span className="text-sm font-medium text-gray-700 dark:text-gray-300">List</span>
@@ -5087,6 +5100,139 @@ const App: React.FC = () => {
         )
       }
 
+
+      {/* Create List Modal */}
+      {isListModalOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[600] flex items-center justify-center p-4 animate-in fade-in duration-200" onClick={() => setIsListModalOpen(false)}>
+          <div className="bg-white dark:bg-[#1e1e1e] w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col relative" onClick={e => e.stopPropagation()}>
+            {/* Header */}
+            <div className="p-6 pb-2">
+              <div className="flex items-center justify-between mb-1">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Create List</h2>
+                <button
+                  onClick={() => setIsListModalOpen(false)}
+                  className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              <p className="text-sm text-gray-500 dark:text-gray-400">All Lists are located within a Space. Lists can house any type of task.</p>
+            </div>
+
+            {/* Form */}
+            <div className="p-6 space-y-6">
+              {/* Name Input */}
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-gray-700 dark:text-gray-300">Name</label>
+                <input
+                  type="text"
+                  autoFocus
+                  value={newListName}
+                  onChange={(e) => setNewListName(e.target.value)}
+                  placeholder="e.g. Project, List of items, Campaign"
+                  className="w-full px-4 py-2.5 bg-white dark:bg-[#121213] border-2 border-primary/20 focus:border-primary rounded-xl text-sm text-gray-900 dark:text-white placeholder:text-gray-400 outline-none transition-all"
+                />
+              </div>
+
+              {/* Space Selector */}
+              <div className="space-y-2 relative">
+                <label className="text-sm font-bold text-gray-700 dark:text-gray-300">Space (location)</label>
+                <button
+                  onClick={() => setIsSpaceSelectorOpen(!isSpaceSelectorOpen)}
+                  className="w-full flex items-center justify-between px-4 py-2.5 bg-white dark:bg-[#121213] border border-gray-200 dark:border-gray-800 rounded-lg hover:border-gray-300 dark:hover:border-gray-700 transition-all text-sm group"
+                >
+                  <div className="flex items-center gap-2">
+                    {selectedSpaceIdForList ? (
+                      <>
+                        <div className="w-5 h-5 bg-primary text-white rounded flex items-center justify-center text-[10px] font-bold">
+                          {spaces.find(s => s.id === selectedSpaceIdForList)?.name[0].toUpperCase()}
+                        </div>
+                        <span className="text-gray-900 dark:text-white font-medium">
+                          {spaces.find(s => s.id === selectedSpaceIdForList)?.name}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="text-gray-400">Select a Space</span>
+                    )}
+                  </div>
+                  <ChevronDown size={16} className={`text-gray-400 transition-transform ${isSpaceSelectorOpen ? 'rotate-180' : ''}`} />
+                </button>
+
+                {isSpaceSelectorOpen && (
+                  <>
+                    <div className="fixed inset-0 z-10" onClick={() => setIsSpaceSelectorOpen(false)} />
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-[#1c1c1e] border border-gray-200 dark:border-gray-800 rounded-xl shadow-xl z-20 py-2 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                      {spaces.length === 0 ? (
+                        <div className="px-4 py-2 text-sm text-gray-500">No spaces available</div>
+                      ) : (
+                        spaces.map(space => (
+                          <button
+                            key={space.id}
+                            onClick={() => {
+                              setSelectedSpaceIdForList(space.id);
+                              setIsSpaceSelectorOpen(false);
+                            }}
+                            className={`w-full flex items-center gap-2 px-4 py-2 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors text-sm ${selectedSpaceIdForList === space.id ? 'bg-gray-50 dark:bg-white/5' : ''}`}
+                          >
+                            <div className="w-5 h-5 bg-primary text-white rounded flex items-center justify-center text-[10px] font-bold">
+                              {space.name[0].toUpperCase()}
+                            </div>
+                            <span className="text-gray-700 dark:text-gray-200">{space.name}</span>
+                          </button>
+                        ))
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Private Toggle */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <label className="text-sm font-bold text-gray-700 dark:text-gray-300">Make private</label>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Only you and invited members have access</p>
+                </div>
+                <button
+                  onClick={() => setIsListPrivate(!isListPrivate)}
+                  className={`w-11 h-6 rounded-full relative transition-colors duration-200 ${isListPrivate ? 'bg-primary' : 'bg-gray-200 dark:bg-gray-800'
+                    }`}
+                >
+                  <div className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-200 ${isListPrivate ? 'translate-x-5' : 'translate-x-0'
+                    }`} />
+                </button>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="p-6 bg-gray-50 dark:bg-white/5 border-t border-gray-100 dark:border-gray-800 flex items-center justify-end">
+              <button
+                disabled={!newListName.trim() || !selectedSpaceIdForList}
+                onClick={() => {
+                  setSpaces(prev => prev.map(space => {
+                    if (space.id === selectedSpaceIdForList) {
+                      return {
+                        ...space,
+                        lists: [...space.lists, newListName]
+                      };
+                    }
+                    return space;
+                  }));
+                  alert(`List "${newListName}" created successfully in space!`);
+                  setIsListModalOpen(false);
+                  setNewListName('');
+                  setSelectedSpaceIdForList('');
+                }}
+                className={`px-6 py-2 rounded-xl text-sm font-bold transition-all ${(!newListName.trim() || !selectedSpaceIdForList)
+                  ? 'bg-gray-200 dark:bg-gray-800 text-gray-400 cursor-not-allowed'
+                  : 'bg-primary hover:bg-primary-hover text-white shadow-lg active:scale-95'
+                  }`}
+              >
+                Create
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div >
   );
