@@ -313,6 +313,7 @@ const App: React.FC = () => {
   const [isFilterTypeDropdownOpen, setIsFilterTypeDropdownOpen] = useState(false);
   const [filterTypeSearchQuery, setFilterTypeSearchQuery] = useState('');
   const [activeFilters, setActiveFilters] = useState<any[]>([]);
+  const [isSavedFiltersDropdownOpen, setIsSavedFiltersDropdownOpen] = useState(false);
 
   // Sync theme with document element
   useEffect(() => {
@@ -1837,9 +1838,33 @@ const App: React.FC = () => {
                           <span className="text-sm font-bold text-gray-900 dark:text-white">Filters</span>
                           <Info size={14} className="text-gray-400 cursor-help" />
                         </div>
-                        <button className="flex items-center gap-1.5 px-2 py-1 text-[10px] font-bold text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 border border-gray-200 dark:border-gray-700 rounded-lg transition-colors">
-                          Saved filters <ChevronDown size={14} />
-                        </button>
+                        <div className="relative">
+                          <button
+                            onClick={() => setIsSavedFiltersDropdownOpen(!isSavedFiltersDropdownOpen)}
+                            className="flex items-center gap-1.5 px-2 py-1 text-[10px] font-bold text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 border border-gray-200 dark:border-gray-700 rounded-lg transition-colors"
+                          >
+                            Saved filters <ChevronDown size={14} className={`transition-transform ${isSavedFiltersDropdownOpen ? 'rotate-180' : ''}`} />
+                          </button>
+
+                          {isSavedFiltersDropdownOpen && (
+                            <>
+                              <div className="fixed inset-0 z-10" onClick={() => setIsSavedFiltersDropdownOpen(false)} />
+                              <div className="absolute top-full right-0 mt-1 w-64 bg-white dark:bg-[#1c1c1e] border border-gray-200 dark:border-gray-800 rounded-xl shadow-2xl z-20 p-6 animate-in fade-in slide-in-from-top-1 duration-200">
+                                <div className="flex flex-col items-center text-center space-y-4">
+                                  <div className="space-y-1">
+                                    <h4 className="text-sm font-bold text-gray-900 dark:text-white">No saved filters yet</h4>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                                      Save filters you use often to quickly apply them to any view.
+                                    </p>
+                                  </div>
+                                  <button className="w-full py-2.5 bg-primary hover:bg-primary-hover text-white text-[11px] font-bold rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-95">
+                                    Save new filter
+                                  </button>
+                                </div>
+                              </div>
+                            </>
+                          )}
+                        </div>
                       </div>
 
                       <div className="bg-gray-50/50 dark:bg-black/20 border border-gray-100 dark:border-gray-800 rounded-xl p-6 flex flex-col">
