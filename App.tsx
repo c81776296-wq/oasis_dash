@@ -110,7 +110,11 @@ import {
   Heading4,
   GripVertical,
   HelpCircle,
-  CheckCircle2
+  CheckCircle2,
+  Eye,
+  RefreshCw,
+  RotateCcw,
+  AlignLeft
 } from 'lucide-react';
 import { USERS, PRIORITY_COLORS, STATUS_COLORS, MOCK_TAGS, TEAMS, MOCK_TASKS } from './constants';
 import { Task, ViewType, Status, Priority, User as UserType } from './types';
@@ -236,6 +240,35 @@ const DOC_MENU_GROUPS = [
   }
 ];
 
+const FILTER_OPTIONS = [
+  { id: 'status', label: 'Status', icon: <CircleDot size={14} /> },
+  { id: 'tags', label: 'Tags', icon: <Tag size={14} /> },
+  { id: 'due_date', label: 'Due date', icon: <Calendar size={14} /> },
+  { id: 'priority', label: 'Priority', icon: <Flag size={14} /> },
+  { id: 'assignee', label: 'Assignee', icon: <Users size={14} /> },
+  { id: 'archived', label: 'Archived', icon: <Archive size={14} /> },
+  { id: 'assigned_comment', label: 'Assigned comment', icon: <MessageSquare size={14} /> },
+  { id: 'created_by', label: 'Created by', icon: <UserPlus size={14} /> },
+  { id: 'date_closed', label: 'Date closed', icon: <Calendar size={14} /> },
+  { id: 'date_created', label: 'Date created', icon: <Calendar size={14} /> },
+  { id: 'date_updated', label: 'Date updated', icon: <Calendar size={14} /> },
+  { id: 'date_done', label: 'Date done', icon: <Calendar size={14} /> },
+  { id: 'dependency', label: 'Dependency', icon: <GitMerge size={14} /> },
+  { id: 'duration', label: 'Duration', icon: <Clock size={14} /> },
+  { id: 'location_list', label: 'Location/List', icon: <LayoutList size={14} /> },
+  { id: 'recurring', label: 'Recurring', icon: <RefreshCw size={14} /> },
+  { id: 'start_date', label: 'Start date', icon: <Calendar size={14} /> },
+  { id: 'status_is_closed', label: 'Status is closed', icon: <Check size={14} /> },
+  { id: 'time_estimate', label: 'Time estimate', icon: <Hourglass size={14} /> },
+  { id: 'time_tracked', label: 'Time tracked', icon: <Clock size={14} /> },
+  { id: 'sprint_points', label: 'Sprint points', icon: <Star size={14} /> },
+  { id: 'follower', label: 'Follower', icon: <Eye size={14} /> },
+  { id: 'task_type', label: 'Task type', icon: <Box size={14} /> },
+  { id: 'last_status_change', label: 'Last status change', icon: <RotateCcw size={14} /> },
+  { id: 'task_name', label: 'Task Name', icon: <Type size={14} /> },
+  { id: 'task_description', label: 'Task Description', icon: <AlignLeft size={14} /> },
+];
+
 type NavigationContext = 'Everything' | 'Engineering' | 'Design' | 'Marketing' | 'Home' | 'Planner' | 'Teams' | 'My Tasks' | 'Pulse';
 type SettingsTab = 'General' | 'Workspace' | 'Security' | 'Notifications' | 'Integrations';
 
@@ -274,6 +307,12 @@ const App: React.FC = () => {
   const [selectedSpaceIdForList, setSelectedSpaceIdForList] = useState<string>('');
   const [isListPrivate, setIsListPrivate] = useState(false);
   const [isSpaceSelectorOpen, setIsSpaceSelectorOpen] = useState(false);
+
+  // Advanced Filter State
+  const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
+  const [isFilterTypeDropdownOpen, setIsFilterTypeDropdownOpen] = useState(false);
+  const [filterTypeSearchQuery, setFilterTypeSearchQuery] = useState('');
+  const [activeFilters, setActiveFilters] = useState<any[]>([]);
 
   // Sync theme with document element
   useEffect(() => {
@@ -1781,9 +1820,102 @@ const App: React.FC = () => {
 
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-2 bg-gray-100/50 dark:bg-[#1c1c1e]/50 rounded-lg p-0.5 border border-gray-200 dark:border-[#2c2c2e]">
-              <button className="flex items-center gap-1.5 px-3 py-1 text-[10px] font-bold text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
-                <Filter size={12} /> Filter
-              </button>
+              <div className="relative">
+                <button
+                  onClick={() => setIsFilterMenuOpen(!isFilterMenuOpen)}
+                  className={`flex items-center gap-1.5 px-3 py-1 text-[10px] font-bold transition-colors ${isFilterMenuOpen ? 'text-black dark:text-white bg-white dark:bg-gray-800 rounded shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}
+                >
+                  <Filter size={12} /> Filter
+                </button>
+
+                {isFilterMenuOpen && (
+                  <>
+                    <div className="fixed inset-0 z-[100]" onClick={() => setIsFilterMenuOpen(false)} />
+                    <div className="absolute top-full right-0 mt-2 w-[450px] bg-white dark:bg-[#1e1e1f] border border-gray-200 dark:border-gray-800 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] z-[101] p-4 flex flex-col animate-in fade-in zoom-in-95 duration-200">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-bold text-gray-900 dark:text-white">Filters</span>
+                          <Info size={14} className="text-gray-400 cursor-help" />
+                        </div>
+                        <button className="flex items-center gap-1.5 px-2 py-1 text-[10px] font-bold text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 border border-gray-200 dark:border-gray-700 rounded-lg transition-colors">
+                          Saved filters <ChevronDown size={14} />
+                        </button>
+                      </div>
+
+                      <div className="bg-gray-50/50 dark:bg-black/20 border border-gray-100 dark:border-gray-800 rounded-xl p-6 flex flex-col">
+                        <div className="relative w-48">
+                          <button
+                            onClick={() => setIsFilterTypeDropdownOpen(!isFilterTypeDropdownOpen)}
+                            className="w-full flex items-center justify-between px-3 py-2 bg-white dark:bg-[#121213] border border-gray-200 dark:border-gray-700 rounded-lg text-xs text-gray-500 hover:border-gray-300 transition-colors"
+                          >
+                            <span>Select filter</span>
+                            <ChevronDown size={14} className={`transition-transform ${isFilterTypeDropdownOpen ? 'rotate-180' : ''}`} />
+                          </button>
+
+                          {isFilterTypeDropdownOpen && (
+                            <>
+                              <div className="fixed inset-0 z-10" onClick={() => setIsFilterTypeDropdownOpen(false)} />
+                              <div className="absolute top-full left-0 mt-1 w-64 bg-white dark:bg-[#1c1c1e] border border-gray-200 dark:border-gray-800 rounded-xl shadow-2xl z-20 overflow-hidden animate-in fade-in slide-in-from-top-1 duration-200">
+                                <div className="p-2 border-b border-gray-100 dark:border-gray-800">
+                                  <div className="relative">
+                                    <input
+                                      type="text"
+                                      autoFocus
+                                      placeholder="Search..."
+                                      value={filterTypeSearchQuery}
+                                      onChange={(e) => setFilterTypeSearchQuery(e.target.value)}
+                                      className="w-full px-3 py-1.5 bg-gray-50 dark:bg-black/20 border border-primary/20 focus:border-primary rounded-lg text-xs outline-none transition-all"
+                                    />
+                                  </div>
+                                </div>
+                                <div className="max-h-80 overflow-y-auto custom-scrollbar py-1">
+                                  {FILTER_OPTIONS.filter(opt => opt.label.toLowerCase().includes(filterTypeSearchQuery.toLowerCase())).map(option => (
+                                    <button
+                                      key={option.id}
+                                      onClick={() => {
+                                        setActiveFilters([...activeFilters, option]);
+                                        setIsFilterTypeDropdownOpen(false);
+                                        setFilterTypeSearchQuery('');
+                                      }}
+                                      className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors text-xs text-gray-700 dark:text-gray-300 group"
+                                    >
+                                      <span className="text-gray-400 group-hover:text-primary transition-colors">{option.icon}</span>
+                                      <span>{option.label}</span>
+                                    </button>
+                                  ))}
+                                </div>
+                                <div className="p-1 border-t border-gray-100 dark:border-gray-800 hidden">
+                                  <div className="flex flex-col gap-1 p-1">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-gray-300 animate-bounce" />
+                                  </div>
+                                </div>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="mt-4 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          {activeFilters.length > 0 && (
+                            <button
+                              onClick={() => setActiveFilters([])}
+                              className="text-[10px] font-bold text-primary hover:underline"
+                            >
+                              Clear all
+                            </button>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button className="text-[10px] font-bold text-gray-400 hover:text-gray-600 transition-colors">
+                            More
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
               <button className="flex items-center gap-1.5 px-3 py-1 text-[10px] font-bold text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors border-l border-gray-200 dark:border-gray-800">
                 <Check size={12} /> Closed
               </button>
