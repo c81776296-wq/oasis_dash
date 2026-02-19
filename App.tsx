@@ -108,7 +108,8 @@ import {
   Heading2,
   Heading3,
   Heading4,
-  GripVertical
+  GripVertical,
+  HelpCircle
 } from 'lucide-react';
 import { USERS, PRIORITY_COLORS, STATUS_COLORS, MOCK_TAGS, TEAMS, MOCK_TASKS } from './constants';
 import { Task, ViewType, Status, Priority, User as UserType } from './types';
@@ -286,6 +287,22 @@ const App: React.FC = () => {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isSpaceModalOpen, setIsSpaceModalOpen] = useState(false);
+  const [spaceModalStep, setSpaceModalStep] = useState(1);
+  const [spaceWorkflowOption, setSpaceWorkflowOption] = useState('Starter');
+  const [spaceDefaultViews, setSpaceDefaultViews] = useState(['List', 'Board']);
+  const [tempSpaceDefaultViews, setTempSpaceDefaultViews] = useState(['List', 'Board']);
+  const [spaceTaskStatuses, setSpaceTaskStatuses] = useState([
+    { category: 'Not started', statuses: [{ name: 'TO DO', color: '#87909e' }] },
+    { category: 'Active', statuses: [{ name: 'IN PROGRESS', color: '#9333ea' }] },
+    { category: 'Done', statuses: [] },
+    { category: 'Closed', statuses: [{ name: 'COMPLETE', color: '#10b981' }] }
+  ]);
+  const [tempSpaceTaskStatuses, setTempSpaceTaskStatuses] = useState([
+    { category: 'Not started', statuses: [{ name: 'TO DO', color: '#87909e' }] },
+    { category: 'Active', statuses: [{ name: 'IN PROGRESS', color: '#9333ea' }] },
+    { category: 'Done', statuses: [] },
+    { category: 'Closed', statuses: [{ name: 'COMPLETE', color: '#10b981' }] }
+  ]);
   const [newSpaceName, setNewSpaceName] = useState('');
   const [newSpaceDescription, setNewSpaceDescription] = useState('');
   const [isSpacePrivate, setIsSpacePrivate] = useState(false);
@@ -3418,127 +3435,434 @@ const App: React.FC = () => {
         <div>
           <div className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setIsSpaceModalOpen(false)} />
           <div className="fixed inset-0 z-[201] flex items-center justify-center p-4 pointer-events-none">
-            <div className="bg-white dark:bg-[#121213] w-full max-w-2xl rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl animate-in zoom-in duration-300 flex flex-col pointer-events-auto relative">
-              {/* Modal Header */}
-              <div className="px-8 pt-6 pb-2 flex items-center justify-between">
-                <div className="space-y-1">
-                  <h2 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">Create a Space</h2>
-                  <p className="text-sm text-gray-500 font-medium">A Space represents teams, departments, or groups, each with its own Lists, workflows, and settings.</p>
-                </div>
-                <button onClick={() => setIsSpaceModalOpen(false)} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-500 dark:text-gray-400 self-start mt-1">
-                  <X size={20} />
-                </button>
-              </div>
-
-              <div className="p-8 pb-4 space-y-8 custom-scrollbar">
-                {/* Icon & Name Section */}
-                <div className="space-y-3">
-                  <label className="text-sm font-bold text-gray-700 dark:text-gray-300">Icon & name</label>
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-gray-100 dark:bg-[#2e2e2e] border border-gray-200 dark:border-gray-700 font-black text-gray-700 dark:text-white flex items-center justify-center text-lg shadow-inner uppercase">
-                      {newSpaceName.trim() ? newSpaceName.trim()[0] : 'S'}
+            <div className="bg-white dark:bg-[#121213] w-full max-w-2xl rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl animate-in zoom-in duration-300 flex flex-col pointer-events-auto relative max-h-[90vh] overflow-hidden">
+              {spaceModalStep === 1 ? (
+                <>
+                  {/* Step 1: Modal Header */}
+                  <div className="px-8 pt-6 pb-2 flex items-center justify-between">
+                    <div className="space-y-1">
+                      <h2 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">Create a Space</h2>
+                      <p className="text-sm text-gray-500 font-medium">A Space represents teams, departments, or groups, each with its own Lists, workflows, and settings.</p>
                     </div>
-                    <input
-                      type="text"
-                      placeholder="e.g. Marketing, Engineering, HR"
-                      value={newSpaceName}
-                      onChange={(e) => setNewSpaceName(e.target.value)}
-                      className="flex-1 bg-transparent border border-gray-200 dark:border-gray-800 rounded-xl py-3 px-4 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:focus:ring-gray-700 transition-all font-medium"
-                      autoFocus
-                    />
-                  </div>
-                </div>
-
-                {/* Description Section */}
-                <div className="space-y-3">
-                  <label className="text-sm font-bold text-gray-700 dark:text-gray-300">Description <span className="text-gray-400 dark:text-gray-600 font-medium">(optional)</span></label>
-                  <textarea
-                    placeholder="Type here..."
-                    value={newSpaceDescription}
-                    onChange={(e) => setNewSpaceDescription(e.target.value)}
-                    className="w-full bg-transparent border border-gray-200 dark:border-gray-800 rounded-xl py-3 px-4 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:focus:ring-gray-700 transition-all font-medium min-h-[44px] resize-none"
-                  />
-                </div>
-
-                {/* Default Permissions Section */}
-                <div className="relative pt-2">
-                  <div
-                    onClick={() => setIsPermissionPickerOpen(!isPermissionPickerOpen)}
-                    className="flex items-center justify-between group cursor-pointer"
-                  >
-                    <div className="flex items-center gap-2">
-                      <UserPlus size={18} className="text-gray-400" />
-                      <span className="text-sm font-bold text-gray-700 dark:text-gray-300">Default permission</span>
-                      <Info size={14} className="text-gray-400 dark:text-gray-600" />
-                    </div>
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 dark:bg-[#1a1a1b] border border-gray-200 dark:border-gray-800 rounded-lg text-xs font-bold text-gray-500 dark:text-gray-400 group-hover:bg-gray-100 dark:group-hover:bg-[#202021] transition-colors">
-                      {selectedSpacePermission}
-                      <ChevronDown size={14} className={`transition-transform duration-200 ${isPermissionPickerOpen ? 'rotate-180' : ''}`} />
-                    </div>
+                    <button onClick={() => setIsSpaceModalOpen(false)} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-500 dark:text-gray-400 self-start mt-1">
+                      <X size={20} />
+                    </button>
                   </div>
 
-                  {isPermissionPickerOpen && (
-                    <div className="absolute bottom-full right-0 mb-2 w-[340px] bg-white dark:bg-[#1a1a1c] rounded-xl shadow-2xl border border-gray-100 dark:border-gray-800 z-[210] overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200">
-                      <div className="p-1 space-y-0.5">
-                        {[
-                          { id: 'Full edit', desc: 'Can create and edit entities in this Space. Owners and admins can manage Space settings.' },
-                          { id: 'Edit', desc: "Can create and edit entities in this Space. Can't manage Space settings or delete entities." },
-                          { id: 'Comment', desc: "Can comment on entities within this Space. Can't manage Space settings or edit entities." },
-                          { id: 'View only', desc: "Read-only. Can't edit entities or comment in this Space outside of Chat. Can collaborate in Chat." }
-                        ].map((perm) => (
-                          <button
-                            key={perm.id}
-                            onClick={() => {
-                              setSelectedSpacePermission(perm.id);
-                              setIsPermissionPickerOpen(false);
-                            }}
-                            className="w-full text-left p-4 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors group relative"
-                          >
-                            <div className="flex items-center justify-between mb-1">
-                              <span className="text-sm font-bold text-gray-900 dark:text-white">{perm.id}</span>
-                              {selectedSpacePermission === perm.id && (
-                                <Check size={14} className="text-primary" />
-                              )}
+                  <div className="p-8 pb-4 space-y-8 custom-scrollbar overflow-y-auto">
+                    {/* Icon & Name Section */}
+                    <div className="space-y-3">
+                      <label className="text-sm font-bold text-gray-700 dark:text-gray-300">Icon & name</label>
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-xl bg-gray-100 dark:bg-[#2e2e2e] border border-gray-200 dark:border-gray-700 font-black text-gray-700 dark:text-white flex items-center justify-center text-lg shadow-inner uppercase">
+                          {newSpaceName.trim() ? newSpaceName.trim()[0] : 'S'}
+                        </div>
+                        <input
+                          type="text"
+                          placeholder="e.g. Marketing, Engineering, HR"
+                          value={newSpaceName}
+                          onChange={(e) => setNewSpaceName(e.target.value)}
+                          className="flex-1 bg-transparent border border-gray-200 dark:border-gray-800 rounded-xl py-3 px-4 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:focus:ring-gray-700 transition-all font-medium"
+                          autoFocus
+                        />
+                      </div>
+                    </div>
+
+                    {/* Description Section */}
+                    <div className="space-y-3">
+                      <label className="text-sm font-bold text-gray-700 dark:text-gray-300">Description <span className="text-gray-400 dark:text-gray-600 font-medium">(optional)</span></label>
+                      <textarea
+                        placeholder="Type here..."
+                        value={newSpaceDescription}
+                        onChange={(e) => setNewSpaceDescription(e.target.value)}
+                        className="w-full bg-transparent border border-gray-200 dark:border-gray-800 rounded-xl py-3 px-4 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:focus:ring-gray-700 transition-all font-medium min-h-[44px] resize-none"
+                      />
+                    </div>
+
+                    {/* Default Permissions Section */}
+                    <div className="relative pt-2">
+                      <div
+                        onClick={() => setIsPermissionPickerOpen(!isPermissionPickerOpen)}
+                        className="flex items-center justify-between group cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2">
+                          <UserPlus size={18} className="text-gray-400" />
+                          <span className="text-sm font-bold text-gray-700 dark:text-gray-300">Default permission</span>
+                          <span className="w-4 h-4 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center text-[10px] text-gray-400">?</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 dark:bg-[#1a1a1b] border border-gray-200 dark:border-gray-800 rounded-lg text-xs font-bold text-gray-500 dark:text-gray-400 group-hover:bg-gray-100 dark:group-hover:bg-[#202021] transition-colors">
+                          {selectedSpacePermission}
+                          <ChevronDown size={14} className={`transition-transform duration-200 ${isPermissionPickerOpen ? 'rotate-180' : ''}`} />
+                        </div>
+                      </div>
+
+                      {isPermissionPickerOpen && (
+                        <div className="fixed inset-0 z-[500] flex items-center justify-center p-4 pointer-events-auto">
+                          <div className="fixed inset-0 bg-black/40 backdrop-blur-[2px]" onClick={() => setIsPermissionPickerOpen(false)} />
+                          <div className="relative w-[400px] bg-white dark:bg-[#1a1a1c] rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-gray-100 dark:border-gray-800 overflow-hidden animate-in zoom-in-95 fade-in duration-200">
+                            <div className="p-1 space-y-0.5">
+                              {[
+                                { id: 'Full edit', desc: 'Can create and edit entities in this Space. Owners and admins can manage Space settings.' },
+                                { id: 'Edit', desc: "Can create and edit entities in this Space. Can't manage Space settings or delete entities." },
+                                { id: 'Comment', desc: "Can comment on entities within this Space. Can't manage Space settings or edit entities." },
+                                { id: 'View only', desc: "Read-only. Can't edit entities or comment in this Space outside of Chat. Can collaborate in Chat." }
+                              ].map((perm) => (
+                                <button
+                                  key={perm.id}
+                                  onClick={() => {
+                                    setSelectedSpacePermission(perm.id);
+                                    setIsPermissionPickerOpen(false);
+                                  }}
+                                  className="w-full text-left p-5 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group relative"
+                                >
+                                  <div className="flex items-center justify-between mb-1.5">
+                                    <span className="text-base font-bold text-gray-900 dark:text-white">{perm.id}</span>
+                                    {selectedSpacePermission === perm.id && (
+                                      <Check size={18} className="text-primary" />
+                                    )}
+                                  </div>
+                                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed font-medium">
+                                    {perm.desc}
+                                  </p>
+                                </button>
+                              ))}
                             </div>
-                            <p className="text-[12px] text-gray-500 dark:text-gray-400 leading-relaxed font-medium pr-4">
-                              {perm.desc}
-                            </p>
-                          </button>
-                        ))}
+                            <div className="p-6 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-black/20 text-center">
+                              <button className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
+                                <span className="underline cursor-pointer">Learn more</span> about permissions.
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Private Toggle Section */}
+                    <div className="flex items-center justify-between pt-2">
+                      <div className="space-y-1">
+                        <div className="text-sm font-bold text-gray-700 dark:text-gray-300">Make Private</div>
+                        <div className="text-xs text-gray-500 font-medium">Only you and invited members have access</div>
                       </div>
-                      <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-black/20 text-center">
-                        <button className="text-[12px] font-medium text-gray-500 hover:text-gray-900 transition-colors">
-                          <span className="underline cursor-pointer">Learn more</span> about permissions.
-                        </button>
+                      <div
+                        onClick={() => setIsSpacePrivate(!isSpacePrivate)}
+                        className={`w-11 h-6 ${isSpacePrivate ? 'bg-black' : 'bg-gray-200 dark:bg-[#2a2a2b]'} rounded-full relative p-1 cursor-pointer transition-colors active:scale-95`}
+                      >
+                        <div className={`w-4 h-4 bg-white rounded-full transition-transform ${isSpacePrivate ? 'translate-x-5' : 'translate-x-0'}`} />
                       </div>
                     </div>
-                  )}
-                </div>
-
-                {/* Private Toggle Section */}
-                <div className="flex items-center justify-between pt-2">
-                  <div className="space-y-1">
-                    <div className="text-sm font-bold text-gray-700 dark:text-gray-300">Make Private</div>
-                    <div className="text-xs text-gray-500 font-medium">Only you and invited members have access</div>
                   </div>
-                  <div
-                    onClick={() => setIsSpacePrivate(!isSpacePrivate)}
-                    className={`w-11 h-6 ${isSpacePrivate ? 'bg-black' : 'bg-gray-200 dark:bg-[#2a2a2b]'} rounded-full relative p-1 cursor-pointer transition-colors active:scale-95`}
-                  >
-                    <div className={`w-4 h-4 bg-white rounded-full transition-transform ${isSpacePrivate ? 'translate-x-5' : 'translate-x-0'}`} />
-                  </div>
-                </div>
-              </div>
 
-              {/* Footer */}
-              <div className="px-8 py-6 border-t border-gray-200 dark:border-gray-800 flex items-center justify-end bg-gray-50 dark:bg-[#121213]">
-                <button
-                  onClick={() => setIsSpaceModalOpen(false)}
-                  className="bg-primary hover:bg-primary-hover active:bg-primary-hover text-white px-8 py-2.5 rounded-xl font-black text-sm transition-all hover:scale-105 active:scale-95 shadow-lg shadow-black/10"
-                >
-                  Continue
-                </button>
-              </div>
+                  {/* Footer */}
+                  <div className="px-8 py-6 border-t border-gray-200 dark:border-gray-800 flex items-center justify-end bg-gray-50 dark:bg-[#121213]">
+                    <button
+                      onClick={() => setSpaceModalStep(2)}
+                      className="bg-primary hover:bg-primary-hover active:bg-primary-hover text-white px-8 py-2.5 rounded-xl font-black text-sm transition-all hover:scale-105 active:scale-95 shadow-lg shadow-black/10"
+                    >
+                      Continue
+                    </button>
+                  </div>
+                </>
+              ) : spaceModalStep === 2 ? (
+                <>
+                  {/* Step 2: Define your workflow */}
+                  <div className="px-8 pt-6 pb-2 flex items-center justify-between">
+                    <div className="space-y-1">
+                      <h2 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">Define your workflow</h2>
+                      <p className="text-sm text-gray-500 font-medium leading-relaxed">Choose a pre-configured solution, required views, and task statuses.</p>
+                    </div>
+                    <button onClick={() => setIsSpaceModalOpen(false)} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-500 dark:text-gray-400 self-start mt-1">
+                      <X size={20} />
+                    </button>
+                  </div>
+
+                  <div className="p-8 pb-4 space-y-8 overflow-y-auto custom-scrollbar">
+                    {/* Workflow Options Grid */}
+                    <div className="grid grid-cols-2 gap-4">
+                      {[
+                        { title: 'Starter', desc: 'The basics for any project' },
+                        { title: 'Marketing', desc: 'Campaigns, content & events' },
+                        { title: 'Sales', desc: 'CRM, deals & pipelines' },
+                        { title: 'Product + Engineering', desc: 'Streamline your product lifecycle' }
+                      ].map(option => (
+                        <button
+                          key={option.title}
+                          onClick={() => setSpaceWorkflowOption(option.title)}
+                          className={`p-4 rounded-xl border-2 text-left transition-all hover:border-primary/50 ${spaceWorkflowOption === option.title ? 'border-primary bg-primary/5 dark:bg-primary/10 shadow-lg shadow-primary/5' : 'border-gray-100 dark:border-gray-800 bg-transparent hover:bg-gray-50 dark:hover:bg-white/5'}`}
+                        >
+                          <div className={`text-sm font-bold mb-1 ${spaceWorkflowOption === option.title ? 'text-primary' : 'text-gray-900 dark:text-white'}`}>{option.title}</div>
+                          <div className="text-xs text-gray-500 font-medium">{option.desc}</div>
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="pt-2">
+                      <div className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-4">Customize defaults for <span className="text-primary">{spaceWorkflowOption}</span></div>
+
+                      <div className="space-y-3">
+                        {/* Default views */}
+                        <div
+                          onClick={() => {
+                            setTempSpaceDefaultViews([...spaceDefaultViews]);
+                            setSpaceModalStep(3);
+                          }}
+                          className="flex items-center justify-between p-4 bg-white dark:bg-transparent border border-gray-100 dark:border-gray-800 rounded-xl group hover:border-gray-300 dark:hover:border-gray-600 transition-all cursor-pointer"
+                        >
+                          <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-lg bg-gray-50 dark:bg-white/5 flex items-center justify-center text-gray-500">
+                              <Layers size={18} />
+                            </div>
+                            <div className="space-y-0.5">
+                              <div className="text-sm font-bold text-gray-900 dark:text-white">Default views</div>
+                              <div className="text-xs text-gray-500 font-medium">
+                                {spaceDefaultViews.length > 0 ? spaceDefaultViews.join(', ') : 'None selected'}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <span className="w-4 h-4 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center text-[10px] text-gray-400">?</span>
+                            <ChevronRight size={16} className="text-gray-400" />
+                          </div>
+                        </div>
+
+                        {/* Task statuses */}
+                        <div
+                          onClick={() => {
+                            setTempSpaceTaskStatuses(JSON.parse(JSON.stringify(spaceTaskStatuses)));
+                            setSpaceModalStep(4);
+                          }}
+                          className="flex items-center justify-between p-4 bg-white dark:bg-transparent border border-gray-100 dark:border-gray-800 rounded-xl group hover:border-gray-300 dark:hover:border-gray-600 transition-all cursor-pointer"
+                        >
+                          <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-lg bg-gray-50 dark:bg-white/5 flex items-center justify-center text-gray-500">
+                              <CircleDot size={18} />
+                            </div>
+                            <div className="space-y-0.5">
+                              <div className="text-sm font-bold text-gray-900 dark:text-white">Task statuses</div>
+                              <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-tight text-gray-500">
+                                {spaceTaskStatuses.map((cat, i) => (
+                                  <React.Fragment key={cat.category}>
+                                    {cat.statuses.map((status, si) => (
+                                      <React.Fragment key={status.name + si}>
+                                        <span className="flex items-center gap-1">
+                                          <div className="w-1.5 h-1.5 rounded-full border-2" style={{ borderColor: status.color }} />
+                                          {status.name}
+                                        </span>
+                                        {(si < cat.statuses.length - 1 || (i < spaceTaskStatuses.length - 1 && spaceTaskStatuses[i + 1].statuses.length > 0)) && <ChevronRight size={10} />}
+                                      </React.Fragment>
+                                    ))}
+                                  </React.Fragment>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <span className="w-4 h-4 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center text-[10px] text-gray-400">?</span>
+                            <ChevronRight size={16} className="text-gray-400" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Footer Step 2 */}
+                  <div className="px-8 py-6 border-t border-gray-200 dark:border-gray-800 flex items-center justify-between bg-gray-50 dark:bg-[#121213]">
+                    <button
+                      onClick={() => setSpaceModalStep(1)}
+                      className="px-6 py-2.5 border border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-white/5 text-gray-600 dark:text-gray-400 rounded-xl font-bold text-sm transition-all shadow-sm"
+                    >
+                      Back
+                    </button>
+                    <button
+                      onClick={() => {
+                        setIsSpaceModalOpen(false);
+                        setSpaceModalStep(1);
+                      }}
+                      className="bg-primary hover:bg-primary-hover active:bg-primary-hover text-white px-8 py-2.5 rounded-xl font-black text-sm transition-all hover:scale-105 active:scale-95 shadow-lg shadow-primary/20"
+                    >
+                      Create Space
+                    </button>
+                  </div>
+                </>
+              ) : spaceModalStep === 3 ? (
+                <>
+                  {/* Step 3: Default settings for views */}
+                  <div className="px-8 pt-6 pb-2 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => setSpaceModalStep(2)}
+                        className="p-1.5 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg text-gray-500 transition-colors"
+                      >
+                        <ChevronLeft size={20} />
+                      </button>
+                      <h2 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">Default settings for views</h2>
+                    </div>
+                    <button onClick={() => setIsSpaceModalOpen(false)} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-500 dark:text-gray-400 self-start mt-1">
+                      <X size={20} />
+                    </button>
+                  </div>
+
+                  <div className="px-8 pt-2">
+                    <div className="flex bg-gray-100 dark:bg-white/5 p-1 rounded-xl mb-6">
+                      <button className="flex-1 py-1.5 text-xs font-bold text-gray-900 dark:text-white bg-white dark:bg-[#2a2a2c] rounded-lg shadow-sm">Required views</button>
+                      <button className="flex-1 py-1.5 text-xs font-bold text-gray-400 dark:text-gray-500 hover:text-gray-600 transition-colors">Default View Templates</button>
+                    </div>
+
+                    <p className="text-sm text-gray-500 font-medium leading-relaxed mb-6">
+                      Set up views that appear automatically in every Space, Folder, or List — and can't be removed.
+                    </p>
+
+                    <div className="bg-white dark:bg-[#1a1a1c] border border-gray-100 dark:border-gray-800 rounded-2xl overflow-hidden mb-8">
+                      <div className="p-2 space-y-1 max-h-[400px] overflow-y-auto custom-scrollbar">
+                        {[
+                          { id: 'List', icon: <Hash size={16} />, required: true },
+                          { id: 'Board', icon: <Layout size={16} /> },
+                          { id: 'Calendar', icon: <CalendarIcon size={16} /> },
+                          { id: 'Map', icon: <MapPin size={16} /> },
+                          { id: 'Activity', icon: <Activity size={16} /> },
+                          { id: 'Team', icon: <Users size={16} /> },
+                          { id: 'Gantt', icon: <GanttChart size={16} /> },
+                          { id: 'Mind Map', icon: <MindMapIcon size={16} /> },
+                          { id: 'Table', icon: <TableIcon size={16} /> },
+                          { id: 'Timeline', icon: <Clock size={16} /> },
+                          { id: 'Workload', icon: <BarChart3 size={16} /> },
+                        ].map((view) => {
+                          const isActive = tempSpaceDefaultViews.includes(view.id);
+                          return (
+                            <div key={view.id} className="flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl transition-colors">
+                              <div className="flex items-center gap-3">
+                                <div className={`text-gray-400 ${view.id === 'List' ? 'text-gray-400' : isActive ? 'text-primary' : ''}`}>
+                                  {view.icon}
+                                </div>
+                                <span className={`text-sm font-bold ${isActive ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
+                                  {view.id} {view.required && <span className="text-gray-400 font-medium">— Required</span>}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-4">
+                                {view.required && <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Default</span>}
+                                <div
+                                  onClick={() => {
+                                    if (view.required) return;
+                                    setTempSpaceDefaultViews(prev =>
+                                      prev.includes(view.id)
+                                        ? prev.filter(v => v !== view.id)
+                                        : [...prev, view.id]
+                                    );
+                                  }}
+                                  className={`w-10 h-5 rounded-full relative p-1 cursor-pointer transition-colors ${isActive ? (view.required ? 'bg-primary/40' : 'bg-primary') : 'bg-gray-200 dark:bg-[#2a2a2b]'} ${view.required ? 'cursor-not-allowed opacity-60' : 'active:scale-95'}`}
+                                >
+                                  <div className={`w-3 h-3 bg-white rounded-full transition-transform ${isActive ? 'translate-x-5' : 'translate-x-0'}`} />
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Step 3 Footer */}
+                  <div className="px-8 py-6 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-[#121213]">
+                    <button
+                      onClick={() => {
+                        setSpaceDefaultViews([...tempSpaceDefaultViews]);
+                        setSpaceModalStep(2);
+                      }}
+                      className="w-full bg-primary hover:bg-primary-hover active:bg-primary-hover text-white py-3 rounded-xl font-black text-sm transition-all hover:scale-[1.02] active:scale-95 shadow-lg shadow-primary/20"
+                    >
+                      Done
+                    </button>
+                  </div>
+                </>
+              ) : spaceModalStep === 4 ? (
+                <>
+                  {/* Step 4: Edit task statuses */}
+                  <div className="px-8 pt-6 pb-2 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => setSpaceModalStep(2)}
+                        className="p-1.5 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg text-gray-500 transition-colors"
+                      >
+                        <ChevronLeft size={20} />
+                      </button>
+                      <h2 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">Edit {spaceWorkflowOption.toLowerCase()} statuses</h2>
+                    </div>
+                    <button onClick={() => setIsSpaceModalOpen(false)} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-500 dark:text-gray-400 self-start mt-1">
+                      <X size={20} />
+                    </button>
+                  </div>
+
+                  <div className="flex-1 overflow-y-auto custom-scrollbar p-8">
+                    <div className="space-y-8">
+                      {tempSpaceTaskStatuses.map((category, catIndex) => (
+                        <div key={category.category} className="space-y-3">
+                          <div className="flex items-center gap-2">
+                            <h4 className="text-xs font-black uppercase tracking-wider text-gray-400">{category.category}</h4>
+                            <Info size={12} className="text-gray-300" />
+                            <button className="ml-auto text-gray-300 hover:text-gray-500 transition-colors">
+                              <Plus size={14} />
+                            </button>
+                          </div>
+
+                          <div className="space-y-2">
+                            {category.statuses.map((status, statusIndex) => (
+                              <div key={statusIndex} className="flex items-center gap-3 p-3 bg-white dark:bg-[#1a1a1c] border border-gray-100 dark:border-gray-800 rounded-xl group hover:border-gray-300 dark:hover:border-gray-600 transition-all">
+                                <div className="w-4 h-4 cursor-grab active:cursor-grabbing text-gray-300 group-hover:text-gray-400">
+                                  <div className="grid grid-cols-2 gap-0.5">
+                                    {[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="w-0.5 h-0.5 bg-current rounded-full" />)}
+                                  </div>
+                                </div>
+                                <div className="w-5 h-5 rounded-full border-2 flex items-center justify-center" style={{ borderColor: status.color }}>
+                                  {category.category === 'Closed' && <Check size={10} style={{ color: status.color }} />}
+                                  {category.category === 'Active' && <div className="w-2 h-2 rounded-full" style={{ backgroundColor: status.color }} />}
+                                </div>
+                                <input
+                                  value={status.name}
+                                  onChange={(e) => {
+                                    const newStatuses = [...tempSpaceTaskStatuses];
+                                    newStatuses[catIndex].statuses[statusIndex].name = e.target.value;
+                                    setTempSpaceTaskStatuses(newStatuses);
+                                  }}
+                                  className="flex-1 bg-transparent border-none focus:outline-none text-sm font-bold text-gray-900 dark:text-white"
+                                />
+                                <button className="opacity-0 group-hover:opacity-100 text-gray-300 hover:text-gray-600 transition-all p-1">
+                                  <MoreHorizontal size={16} />
+                                </button>
+                              </div>
+                            ))}
+                            <button
+                              onClick={() => {
+                                const newStatuses = [...tempSpaceTaskStatuses];
+                                newStatuses[catIndex].statuses.push({ name: 'NEW STATUS', color: '#94a3b8' });
+                                setTempSpaceTaskStatuses(newStatuses);
+                              }}
+                              className="w-full py-3 border border-dashed border-gray-200 dark:border-gray-800 rounded-xl text-xs font-bold text-gray-400 hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-white/5 transition-all flex items-center justify-center gap-2"
+                            >
+                              <Plus size={14} /> Add status
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Step 4 Footer */}
+                  <div className="px-8 py-6 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-[#121213] flex items-center justify-between">
+                    <button className="text-[12px] font-medium text-gray-500 hover:text-gray-900 transition-colors flex items-center gap-2">
+                      <HelpCircle size={14} />
+                      <span className="underline cursor-pointer">Learn more about statuses</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSpaceTaskStatuses(JSON.parse(JSON.stringify(tempSpaceTaskStatuses)));
+                        setSpaceModalStep(2);
+                      }}
+                      className="bg-primary hover:bg-primary-hover active:bg-primary-hover text-white px-8 py-2.5 rounded-xl font-black text-sm transition-all hover:scale-[1.02] active:scale-95 shadow-lg shadow-primary/20"
+                    >
+                      Apply changes
+                    </button>
+                  </div>
+                </>
+              ) : null}
             </div>
           </div>
         </div>
