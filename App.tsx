@@ -1853,7 +1853,7 @@ const App: React.FC = () => {
                 {isFilterMenuOpen && (
                   <>
                     <div className="fixed inset-0 z-[100]" onClick={() => setIsFilterMenuOpen(false)} />
-                    <div className="absolute top-full right-0 mt-2 w-[min(calc(100vw-40px),700px)] max-h-[85vh] overflow-y-auto custom-scrollbar bg-white dark:bg-[#1e1e1f] border border-gray-200 dark:border-gray-800 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] z-[101] p-6 flex flex-col animate-in fade-in zoom-in-95 duration-200">
+                    <div className="absolute top-full right-0 mt-2 w-[min(calc(100vw-40px),700px)] bg-white dark:bg-[#1e1e1f] border border-gray-200 dark:border-gray-800 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] z-[101] p-6 flex flex-col animate-in fade-in zoom-in-95 duration-200">
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-bold text-gray-900 dark:text-white">Filters</span>
