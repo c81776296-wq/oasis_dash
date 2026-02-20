@@ -1705,7 +1705,7 @@ const App: React.FC = () => {
                   key={view}
                   onClick={() => setActiveView(view)}
                   className={`h-full flex items-center gap-1.5 text-xs font-bold border-b-2 transition-all relative ${activeView === view
-                    ? 'border-black text-black'
+                    ? 'border-black dark:border-white text-black dark:text-white'
                     : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-300'
                     }`}
                 >
@@ -1721,7 +1721,7 @@ const App: React.FC = () => {
               <div className="relative h-full flex items-center">
                 <button
                   onClick={() => setIsViewSelectorOpen(!isViewSelectorOpen)}
-                  className={`h-full flex items-center gap-1 text-xs font-bold transition-all relative px-2 ${isViewSelectorOpen ? 'text-black' : 'text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-300'}`}
+                  className={`h-full flex items-center gap-1 text-xs font-bold transition-all relative px-2 ${isViewSelectorOpen ? 'text-black dark:text-white' : 'text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-300'}`}
                 >
                   <Plus size={14} /> View
                 </button>
