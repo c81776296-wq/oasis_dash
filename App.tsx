@@ -5,6 +5,7 @@ import {
   Plus,
   CalendarIcon,
   ChevronDown,
+  ChevronUp,
   ChevronRight,
   ChevronLeft,
   ChevronsLeft,
@@ -314,6 +315,8 @@ const App: React.FC = () => {
   const [filterTypeSearchQuery, setFilterTypeSearchQuery] = useState('');
   const [activeFilters, setActiveFilters] = useState<any[]>([]);
   const [isSavedFiltersDropdownOpen, setIsSavedFiltersDropdownOpen] = useState(false);
+  const [isFilterStatusDropdownOpen, setIsFilterStatusDropdownOpen] = useState(false);
+  const [filterStatusSearchQuery, setFilterStatusSearchQuery] = useState('');
 
   // Sync theme with document element
   useEffect(() => {
@@ -663,6 +666,24 @@ const App: React.FC = () => {
       result = result.filter(t => t.assignee.name === ownerName || t.assignee.id === USERS[0].id);
     }
 
+    // Apply Advanced Filters
+    if (activeFilters.length > 0) {
+      activeFilters.forEach(filter => {
+        if (filter.id === 'status' && filter.value?.length > 0) {
+          const isMatch = (task: Task) => {
+            return filter.value.some((val: string) => {
+              const category = spaceTaskStatuses.find(c => c.category === val);
+              if (category) {
+                return category.statuses.some(s => s.name === task.status);
+              }
+              return task.status === val;
+            });
+          };
+          result = result.filter(t => filter.operator === 'is' ? isMatch(t) : !isMatch(t));
+        }
+      });
+    }
+
     if (searchQuery) {
       result = result.filter(t =>
         t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -671,7 +692,7 @@ const App: React.FC = () => {
     }
 
     return result;
-  }, [tasks, searchQuery, activeContext, ownerName]);
+  }, [tasks, searchQuery, activeContext, ownerName, activeFilters]);
 
   const toggleTaskStatus = (taskId: string) => {
     setTasks(prev => prev.map(t => {
@@ -1832,7 +1853,7 @@ const App: React.FC = () => {
                 {isFilterMenuOpen && (
                   <>
                     <div className="fixed inset-0 z-[100]" onClick={() => setIsFilterMenuOpen(false)} />
-                    <div className="absolute top-full right-0 mt-2 w-[450px] bg-white dark:bg-[#1e1e1f] border border-gray-200 dark:border-gray-800 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] z-[101] p-4 flex flex-col animate-in fade-in zoom-in-95 duration-200">
+                    <div className="absolute top-full right-0 mt-2 w-[min(calc(100vw-40px),700px)] max-h-[85vh] overflow-y-auto custom-scrollbar bg-white dark:bg-[#1e1e1f] border border-gray-200 dark:border-gray-800 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] z-[101] p-6 flex flex-col animate-in fade-in zoom-in-95 duration-200">
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-bold text-gray-900 dark:text-white">Filters</span>
@@ -1867,7 +1888,135 @@ const App: React.FC = () => {
                         </div>
                       </div>
 
-                      <div className="bg-gray-50/50 dark:bg-black/20 border border-gray-100 dark:border-gray-800 rounded-xl p-6 flex flex-col">
+                      <div className="bg-gray-50/50 dark:bg-black/20 border border-gray-100 dark:border-gray-800 rounded-xl p-6 flex flex-col gap-4">
+                        {activeFilters.length > 0 && (
+                          <div className="flex flex-col gap-3">
+                            {activeFilters.map((filter, index) => (
+                              <React.Fragment key={index}>
+                                <div className="flex items-center gap-3">
+                                  {/* Filter Name and Icon */}
+                                  <div className="w-48 flex items-center justify-between px-3 py-2 bg-white dark:bg-[#121213] border border-gray-200 dark:border-gray-700 rounded-lg text-xs font-bold text-gray-700 dark:text-gray-200">
+                                    <span>{filter.label}</span>
+                                    <ChevronDown size={14} className="text-gray-400" />
+                                  </div>
+
+                                  {/* Operator Selector */}
+                                  <div className="relative">
+                                    <button
+                                      onClick={() => {
+                                        const newFilters = [...activeFilters];
+                                        newFilters[index].operator = newFilters[index].operator === 'is' ? 'is not' : 'is';
+                                        setActiveFilters(newFilters);
+                                      }}
+                                      className="flex items-center justify-between gap-2 px-3 py-2 w-32 bg-white dark:bg-[#121213] border border-gray-200 dark:border-gray-700 rounded-lg text-xs font-bold text-gray-700 dark:text-gray-200 hover:border-gray-300 transition-all"
+                                    >
+                                      <span>{filter.operator || 'is'}</span>
+                                      <ChevronDown size={14} className="text-gray-400" />
+                                    </button>
+                                  </div>
+
+                                  {/* Value Selector */}
+                                  <div className="relative flex-1 min-w-[200px]">
+                                    <button
+                                      onClick={() => {
+                                        if (filter.id === 'status') setIsFilterStatusDropdownOpen(!isFilterStatusDropdownOpen);
+                                      }}
+                                      className={`w-full flex items-center justify-between px-3 py-2 bg-white dark:bg-[#121213] border border-gray-200 dark:border-gray-700 rounded-lg text-xs font-bold transition-all hover:border-gray-300 overflow-hidden ${filter.value?.length > 0 ? 'text-black dark:text-white' : 'text-gray-400'}`}
+                                    >
+                                      <span className="truncate mr-2">
+                                        {filter.value?.length > 0
+                                          ? filter.value.join(', ')
+                                          : 'Select option'
+                                        }
+                                      </span>
+                                      <ChevronUp size={14} className={`shrink-0 text-gray-400 transition-transform ${isFilterStatusDropdownOpen ? '' : 'rotate-180'}`} />
+                                    </button>
+
+                                    {filter.id === 'status' && isFilterStatusDropdownOpen && (
+                                      <>
+                                        <div className="fixed inset-0 z-[110]" onClick={() => setIsFilterStatusDropdownOpen(false)} />
+                                        <div className="absolute top-full right-0 mt-2 w-[400px] bg-white dark:bg-[#1c1c1e] border border-gray-200 dark:border-gray-800 rounded-xl shadow-2xl z-[120] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                                          <div className="p-3">
+                                            <div className="relative">
+                                              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
+                                              <input
+                                                type="text"
+                                                autoFocus
+                                                placeholder="Search..."
+                                                value={filterStatusSearchQuery}
+                                                onChange={(e) => setFilterStatusSearchQuery(e.target.value)}
+                                                className="w-full px-4 py-2 pl-9 bg-gray-50/50 dark:bg-black/20 border border-gray-200 dark:border-gray-800 rounded-lg text-xs outline-none focus:ring-1 focus:ring-primary transition-all"
+                                              />
+                                            </div>
+                                          </div>
+
+                                          <div className="px-4 py-2 flex items-center justify-between">
+                                            <span className="text-xs font-bold text-gray-500">Statuses</span>
+                                            <button className="text-xs font-bold text-primary hover:text-primary-hover">Select All</button>
+                                          </div>
+
+                                          <div className="max-h-80 overflow-y-auto custom-scrollbar py-2">
+                                            {spaceTaskStatuses.map(cat => {
+                                              const getIcon = (category: string) => {
+                                                switch (category) {
+                                                  case 'Not started': return <Circle size={16} className="text-gray-400 border-dashed" />;
+                                                  case 'Active': return <CircleDot size={16} className="text-gray-400" />;
+                                                  case 'Done': return <CheckCircle2 size={16} className="text-gray-400" />;
+                                                  case 'Closed': return <CheckCircle2 size={16} className="text-gray-400" />;
+                                                  default: return <Circle size={16} className="text-gray-400" />;
+                                                }
+                                              };
+
+                                              return (
+                                                <button
+                                                  key={cat.category}
+                                                  onClick={() => {
+                                                    const newFilters = [...activeFilters];
+                                                    const currentVal = newFilters[index].value || [];
+                                                    if (currentVal.includes(cat.category)) {
+                                                      newFilters[index].value = currentVal.filter((v: string) => v !== cat.category);
+                                                    } else {
+                                                      newFilters[index].value = [...currentVal, cat.category];
+                                                    }
+                                                    setActiveFilters(newFilters);
+                                                  }}
+                                                  className="w-full flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group"
+                                                >
+                                                  <div className="flex items-center gap-3">
+                                                    {getIcon(cat.category)}
+                                                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{cat.category}</span>
+                                                  </div>
+                                                  <div className={`w-4 h-4 rounded border transition-colors flex items-center justify-center ${filter.value?.includes(cat.category) ? 'bg-primary border-primary' : 'border-gray-300 dark:border-gray-600'}`}>
+                                                    {filter.value?.includes(cat.category) && <Check size={10} className="text-white" />}
+                                                  </div>
+                                                </button>
+                                              );
+                                            })}
+                                          </div>
+                                        </div>
+                                      </>
+                                    )}
+                                  </div>
+
+                                  {/* Remove Button */}
+                                  <button
+                                    onClick={() => {
+                                      setActiveFilters(activeFilters.filter((_, i) => i !== index));
+                                    }}
+                                    className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+                                  >
+                                    <Trash size={18} />
+                                  </button>
+                                </div>
+                                <div className="px-3">
+                                  <button className="text-[10px] font-bold text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                                    Add nested filter
+                                  </button>
+                                </div>
+                              </React.Fragment>
+                            ))}
+                          </div>
+                        )}
                         <div className="relative w-48">
                           <button
                             onClick={() => setIsFilterTypeDropdownOpen(!isFilterTypeDropdownOpen)}
@@ -1898,7 +2047,7 @@ const App: React.FC = () => {
                                     <button
                                       key={option.id}
                                       onClick={() => {
-                                        setActiveFilters([...activeFilters, option]);
+                                        setActiveFilters([...activeFilters, { ...option, operator: 'is', value: [] }]);
                                         setIsFilterTypeDropdownOpen(false);
                                         setFilterTypeSearchQuery('');
                                       }}
@@ -1984,7 +2133,7 @@ const App: React.FC = () => {
             ) : renderView()
           }
         </div>
-      </main>
+      </main >
 
       {/* Modals */}
       {
@@ -5256,137 +5405,139 @@ const App: React.FC = () => {
 
 
       {/* Create List Modal */}
-      {isListModalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[600] flex items-center justify-center p-4 animate-in fade-in duration-200" onClick={() => setIsListModalOpen(false)}>
-          <div className="bg-white dark:bg-[#1e1e1e] w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col relative" onClick={e => e.stopPropagation()}>
-            {/* Header */}
-            <div className="p-6 pb-2">
-              <div className="flex items-center justify-between mb-1">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Create List</h2>
-                <button
-                  onClick={() => setIsListModalOpen(false)}
-                  className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                >
-                  <X size={20} />
-                </button>
-              </div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">All Lists are located within a Space. Lists can house any type of task.</p>
-            </div>
-
-            {/* Form */}
-            <div className="p-6 space-y-6">
-              {/* Name Input */}
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-gray-700 dark:text-gray-300">Name</label>
-                <input
-                  type="text"
-                  autoFocus
-                  value={newListName}
-                  onChange={(e) => setNewListName(e.target.value)}
-                  placeholder="e.g. Project, List of items, Campaign"
-                  className="w-full px-4 py-2.5 bg-white dark:bg-[#121213] border-2 border-primary/20 focus:border-primary rounded-xl text-sm text-gray-900 dark:text-white placeholder:text-gray-400 outline-none transition-all"
-                />
+      {
+        isListModalOpen && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[600] flex items-center justify-center p-4 animate-in fade-in duration-200" onClick={() => setIsListModalOpen(false)}>
+            <div className="bg-white dark:bg-[#1e1e1e] w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col relative" onClick={e => e.stopPropagation()}>
+              {/* Header */}
+              <div className="p-6 pb-2">
+                <div className="flex items-center justify-between mb-1">
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Create List</h2>
+                  <button
+                    onClick={() => setIsListModalOpen(false)}
+                    className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+                <p className="text-sm text-gray-500 dark:text-gray-400">All Lists are located within a Space. Lists can house any type of task.</p>
               </div>
 
-              {/* Space Selector */}
-              <div className="space-y-2 relative">
-                <label className="text-sm font-bold text-gray-700 dark:text-gray-300">Space (location)</label>
-                <button
-                  onClick={() => setIsSpaceSelectorOpen(!isSpaceSelectorOpen)}
-                  className="w-full flex items-center justify-between px-4 py-2.5 bg-white dark:bg-[#121213] border border-gray-200 dark:border-gray-800 rounded-lg hover:border-gray-300 dark:hover:border-gray-700 transition-all text-sm group"
-                >
-                  <div className="flex items-center gap-2">
-                    {selectedSpaceIdForList ? (
-                      <>
-                        <div className="w-5 h-5 bg-primary text-white rounded flex items-center justify-center text-[10px] font-bold">
-                          {spaces.find(s => s.id === selectedSpaceIdForList)?.name[0].toUpperCase()}
-                        </div>
-                        <span className="text-gray-900 dark:text-white font-medium">
-                          {spaces.find(s => s.id === selectedSpaceIdForList)?.name}
-                        </span>
-                      </>
-                    ) : (
-                      <span className="text-gray-400">Select a Space</span>
-                    )}
-                  </div>
-                  <ChevronDown size={16} className={`text-gray-400 transition-transform ${isSpaceSelectorOpen ? 'rotate-180' : ''}`} />
-                </button>
+              {/* Form */}
+              <div className="p-6 space-y-6">
+                {/* Name Input */}
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-gray-700 dark:text-gray-300">Name</label>
+                  <input
+                    type="text"
+                    autoFocus
+                    value={newListName}
+                    onChange={(e) => setNewListName(e.target.value)}
+                    placeholder="e.g. Project, List of items, Campaign"
+                    className="w-full px-4 py-2.5 bg-white dark:bg-[#121213] border-2 border-primary/20 focus:border-primary rounded-xl text-sm text-gray-900 dark:text-white placeholder:text-gray-400 outline-none transition-all"
+                  />
+                </div>
 
-                {isSpaceSelectorOpen && (
-                  <>
-                    <div className="fixed inset-0 z-10" onClick={() => setIsSpaceSelectorOpen(false)} />
-                    <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-[#1c1c1e] border border-gray-200 dark:border-gray-800 rounded-xl shadow-xl z-20 py-2 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-                      {spaces.length === 0 ? (
-                        <div className="px-4 py-2 text-sm text-gray-500">No spaces available</div>
+                {/* Space Selector */}
+                <div className="space-y-2 relative">
+                  <label className="text-sm font-bold text-gray-700 dark:text-gray-300">Space (location)</label>
+                  <button
+                    onClick={() => setIsSpaceSelectorOpen(!isSpaceSelectorOpen)}
+                    className="w-full flex items-center justify-between px-4 py-2.5 bg-white dark:bg-[#121213] border border-gray-200 dark:border-gray-800 rounded-lg hover:border-gray-300 dark:hover:border-gray-700 transition-all text-sm group"
+                  >
+                    <div className="flex items-center gap-2">
+                      {selectedSpaceIdForList ? (
+                        <>
+                          <div className="w-5 h-5 bg-primary text-white rounded flex items-center justify-center text-[10px] font-bold">
+                            {spaces.find(s => s.id === selectedSpaceIdForList)?.name[0].toUpperCase()}
+                          </div>
+                          <span className="text-gray-900 dark:text-white font-medium">
+                            {spaces.find(s => s.id === selectedSpaceIdForList)?.name}
+                          </span>
+                        </>
                       ) : (
-                        spaces.map(space => (
-                          <button
-                            key={space.id}
-                            onClick={() => {
-                              setSelectedSpaceIdForList(space.id);
-                              setIsSpaceSelectorOpen(false);
-                            }}
-                            className={`w-full flex items-center gap-2 px-4 py-2 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors text-sm ${selectedSpaceIdForList === space.id ? 'bg-gray-50 dark:bg-white/5' : ''}`}
-                          >
-                            <div className="w-5 h-5 bg-primary text-white rounded flex items-center justify-center text-[10px] font-bold">
-                              {space.name[0].toUpperCase()}
-                            </div>
-                            <span className="text-gray-700 dark:text-gray-200">{space.name}</span>
-                          </button>
-                        ))
+                        <span className="text-gray-400">Select a Space</span>
                       )}
                     </div>
-                  </>
-                )}
+                    <ChevronDown size={16} className={`text-gray-400 transition-transform ${isSpaceSelectorOpen ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  {isSpaceSelectorOpen && (
+                    <>
+                      <div className="fixed inset-0 z-10" onClick={() => setIsSpaceSelectorOpen(false)} />
+                      <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-[#1c1c1e] border border-gray-200 dark:border-gray-800 rounded-xl shadow-xl z-20 py-2 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                        {spaces.length === 0 ? (
+                          <div className="px-4 py-2 text-sm text-gray-500">No spaces available</div>
+                        ) : (
+                          spaces.map(space => (
+                            <button
+                              key={space.id}
+                              onClick={() => {
+                                setSelectedSpaceIdForList(space.id);
+                                setIsSpaceSelectorOpen(false);
+                              }}
+                              className={`w-full flex items-center gap-2 px-4 py-2 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors text-sm ${selectedSpaceIdForList === space.id ? 'bg-gray-50 dark:bg-white/5' : ''}`}
+                            >
+                              <div className="w-5 h-5 bg-primary text-white rounded flex items-center justify-center text-[10px] font-bold">
+                                {space.name[0].toUpperCase()}
+                              </div>
+                              <span className="text-gray-700 dark:text-gray-200">{space.name}</span>
+                            </button>
+                          ))
+                        )}
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {/* Private Toggle */}
+                <div className="flex items-center justify-between">
+                  <div>
+                    <label className="text-sm font-bold text-gray-700 dark:text-gray-300">Make private</label>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Only you and invited members have access</p>
+                  </div>
+                  <button
+                    onClick={() => setIsListPrivate(!isListPrivate)}
+                    className={`w-11 h-6 rounded-full relative transition-colors duration-200 ${isListPrivate ? 'bg-primary' : 'bg-gray-200 dark:bg-gray-800'
+                      }`}
+                  >
+                    <div className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-200 ${isListPrivate ? 'translate-x-5' : 'translate-x-0'
+                      }`} />
+                  </button>
+                </div>
               </div>
 
-              {/* Private Toggle */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <label className="text-sm font-bold text-gray-700 dark:text-gray-300">Make private</label>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Only you and invited members have access</p>
-                </div>
+              {/* Footer */}
+              <div className="p-6 bg-gray-50 dark:bg-white/5 border-t border-gray-100 dark:border-gray-800 flex items-center justify-end">
                 <button
-                  onClick={() => setIsListPrivate(!isListPrivate)}
-                  className={`w-11 h-6 rounded-full relative transition-colors duration-200 ${isListPrivate ? 'bg-primary' : 'bg-gray-200 dark:bg-gray-800'
+                  disabled={!newListName.trim() || !selectedSpaceIdForList}
+                  onClick={() => {
+                    setSpaces(prev => prev.map(space => {
+                      if (space.id === selectedSpaceIdForList) {
+                        return {
+                          ...space,
+                          lists: [...space.lists, newListName]
+                        };
+                      }
+                      return space;
+                    }));
+                    alert(`List "${newListName}" created successfully in space!`);
+                    setIsListModalOpen(false);
+                    setNewListName('');
+                    setSelectedSpaceIdForList('');
+                  }}
+                  className={`px-6 py-2 rounded-xl text-sm font-bold transition-all ${(!newListName.trim() || !selectedSpaceIdForList)
+                    ? 'bg-gray-200 dark:bg-gray-800 text-gray-400 cursor-not-allowed'
+                    : 'bg-primary hover:bg-primary-hover text-white shadow-lg active:scale-95'
                     }`}
                 >
-                  <div className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-200 ${isListPrivate ? 'translate-x-5' : 'translate-x-0'
-                    }`} />
+                  Create
                 </button>
               </div>
             </div>
-
-            {/* Footer */}
-            <div className="p-6 bg-gray-50 dark:bg-white/5 border-t border-gray-100 dark:border-gray-800 flex items-center justify-end">
-              <button
-                disabled={!newListName.trim() || !selectedSpaceIdForList}
-                onClick={() => {
-                  setSpaces(prev => prev.map(space => {
-                    if (space.id === selectedSpaceIdForList) {
-                      return {
-                        ...space,
-                        lists: [...space.lists, newListName]
-                      };
-                    }
-                    return space;
-                  }));
-                  alert(`List "${newListName}" created successfully in space!`);
-                  setIsListModalOpen(false);
-                  setNewListName('');
-                  setSelectedSpaceIdForList('');
-                }}
-                className={`px-6 py-2 rounded-xl text-sm font-bold transition-all ${(!newListName.trim() || !selectedSpaceIdForList)
-                  ? 'bg-gray-200 dark:bg-gray-800 text-gray-400 cursor-not-allowed'
-                  : 'bg-primary hover:bg-primary-hover text-white shadow-lg active:scale-95'
-                  }`}
-              >
-                Create
-              </button>
-            </div>
           </div>
-        </div>
-      )}
+        )
+      }
 
     </div >
   );
