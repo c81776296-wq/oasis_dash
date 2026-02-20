@@ -1932,9 +1932,6 @@ const App: React.FC = () => {
                           )}
                         </div>
                         <div className="flex items-center gap-2">
-                          <button className="text-[10px] font-bold text-gray-400 hover:text-gray-600 transition-colors">
-                            More
-                          </button>
                         </div>
                       </div>
                     </div>
