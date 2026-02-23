@@ -51,7 +51,8 @@ import {
   ChevronLeft,
   ChevronRight as CollapseIcon,
   CheckCheck,
-  Box
+  Box,
+  AlignLeft
 } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { STATUS_COLORS, PRIORITY_COLORS, USERS, TEAMS } from '../constants';
@@ -108,6 +109,7 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
   const [customStatuses, setCustomStatuses] = useState<string[]>([]);
   const [statusOrder, setStatusOrder] = useState<string[]>(['TO DO', 'IN PROGRESS', 'COMPLETED', 'CANCELLED', 'BLOCKED']);
   const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
+  const [descriptionPreviewTask, setDescriptionPreviewTask] = useState<string | null>(null);
 
   const addColumn = (label: string) => {
     if (!activeColumns.includes(label)) {
@@ -593,6 +595,32 @@ const ListView: React.FC<ListViewProps> = ({ tasks, onToggleStatus, onAddTask, o
                                             <span className={`text-sm ${task.status === 'COMPLETED' ? 'line-through text-gray-400' : 'text-gray-900 dark:text-gray-100'}`}>
                                               {task.title}
                                             </span>
+                                            {task.description && (
+                                              <div className="relative inline-flex ml-1">
+                                                <button
+                                                  onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setDescriptionPreviewTask(descriptionPreviewTask === task.id ? null : task.id);
+                                                  }}
+                                                  className={`p-0.5 hover:bg-gray-100 dark:hover:bg-white/10 rounded transition-colors ${descriptionPreviewTask === task.id ? 'bg-gray-100 dark:bg-white/10' : ''}`}
+                                                >
+                                                  <AlignLeft size={14} className="text-gray-400" />
+                                                </button>
+                                                {descriptionPreviewTask === task.id && (
+                                                  <>
+                                                    <div className="fixed inset-0 z-[200]" onClick={(e) => { e.stopPropagation(); setDescriptionPreviewTask(null); }} />
+                                                    <div
+                                                      className="absolute left-0 top-full mt-2 w-72 bg-white dark:bg-[#1e1e1f] border border-gray-200 dark:border-gray-800 rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.15)] p-4 z-[201] animate-in fade-in zoom-in-95 duration-150"
+                                                      onClick={(e) => e.stopPropagation()}
+                                                    >
+                                                      <p className="text-[11px] text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap font-medium">
+                                                        {task.description}
+                                                      </p>
+                                                    </div>
+                                                  </>
+                                                )}
+                                              </div>
+                                            )}
                                             {task.tags.length > 0 && (
                                               <div className="flex items-center gap-2">
                                                 <div className="w-4 h-0.5 bg-gray-300 dark:bg-gray-500/30 mx-1" />

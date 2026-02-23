@@ -115,7 +115,9 @@ import {
   Eye,
   RefreshCw,
   RotateCcw,
-  AlignLeft
+  AlignLeft,
+  Printer,
+  History
 } from 'lucide-react';
 import { USERS, PRIORITY_COLORS, STATUS_COLORS, MOCK_TAGS, TEAMS, MOCK_TASKS } from './constants';
 import { Task, ViewType, Status, Priority, User as UserType } from './types';
@@ -567,6 +569,7 @@ const App: React.FC = () => {
 
   // Task Detail Transition State
   const [isTaskDetailsVisible, setIsTaskDetailsVisible] = useState(false);
+  const [taskModalActiveTab, setTaskModalActiveTab] = useState<'Details' | 'Subtasks' | 'Action Items'>('Details');
 
   const openTaskDetail = (task: Task) => {
     setSelectedTask(task);
@@ -4258,207 +4261,335 @@ const App: React.FC = () => {
       {
         selectedTask && (
           <div
-            className={`fixed inset-0 z-[150] flex items-center justify-end bg-black/20 backdrop-blur-sm transition-opacity duration-300 ${isTaskDetailsVisible ? 'opacity-100' : 'opacity-0'}`}
+            className={`fixed inset-0 z-[150] flex items-center justify-center bg-black/40 backdrop-blur-md transition-opacity duration-300 p-4 md:p-8 ${isTaskDetailsVisible ? 'opacity-100' : 'opacity-0'}`}
             onClick={closeTaskDetail}
           >
             <div
-              className={`bg-white dark:bg-[#0f0f13] w-full max-w-[95%] h-full flex transition-transform duration-300 ease-in-out border-l border-gray-200 dark:border-gray-800 ${isTaskDetailsVisible ? 'translate-x-0' : 'translate-x-full'}`}
+              className={`bg-white dark:bg-[#0f0f13] w-full max-w-[1600px] h-full flex flex-col transition-all duration-500 ease-out rounded-2xl shadow-[0_32px_64px_-12px_rgba(0,0,0,0.3)] border border-gray-100 dark:border-gray-800/50 overflow-hidden ${isTaskDetailsVisible ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-8 scale-[0.98] opacity-0'}`}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Modal Content - Main Detail Area */}
-              <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-                {/* Modal Header */}
-                <div className="h-14 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-6 shrink-0">
-                  <div className="flex items-center gap-4 text-xs font-bold text-gray-500 dark:text-gray-400">
-                    <div className="flex items-center gap-2 px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded">
-                      <Hash size={12} />
-                      <span>Task</span>
+              {/* Modal Header - Breadcrumbs & Actions */}
+              <div className="h-[48px] border-b border-gray-100 dark:border-gray-800/50 flex items-center justify-between px-6 shrink-0 bg-white dark:bg-[#0f0f13] z-10">
+                <div className="flex items-center gap-4 text-[11px] font-medium text-gray-500">
+                  <button className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"><ChevronsLeft size={14} /></button>
+                  <button className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"><ChevronUp size={14} /></button>
+                  <div className="w-px h-3 bg-gray-200 dark:bg-gray-800 mx-1" />
+                  <div className="flex items-center gap-1.5 px-1.5 py-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded cursor-pointer transition-colors group">
+                    <div className="w-5 h-5 rounded bg-purple-600 flex items-center justify-center text-[10px] text-white font-bold">S</div>
+                    <span className="group-hover:text-gray-900 dark:group-hover:text-gray-300">Space name</span>
+                  </div>
+                  <ChevronRight size={12} className="text-gray-300 dark:text-gray-700" />
+                  <div className="flex items-center gap-1.5 px-1.5 py-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded cursor-pointer transition-colors group">
+                    <List size={14} className="text-gray-400" />
+                    <span className="group-hover:text-gray-900 dark:group-hover:text-gray-300">List name</span>
+                  </div>
+                  <ChevronRight size={12} className="text-gray-300 dark:text-gray-700" />
+                  <div className="flex items-center gap-1.5 px-1.5 py-1 border border-transparent hover:border-gray-200 dark:hover:border-gray-800 rounded cursor-pointer transition-all bg-gray-50/50 dark:bg-gray-800/20">
+                    <div className="flex gap-[1px]">
+                      <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
                     </div>
-                    <div className="text-gray-400 dark:text-gray-500">86ewkpyb7</div>
+                    <span className="text-gray-900 dark:text-white font-semibold">{selectedTask.title}</span>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg text-gray-500 transition-colors">
-                      <MoreHorizontal size={20} />
-                    </button>
-                    <button onClick={closeTaskDetail} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg text-gray-500 transition-colors">
-                      <X size={20} />
-                    </button>
-                  </div>
+                  <button className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors text-gray-400">
+                    <Plus size={14} />
+                  </button>
+                  <button className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors text-gray-400">
+                    <ArrowRight size={14} />
+                  </button>
                 </div>
-
-                {/* Modal Scrollable Body */}
-                <div className="flex-1 overflow-y-auto custom-scrollbar p-8 space-y-10">
-                  {/* Title Section */}
-                  <div>
-                    <h2 className="text-4xl font-black text-gray-900 dark:text-white uppercase tracking-tighter mb-6">{selectedTask.title}</h2>
-                  </div>
-
-                  {/* Info Grid */}
-                  <div className="grid grid-cols-2 gap-x-20 gap-y-6 max-w-4xl">
-                    {/* Status */}
-                    <div className="flex items-center justify-between group cursor-pointer">
-                      <div className="flex items-center gap-3 text-sm font-bold text-gray-500 uppercase tracking-widest">
-                        <Circle size={14} />
-                        Status
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-white rounded text-xs font-black uppercase tracking-widest">Clients</span>
-                        <ChevronRight size={14} className="text-gray-400 dark:text-gray-600" />
-                        <div className="w-5 h-5 rounded-full border border-gray-200 dark:border-gray-700 flex items-center justify-center text-green-500"><Check size={12} /></div>
-                      </div>
-                    </div>
-
-                    {/* Assignees */}
-                    <div className="flex items-center justify-between group cursor-pointer">
-                      <div className="flex items-center gap-3 text-sm font-bold text-gray-500 uppercase tracking-widest">
-                        <Users size={14} />
-                        Assignees
-                      </div>
-                      <span className="text-sm font-bold text-gray-700 dark:text-gray-600">Empty</span>
-                    </div>
-
-                    {/* Dates */}
-                    <div className="flex items-center justify-between group cursor-pointer">
-                      <div className="flex items-center gap-3 text-sm font-bold text-gray-500 uppercase tracking-widest">
-                        <Calendar size={14} />
-                        Dates
-                      </div>
-                      <div className="flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-gray-600">
-                        <Clock size={14} />
-                        <span>Start → Due</span>
-                      </div>
-                    </div>
-
-                    {/* Priority */}
-                    <div className="flex items-center justify-between group cursor-pointer">
-                      <div className="flex items-center gap-3 text-sm font-bold text-gray-500 uppercase tracking-widest">
-                        <Flag size={14} />
-                        Priority
-                      </div>
-                      <span className="text-sm font-bold text-gray-700 dark:text-gray-600">Empty</span>
-                    </div>
-
-                    {/* Time Estimate */}
-                    <div className="flex items-center justify-between group cursor-pointer">
-                      <div className="flex items-center gap-3 text-sm font-bold text-gray-500 uppercase tracking-widest">
-                        <Clock size={14} />
-                        Time Estimate
-                      </div>
-                      <span className="text-sm font-bold text-gray-700 dark:text-gray-600">Empty</span>
-                    </div>
-
-                    {/* Track Time */}
-                    <div className="flex items-center justify-between group cursor-pointer">
-                      <div className="flex items-center gap-3 text-sm font-bold text-gray-500 uppercase tracking-widest">
-                        <Activity size={14} />
-                        Track Time
-                      </div>
-                      <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 dark:bg-gray-800 rounded-lg text-xs font-bold text-gray-500 dark:text-gray-300">
-                        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                        Add time
-                      </div>
-                    </div>
-
-                    {/* Tags */}
-                    <div className="flex items-center justify-between group cursor-pointer">
-                      <div className="flex items-center gap-3 text-sm font-bold text-gray-500 uppercase tracking-widest">
-                        <Hash size={14} />
-                        Tags
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        <span className="px-2 py-0.5 bg-gray-100 dark:bg-black/20 text-black dark:text-purple-400 rounded text-[10px] font-black uppercase tracking-widest border border-gray-200 dark:border-black/20">client</span>
-                      </div>
-                    </div>
-
-                    {/* Relationships */}
-                    <div className="flex items-center justify-between group cursor-pointer">
-                      <div className="flex items-center gap-3 text-sm font-bold text-gray-500 uppercase tracking-widest">
-                        <Zap size={14} />
-                        Relationships
-                      </div>
-                      <span className="text-sm font-bold text-gray-700 dark:text-gray-600">Empty</span>
-                    </div>
-                  </div>
-
-                  {/* Description Text Area */}
-                  <div className="p-8 border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-[#16161e]/30 rounded-[32px] max-w-4xl min-h-[160px]">
-                    <p className="text-sm font-bold text-gray-600 dark:text-gray-300 leading-relaxed mb-1">Phone: +971 50 963 6126</p>
-                    <p className="text-sm font-bold text-gray-600 dark:text-gray-300 leading-relaxed">Email: info@kocrossboxdubai.com</p>
-                  </div>
-
-                  {/* Section Tabs */}
-                  <div className="flex items-center gap-8 border-b border-gray-200 dark:border-gray-800 max-w-4xl">
-                    {['Details', 'Subtasks', 'Action Items'].map((tab, idx) => (
-                      <button key={tab} className={`pb-4 text-sm font-black uppercase tracking-tighter relative ${idx === 0 ? 'text-gray-900 dark:text-white' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-400'}`}>
-                        {tab}
-                        {idx === 0 && <div className="absolute bottom-[-1px] left-0 w-full h-0.5 bg-orange-500" />}
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Add Custom Fields */}
-                  <div className="space-y-6 max-w-4xl pt-4">
-                    <h3 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-tighter">Add Custom Fields</h3>
-                    <button className="px-4 py-2 border border-gray-200 dark:border-gray-800/50 rounded-lg text-[10px] font-black text-gray-500 dark:text-gray-600 uppercase tracking-widest hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
-                      + Create a field in this List
-                    </button>
-                  </div>
-
-                  {/* Attachments Section */}
-                  <div className="space-y-6 max-w-4xl pt-8">
-                    <h3 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-tighter">Attachments</h3>
-                    <div className="border-2 border-dashed border-gray-200 dark:border-gray-800/50 rounded-3xl p-10 flex flex-col items-center justify-center text-center group hover:border-black/30 transition-colors cursor-pointer">
-                      <p className="text-sm font-black text-gray-400 dark:text-gray-600 group-hover:text-gray-600 dark:group-hover:text-gray-400 transition-colors">Drop your files here to <span className="underline">upload</span></p>
-                    </div>
+                <div className="flex items-center gap-4 shrink-0">
+                  <div className="hidden lg:block text-[11px] text-gray-400 font-medium bg-gray-50 dark:bg-gray-800/50 px-2 py-1 rounded-md">Created Oct 14</div>
+                  <button className="flex items-center gap-1.5 px-3 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg text-[11px] font-bold text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 transition-all shadow-sm">
+                    <Share2 size={13} />
+                    Share
+                  </button>
+                  <div className="flex items-center gap-1 border-l border-gray-200 dark:border-gray-800 ml-1 pl-2.5">
+                    <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors"><MoreHorizontal size={18} /></button>
+                    <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors"><Maximize2 size={18} /></button>
+                    <button onClick={closeTaskDetail} className="p-2 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg text-gray-400 hover:text-red-500 transition-all"><X size={20} /></button>
                   </div>
                 </div>
               </div>
 
-
-              {/* Right Activity Panel */}
-              <div className="w-[380px] border-l border-gray-200 dark:border-gray-800 flex flex-col bg-gray-50 dark:bg-[#0f0f13] overflow-hidden">
-                <div className="h-14 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-6 shrink-0">
-                  <h3 className="text-lg font-black text-gray-900 dark:text-white uppercase tracking-tighter">Activity</h3>
-                  <div className="flex items-center gap-3 text-gray-400 dark:text-gray-600">
-                    <Search size={16} className="hover:text-gray-700 dark:hover:text-white cursor-pointer" />
-                    <Filter size={16} className="hover:text-gray-700 dark:hover:text-white cursor-pointer" />
-                    <div className="flex items-center gap-1 hover:text-gray-700 dark:hover:text-white cursor-pointer">
-                      <MessageSquare size={16} />
-                      <span className="text-xs font-bold">1</span>
-                    </div>
-                    <p>Gustavo created this task</p>
-                  </div>
-                  <span className="text-gray-700">11:43 am</span>
-                </div>
-                <div className="flex items-start gap-4 text-[10px] font-bold text-gray-600">
-                  <div className="w-2 h-2 rounded-full bg-black mt-1" />
-                  <div className="flex-1">
-                    <p>Gustavo added tag client</p>
-                  </div>
-                  <span className="text-gray-700">11:43 am</span>
-                </div>
-              </div>
-
-              <div className="p-6 border-t border-gray-800 bg-[#16161e]/50">
-                <div className="bg-[#0f0f13] border border-gray-800 rounded-2xl p-4 flex flex-col gap-4">
-                  <textarea
-                    className="w-full bg-transparent border-none focus:outline-none resize-none text-sm font-medium text-white placeholder:text-gray-700 min-h-[60px]"
-                    placeholder="Write a comment..."
-                  />
-                  <div className="flex items-center justify-between pt-2 border-t border-gray-900">
-                    <div className="flex items-center gap-1.5 px-2 py-1 bg-gray-900 rounded-lg text-[10px] font-black text-gray-500 uppercase tracking-widest cursor-pointer hover:bg-gray-800">
-                      Comment
-                      <ChevronDown size={12} />
-                    </div>
-                    <div className="flex items-center gap-3 text-gray-700">
-                      <MoreHorizontal size={16} className="hover:text-gray-400 cursor-pointer" />
-                      <div className="flex items-center gap-1 hover:text-gray-400 cursor-pointer">
-                        <MessageSquare size={16} />
-                        <span className="text-xs">1</span>
+              <div className="flex-1 flex overflow-hidden">
+                {/* Left Content Area */}
+                <div className="flex-1 overflow-y-auto custom-scrollbar bg-white dark:bg-[#0f0f13]">
+                  <div className="w-full px-6 py-8 md:px-16 md:py-12 space-y-12">
+                    {/* Task Meta & ID */}
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-1.5 px-2 py-0.5 border border-gray-200 dark:border-gray-800 rounded hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer transition-colors group">
+                        <Box size={12} className="text-gray-400 group-hover:text-purple-500" />
+                        <span className="text-[10px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-tight">Task</span>
+                        <ChevronDown size={12} className="text-gray-400" />
                       </div>
-                      <button className="p-1.5 bg-gray-800 rounded-lg hover:text-white transition-colors">
-                        <ChevronRight size={14} />
-                      </button>
+                      <span className="text-[10px] font-bold text-gray-300 dark:text-gray-600 uppercase tracking-widest">{selectedTask.id}</span>
+                    </div>
+
+                    {/* Title */}
+                    <h1 className="text-5xl font-black text-gray-900 dark:text-white tracking-tighter leading-tight">{selectedTask.title}</h1>
+
+                    {/* Info Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-6">
+                      {/* Status */}
+                      <div className="flex items-center group cursor-pointer h-8">
+                        <label className="flex items-center gap-2.5 text-[11px] font-bold text-gray-500 uppercase tracking-widest w-40 shrink-0">
+                          <CircleDot size={14} className="text-gray-400" />
+                          Status
+                        </label>
+                        <div className="flex items-center gap-2">
+                          <div className="px-3 py-1 bg-gray-900 dark:bg-white text-white dark:text-black rounded text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-black/5">
+                            {selectedTask.status}
+                            <ChevronRight size={10} className="opacity-50" />
+                          </div>
+                          <div className="w-5 h-5 rounded-full border border-gray-200 dark:border-gray-800 flex items-center justify-center text-green-500 bg-white dark:bg-gray-800">
+                            <Check size={12} />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Assignees */}
+                      <div className="flex items-center group cursor-pointer h-8">
+                        <label className="flex items-center gap-2.5 text-[11px] font-bold text-gray-500 uppercase tracking-widest w-40 shrink-0">
+                          <Users size={14} className="text-gray-400" />
+                          Assignees
+                        </label>
+                        <div className="flex items-center gap-2">
+                          {selectedTask.assignee ? (
+                            <div className="flex items-center gap-2">
+                              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center text-[10px] text-white font-bold border-2 border-white dark:border-gray-800 shadow-sm">
+                                {selectedTask.assignee.name.charAt(0)}
+                              </div>
+                              <span className="text-xs font-bold text-gray-700 dark:text-gray-300">{selectedTask.assignee.name}</span>
+                            </div>
+                          ) : (
+                            <span className="text-xs font-bold text-gray-400 dark:text-gray-600">Empty</span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Dates */}
+                      <div className="flex items-center group cursor-pointer h-8">
+                        <label className="flex items-center gap-2.5 text-[11px] font-bold text-gray-500 uppercase tracking-widest w-40 shrink-0">
+                          <Calendar size={14} className="text-gray-400" />
+                          Dates
+                        </label>
+                        <div className="flex items-center gap-2 px-3 py-1.5 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded transition-colors border border-transparent hover:border-gray-100 dark:hover:border-gray-700">
+                          <span className="text-xs font-bold text-gray-700 dark:text-gray-300">Start → Due</span>
+                        </div>
+                      </div>
+
+                      {/* Priority */}
+                      <div className="flex items-center group cursor-pointer h-8">
+                        <label className="flex items-center gap-2.5 text-[11px] font-bold text-gray-500 uppercase tracking-widest w-40 shrink-0">
+                          <Flag size={14} className="text-gray-400" />
+                          Priority
+                        </label>
+                        <div className="flex items-center gap-2 px-3 py-1.5 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded transition-colors">
+                          <span className="text-xs font-bold text-gray-400 dark:text-gray-600">Empty</span>
+                        </div>
+                      </div>
+
+                      {/* Time Estimate */}
+                      <div className="flex items-center group cursor-pointer h-8">
+                        <label className="flex items-center gap-2.5 text-[11px] font-bold text-gray-500 uppercase tracking-widest w-40 shrink-0">
+                          <Hourglass size={14} className="text-gray-400" />
+                          Time Estimate
+                        </label>
+                        <div className="flex items-center gap-2 px-3 py-1.5 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded transition-colors">
+                          <span className="text-xs font-bold text-gray-400 dark:text-gray-600">Empty</span>
+                        </div>
+                      </div>
+
+                      {/* Track Time */}
+                      <div className="flex items-center group cursor-pointer h-8">
+                        <label className="flex items-center gap-2.5 text-[11px] font-bold text-gray-500 uppercase tracking-widest w-40 shrink-0">
+                          <Clock size={14} className="text-gray-400" />
+                          Track Time
+                        </label>
+                        <div className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800/40 px-3 py-1 rounded-full border border-gray-100 dark:border-gray-700 hover:border-blue-400 transition-all">
+                          <Plus size={12} className="text-blue-500" />
+                          <span className="text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest">Add time</span>
+                        </div>
+                      </div>
+
+                      {/* Tags */}
+                      <div className="flex items-center group cursor-pointer h-8">
+                        <label className="flex items-center gap-2.5 text-[11px] font-bold text-gray-500 uppercase tracking-widest w-40 shrink-0">
+                          <Tag size={14} className="text-gray-400" />
+                          Tags
+                        </label>
+                        <div className="flex flex-wrap gap-2">
+                          {selectedTask.tags && selectedTask.tags.length > 0 ? (
+                            selectedTask.tags.map(tag => (
+                              <div key={tag} className="px-2 py-0.5 bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 rounded text-[10px] font-black uppercase tracking-widest border border-purple-100 dark:border-purple-800/50 shadow-sm">
+                                {tag}
+                              </div>
+                            ))
+                          ) : (
+                            <span className="text-xs font-bold text-gray-400 dark:text-gray-600">Empty</span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Relationships */}
+                      <div className="flex items-center group cursor-pointer h-8">
+                        <label className="flex items-center gap-2.5 text-[11px] font-bold text-gray-500 uppercase tracking-widest w-40 shrink-0">
+                          <Zap size={14} className="text-gray-400" />
+                          Relationships
+                        </label>
+                        <div className="flex items-center gap-2 px-3 py-1.5 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded transition-colors">
+                          <span className="text-xs font-bold text-gray-400 dark:text-gray-600">Empty</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Description Area */}
+                    <div className="relative group/desc max-w-5xl">
+                      {/* Drag Handle */}
+                      <div className="absolute -left-7 top-1/2 -translate-y-1/2 opacity-0 group-hover/desc:opacity-100 transition-all duration-300 text-gray-300 dark:text-gray-700 cursor-grab active:cursor-grabbing">
+                        <GripVertical size={20} />
+                      </div>
+
+                      <div className="p-8 pb-12 border border-gray-100 dark:border-gray-800/50 bg-white dark:bg-[#16161e]/20 rounded-2xl min-h-[180px] hover:border-gray-200 dark:hover:border-gray-700 transition-all shadow-sm hover:shadow-md relative overflow-hidden">
+                        {/* Hover Tool Icons */}
+                        <div className="absolute top-4 right-6 flex items-center gap-3 opacity-0 group-hover/desc:opacity-100 transform translate-y-2 group-hover/desc:translate-y-0 transition-all duration-300 z-20 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm p-1 rounded-lg border border-gray-100 dark:border-gray-800 shadow-sm">
+                          <button title="Full screen" className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-400 hover:text-purple-600 transition-colors"><Maximize2 size={16} /></button>
+                          <button title="Print" className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-400 hover:text-purple-600 transition-colors"><Printer size={16} /></button>
+                          <button title="History" className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-400 hover:text-purple-600 transition-colors"><History size={16} /></button>
+                        </div>
+
+                        <div className="prose dark:prose-invert max-w-none">
+                          <p className="text-sm font-medium text-gray-800 dark:text-gray-200 leading-relaxed whitespace-pre-wrap">
+                            {selectedTask.description || '{Task description}'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Section Tabs */}
+                    <div className="space-y-6">
+                      <div className="flex items-center gap-8 border-b border-gray-100 dark:border-gray-800 pb-[1px]">
+                        {['Details', 'Subtasks', 'Action Items'].map((tab) => (
+                          <button
+                            key={tab}
+                            onClick={() => setTaskModalActiveTab(tab as any)}
+                            className={`pb-4 text-[13px] font-black uppercase tracking-tight relative transition-colors ${taskModalActiveTab === tab ? 'text-gray-900 dark:text-white' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-400'}`}
+                          >
+                            {tab}
+                            {taskModalActiveTab === tab && (
+                              <div className="absolute bottom-[-1px] left-0 w-full h-[3px] bg-purple-600 rounded-t-full shadow-[0_-4px_10px_rgba(147,51,234,0.3)] animate-in fade-in slide-in-from-bottom-1 duration-300" />
+                            )}
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Tab Content */}
+                      <div className="min-h-[300px] animate-in fade-in slide-in-from-left-2 duration-500">
+                        {taskModalActiveTab === 'Details' && (
+                          <div className="space-y-10">
+                            <div className="space-y-4">
+                              <h3 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-tighter">Add Custom Fields</h3>
+                              <button className="flex items-center gap-2 p-1.5 border border-gray-200 dark:border-gray-800 rounded hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-all group">
+                                <div className="w-5 h-5 flex items-center justify-center border border-dashed border-gray-300 dark:border-gray-700 rounded text-gray-400 group-hover:text-purple-500 group-hover:border-purple-300">
+                                  <Plus size={12} />
+                                </div>
+                                <span className="text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest">Create a field in this List</span>
+                              </button>
+                            </div>
+
+                            <div className="space-y-4">
+                              <div className="flex items-center justify-between">
+                                <h3 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-tighter">Attachments</h3>
+                                <button className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors text-gray-400"><Plus size={16} /></button>
+                              </div>
+                              <div className="border-2 border-dashed border-gray-100 dark:border-gray-800/50 rounded-xl p-8 flex flex-col items-center justify-center text-center group hover:border-gray-200 dark:hover:border-gray-700 transition-all cursor-pointer bg-gray-50/30 dark:bg-gray-800/5">
+                                <p className="text-[11px] font-bold text-gray-400 dark:text-gray-600 transition-colors">
+                                  Drop your files here to <span className="underline decoration-purple-500/30 text-gray-500 dark:text-gray-400">upload</span>
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {taskModalActiveTab === 'Subtasks' && (
+                          <div className="space-y-4">
+                            <h3 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-tighter">Add subtask</h3>
+                            <button className="flex items-center gap-2 px-2.5 py-1.5 border border-gray-200 dark:border-gray-800 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-all group shadow-sm">
+                              <Plus size={14} className="text-gray-400 group-hover:text-purple-500" />
+                              <span className="text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest">Add Task</span>
+                            </button>
+                          </div>
+                        )}
+
+                        {taskModalActiveTab === 'Action Items' && (
+                          <div className="space-y-4">
+                            <h3 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-tighter">Checklists</h3>
+                            <button className="flex items-center gap-2 px-2.5 py-1.5 border border-gray-200 dark:border-gray-800 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-all group shadow-sm">
+                              <Plus size={14} className="text-gray-400 group-hover:text-purple-500" />
+                              <span className="text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest">Create checklist</span>
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Activity Panel */}
+                <div className="hidden lg:flex w-[400px] border-l border-gray-100 dark:border-gray-800 flex-col bg-gray-50/30 dark:bg-[#0f0f13]/30">
+                  <div className="h-[48px] shrink-0 border-b border-gray-100 dark:border-gray-800/50 flex items-center justify-between px-6 bg-white dark:bg-[#0f0f13]">
+                    <h3 className="text-[11px] font-black text-gray-900 dark:text-white uppercase tracking-[0.2em]">Activity</h3>
+                    <div className="flex items-center gap-4 text-gray-400 dark:text-gray-600">
+                      <Search size={15} className="hover:text-gray-700 dark:hover:text-gray-300 cursor-pointer transition-colors" />
+                      <div className="flex items-center gap-1.5 hover:text-gray-700 dark:hover:text-gray-300 cursor-pointer transition-colors relative">
+                        <Bell size={15} />
+                        <span className="flex items-center justify-center w-4 h-4 bg-gray-200 dark:bg-gray-800 rounded-full text-[9px] font-black">2</span>
+                      </div>
+                      <Filter size={15} className="hover:text-gray-700 dark:hover:text-gray-300 cursor-pointer transition-colors" />
+                      <button className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors text-gray-400"><ChevronRight size={18} /></button>
+                    </div>
+                  </div>
+
+                  <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6">
+                    <div className="flex items-start gap-4 group">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-orange-400 to-rose-400 flex items-center justify-center text-[10px] text-white font-bold shrink-0 shadow-sm">IA</div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2 mb-1">
+                          <p className="text-[11px] font-bold text-gray-800 dark:text-gray-200">Augusto Silva <span className="font-medium text-gray-400">created this task</span></p>
+                          <span className="text-[9px] font-bold text-gray-400 shrink-0 uppercase tracking-tighter">Oct 14, 11:43 am</span>
+                        </div>
+                        <div className="text-[10px] py-1.5 px-3 bg-gray-100 dark:bg-gray-800/50 rounded-lg text-gray-500 dark:text-gray-400 border border-gray-200/50 dark:border-gray-700/50">
+                          Initial task creation
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Comment Area */}
+                  <div className="p-4 bg-white dark:bg-[#0f0f13] border-t border-gray-100 dark:border-gray-800/50">
+                    <div className="border border-gray-200 dark:border-gray-800 rounded-2xl bg-white dark:bg-[#16161e]/50 shadow-sm focus-within:shadow-lg focus-within:ring-2 focus-within:ring-purple-500/10 focus-within:border-purple-400 transition-all duration-300">
+                      <textarea
+                        className="w-full bg-transparent border-none focus:outline-none resize-none text-[13px] font-medium text-gray-900 dark:text-white placeholder:text-gray-400 p-4 min-h-[110px]"
+                        placeholder="Write a comment..."
+                      />
+                      <div className="flex items-center justify-between p-3 border-t border-gray-100 dark:border-gray-800/50">
+                        <div className="flex items-center gap-1.5">
+                          <button className="flex items-center gap-1.5 px-3 py-2 bg-orange-500 hover:bg-orange-600 rounded-xl font-black text-[10px] text-white uppercase tracking-widest transition-all shadow-md active:scale-95">
+                            Send
+                            <ChevronRight size={14} />
+                          </button>
+                          <button className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"><Smile size={18} /></button>
+                          <button className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"><Paperclip size={18} /></button>
+                        </div>
+                        <div className="flex items-center gap-4">
+                          <MoreHorizontal size={18} className="text-gray-300 hover:text-gray-600 cursor-pointer" />
+                          <div className="flex items-center gap-1.5 text-gray-300 hover:text-gray-600 cursor-pointer">
+                            <MessageSquare size={16} />
+                            <span className="text-xs font-bold">1</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

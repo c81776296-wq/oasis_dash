@@ -2,7 +2,7 @@
 import React from 'react';
 import { Task, Status } from '../types';
 import { STATUS_COLORS, PRIORITY_COLORS } from '../constants';
-import { MoreHorizontal, Plus, Flag, MessageSquare, Clock } from 'lucide-react';
+import { MoreHorizontal, Plus, Flag, MessageSquare, Clock, AlignLeft } from 'lucide-react';
 
 interface BoardViewProps {
    tasks: Task[];
@@ -11,6 +11,7 @@ interface BoardViewProps {
 }
 
 const BoardView: React.FC<BoardViewProps> = ({ tasks, isDarkMode, onTaskClick }) => {
+   const [descriptionPreviewTask, setDescriptionPreviewTask] = React.useState<string | null>(null);
    const statuses = Array.from(new Set([
       ...Object.keys(STATUS_COLORS),
       ...tasks.map(t => t.status)
@@ -52,7 +53,35 @@ const BoardView: React.FC<BoardViewProps> = ({ tasks, isDarkMode, onTaskClick })
                            </button>
                         </div>
 
-                        <h4 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2 group-hover:text-black dark:group-hover:text-purple-400 transition-colors">{task.title}</h4>
+                        <div className="flex items-center gap-2 mb-2">
+                           <h4 className="text-sm font-semibold text-gray-800 dark:text-gray-200 group-hover:text-black dark:group-hover:text-purple-400 transition-colors flex-1 truncate">{task.title}</h4>
+                           {task.description && (
+                              <div className="relative shrink-0">
+                                 <button
+                                    onClick={(e) => {
+                                       e.stopPropagation();
+                                       setDescriptionPreviewTask(descriptionPreviewTask === task.id ? null : task.id);
+                                    }}
+                                    className={`p-1 hover:bg-white dark:hover:bg-white/10 rounded transition-colors ${descriptionPreviewTask === task.id ? 'bg-white dark:bg-white/10 shadow-sm' : ''}`}
+                                 >
+                                    <AlignLeft size={14} className="text-gray-400" />
+                                 </button>
+                                 {descriptionPreviewTask === task.id && (
+                                    <>
+                                       <div className="fixed inset-0 z-[200]" onClick={(e) => { e.stopPropagation(); setDescriptionPreviewTask(null); }} />
+                                       <div
+                                          className="absolute right-0 top-full mt-2 w-72 bg-white dark:bg-[#1e1e1f] border border-gray-200 dark:border-gray-800 rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.15)] p-4 z-[201] animate-in fade-in zoom-in-95 duration-150 cursor-default"
+                                          onClick={(e) => e.stopPropagation()}
+                                       >
+                                          <p className="text-[11px] text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap font-medium">
+                                             {task.description}
+                                          </p>
+                                       </div>
+                                    </>
+                                 )}
+                              </div>
+                           )}
+                        </div>
                         <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mb-4 leading-relaxed">{task.description}</p>
                         <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-800">
                            <div className="flex items-center -space-x-2">
