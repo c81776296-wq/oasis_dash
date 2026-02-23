@@ -4575,7 +4575,7 @@ const App: React.FC = () => {
                       />
                       <div className="flex items-center justify-between p-3 border-t border-gray-100 dark:border-gray-800/50">
                         <div className="flex items-center gap-1.5">
-                          <button className="flex items-center gap-1.5 px-3 py-2 bg-orange-500 hover:bg-orange-600 rounded-xl font-black text-[10px] text-white uppercase tracking-widest transition-all shadow-md active:scale-95">
+                          <button className="flex items-center gap-1.5 px-3 py-2 bg-black hover:bg-gray-600 rounded-xl font-black text-[10px] text-white uppercase tracking-widest transition-all shadow-md active:scale-95">
                             Send
                             <ChevronRight size={14} />
                           </button>
